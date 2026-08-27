@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
-import { ShoppingBag, Search, UserRound, Menu, X, Phone, MessageCircle, ChevronDown, LayoutGrid, Flame, Sparkles, Tags, Truck as TruckMini, Store as StoreIcon } from "lucide-react";
+import { ShoppingBag, Search, UserRound, Menu, X, Phone, MessageCircle, ChevronDown, LayoutGrid, Flame, Sparkles, Tags, Truck as TruckMini, Store as StoreIcon, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { WHATSAPP_DISPLAY, whatsappLink } from "@/lib/whatsapp";
 import { CategoryIcon } from "@/components/ui/category-icon";
 
@@ -29,6 +30,8 @@ function NavItemIcon({ label, icon }: { label: string; icon?: string }) {
 
 export function ShopHeader({ categories }: { categories: Cat[] }) {
   const count = useCart((s) => s.items.reduce((n, i) => n + i.quantity, 0));
+  const { data: session } = useSession();
+  const isAdmin = (session?.user as { role?: string } | undefined)?.role === "ADMIN";
   const [open, setOpen] = useState(false);
   const [catsOpen, setCatsOpen] = useState(false);
   const [q, setQ] = useState("");
@@ -87,6 +90,12 @@ export function ShopHeader({ categories }: { categories: Cat[] }) {
 
         {/* Actions */}
         <div className="flex items-center gap-1.5 ml-auto lg:ml-0">
+          {isAdmin && (
+            <Link href="/admin" className="hidden sm:flex flex-col items-center px-3 py-1 rounded-xl hover:bg-sabren-gray transition">
+              <LayoutDashboard className="w-5 h-5 text-sabren-gold" />
+              <span className="text-[10px] font-semibold mt-0.5">Admin</span>
+            </Link>
+          )}
           <Link href="/connexion" className="hidden sm:flex flex-col items-center px-3 py-1 rounded-xl hover:bg-sabren-gray transition">
             <UserRound className="w-5 h-5" />
             <span className="text-[10px] font-semibold mt-0.5">Compte</span>
@@ -199,6 +208,11 @@ export function ShopHeader({ categories }: { categories: Cat[] }) {
                 <NavItemIcon label={n.label} icon={n.icon} /> {n.label}
               </Link>
             ))}
+            {isAdmin && (
+              <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
+                <LayoutDashboard className="w-4 h-4 text-sabren-gold" /> Administration
+              </Link>
+            )}
             <Link href="/connexion" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
               <UserRound className="w-4 h-4 text-sabren-gold" /> Mon compte
             </Link>

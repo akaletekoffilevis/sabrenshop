@@ -24,7 +24,12 @@ export function LoginForm() {
       setError("Email ou mot de passe incorrect.");
       return;
     }
-    router.push("/");
+    try {
+      const s = await fetch("/api/auth/session").then((r) => r.json());
+      router.push((s?.user as { role?: string })?.role === "ADMIN" ? "/admin" : "/");
+    } catch {
+      router.push("/");
+    }
     router.refresh();
   };
 
