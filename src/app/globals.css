@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  /* Palette SABREN'SHOP */
+  --color-sabren-black: #111111;
+  --color-sabren-gold: #D4AF37;
+  --color-sabren-gold-hover: #C19B2E;
+  --color-sabren-cream: #FFF8EF;
+  --color-sabren-pink: #E8B7C8;
+  --color-sabren-pink-soft: #F7E3EA;
+  --color-sabren-gray: #F2F2F2;
+  --color-sabren-gray-dark: #E5E5E5;
+  --color-whatsapp: #25D366;
+  --color-whatsapp-dark: #1EBE57;
+
+  /* Typographie */
+  --font-display: var(--font-playfair);
+  --font-sans: var(--font-inter);
+
+  /* Ombres douces */
+  --shadow-card: 0 2px 8px -2px rgb(17 17 17 / 0.06), 0 4px 16px -6px rgb(17 17 17 / 0.08);
+  --shadow-card-hover: 0 12px 32px -10px rgb(17 17 17 / 0.18), 0 4px 12px -4px rgb(212 175 55 / 0.15);
+  --shadow-gold: 0 8px 24px -8px rgb(212 175 55 / 0.5);
+
+  /* Animation */
+  --animate-fade-up: fade-up 0.6s ease-out both;
+  --animate-marquee: marquee 22s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--color-sabren-cream);
+    color: var(--color-sabren-black);
+    font-family: var(--font-inter), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-playfair), serif;
+  }
+  ::selection {
+    background: var(--color-sabren-gold);
+    color: var(--color-sabren-black);
+  }
+}
+
+@layer utilities {
+  .container-px {
+    @apply px-4 md:px-6 lg:px-8;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .text-gradient-gold {
+    background: linear-gradient(120deg, #d4af37 20%, #f3e2a0 50%, #d4af37 80%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+/* Scrollbar de détail */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-sabren-cream);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d4af37, #c19b2e);
+  border-radius: 6px;
+  border: 2px solid var(--color-sabren-cream);
+}

@@ -1,0 +1,76 @@
+"use client";
+import { useState } from "react";
+import Link from "next/link";
+import { useCart } from "@/hooks/useCart";
+import { whatsappLink, productWhatsappMessage } from "@/lib/whatsapp";
+import { ShoppingBag, Zap, MessageCircle, Check, Minus, Plus } from "lucide-react";
+
+export function ProductActions({ product }: { product: any }) {
+  const [qty, setQty] = useState(1);
+  const [color, setColor] = useState(product.colors?.[0] || "");
+  const [size, setSize] = useState(product.sizes?.[0] || "");
+  const [added, setAdded] = useState(false);
+  const addItem = useCart((s) => s.addItem);
+
+  const handleAdd = () => {
+    addItem({ id: product.id || product.slug, slug: product.slug, name: product.name, price: product.price, compareAtPrice: product.compareAtPrice, image: product.images?.[0], quantity: qty, color, size });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1800);
+  };
+
+  const disabled = product.inStock === false;
+  const waLink = whatsappLink(productWhatsappMessage({ name: product.name, price: product.price, quantity: qty, color, size }));
+
+  const inputCls = "flex items-center justify-center rounded-full border border-sabren-gray bg-white text-sm font-semibold hover:border-sabren-gold transition";
+
+  return (
+    <div className="mt-5 space-y-4">
+      {product.colors?.length > 0 && (
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wide text-sabren-black/50 mb-1.5">Couleur : <span className="text-sabren-black">{color}</span></p>
+          <div className="flex flex-wrap gap-2">{product.colors.map((c: string) => (
+            <button key={c} onClick={() => setColor(c)} className={`px-4 py-2 rounded-full border text-sm font-semibold transition ${color === c ? "bg-sabren-black text-white border-sabren-black" : "bg-white border-sabren-gray hover:border-sabren-gold"}`}>{c}</button>
+          ))}</div>
+        </div>
+      )}
+      {product.sizes?.length > 0 && (
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wide text-sabren-black/50 mb-1.5">Taille : <span className="text-sabren-black">{size}</span></p>
+          <div className="flex flex-wrap gap-2">{product.sizes.map((s: string) => (
+            <button key={s} onClick={() => setSize(s)} className={`min-w-11 px-3 py-2 rounded-full border text-sm font-semibold transition ${size === s ? "bg-sabren-black text-white border-sabren-black" : "bg-white border-sabren-gray hover:border-sabren-gold"}`}>{s}</button>
+          ))}</div>
+        </div>
+      )}
+
+      <div className="flex items-center gap-3">
+        <span className="text-xs font-bold uppercase tracking-wide text-sabren-black/50">Quantité</span>
+        <div className="flex items-center border border-sabren-gray rounded-full overflow-hidden bg-white">
+          <button onClick={() => setQty(Math.max(1, qty - 1))} className="p-2.5 hover:bg-sabren-gray transition" aria-label="Diminuer"><Minus className="w-4 h-4" /></button>
+          <span className="px-4 text-sm font-bold">{qty}</span>
+          <button onClick={() => setQty(qty + 1)} className="p-2.5 hover:bg-sabren-gray transition" aria-label="Augmenter"><Plus className="w-4 h-4" /></button>
+        </div>
+      </div>
+
+      <div className="grid gap-2.5">
+        <button
+          onClick={handleAdd}
+          disabled={disabled}
+          className={`inline-flex items-center justify-center gap-2 rounded-full py-3.5 font-bold text-sm transition ${added ? "bg-whatsapp text-white" : "bg-sabren-black text-white hover:bg-black"} disabled:opacity-50`}
+        >
+          {added ? <><Check className="w-4 h-4" /> Ajouté au panier</> : <><ShoppingBag className="w-4 h-4" /> AJOUTER AU PANIER</>}
+        </button>
+        <Link href="/panier" className={`inline-flex items-center justify-center gap-2 rounded-full py-3.5 font-bold text-sm bg-sabren-gold text-sabren-black hover:bg-sabren-gold-hover transition shadow-gold ${disabled ? "pointer-events-none opacity-50" : ""}`}>
+          <Zap className="w-4 h-4" /> ACHETER MAINTENANT
+        </Link>
+        <a
+          href={waLink}
+          target="_blank"
+          className={`inline-flex items-center justify-center gap-2 rounded-full py-3.5 font-bold text-sm bg-whatsapp text-white hover:bg-whatsapp-dark transition ${disabled ? "pointer-events-none opacity-50" : ""}`}
+        >
+          <MessageCircle className="w-4 h-4" /> COMMANDER SUR WHATSAPP
+        </a>
+      </div>
+      <p className="text-center text-xs text-sabren-black/45">WhatsApp : +227 89 14 84 54 — Réponse rapide</p>
+    </div>
+  );
+}
