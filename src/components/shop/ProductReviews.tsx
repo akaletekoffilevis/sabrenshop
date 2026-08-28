@@ -55,7 +55,7 @@ export function ProductReviews({ productId, initial }: { productId: string; init
       {/* Formulaire */}
       <div className="bg-white rounded-2xl border border-sabren-gray shadow-card p-6 lg:sticky lg:top-28">
         <h3 className="font-display font-bold text-lg mb-1">Donnez votre avis</h3>
-        <p className="text-xs text-sabren-black/50 mb-4">Votre avis s'affiche immédiatement. Aucun compte requis.</p>
+        <p className="text-xs text-sabren-black/50 mb-4">Votre avis s’affiche immédiatement. Aucun compte requis.</p>
         <form onSubmit={submit} className="space-y-3">
           <div>
             <span className="block text-xs font-bold uppercase text-sabren-black/55 mb-1">Votre note</span>
