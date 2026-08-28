@@ -18,6 +18,8 @@ const steps = [
   { n: "3", title: "Recevez chez vous", desc: "Livraison rapide partout au Niger ou retrait en boutique." },
 ];
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const best = await getHomeProducts();
   const fresh = await getNewProducts();

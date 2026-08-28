@@ -22,6 +22,8 @@ const sorts = [
   { label: "Mieux notés", value: "rating" },
 ];
 
+export const dynamic = "force-dynamic";
+
 export default async function BoutiquePage({
   searchParams,
 }: {
