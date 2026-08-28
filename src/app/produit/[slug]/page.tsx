@@ -5,6 +5,7 @@ import { Footer } from "@/components/shop/Footer";
 import { WhatsappFloat } from "@/components/shop/WhatsappFloat";
 import { formatPrice, discountPercent, isNewProduct } from "@/lib/utils";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { ProductGallery } from "./ProductGallery";
 import { ProductActions } from "./ProductActions";
 import { ProductReviews } from "@/components/shop/ProductReviews";
@@ -93,7 +94,7 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
       <main className="flex-1 max-w-7xl mx-auto container-px lg:px-8 py-6 w-full">
         {/* Fil d'ariane */}
         <nav className="flex items-center gap-1.5 text-xs text-sabren-black/45 mb-5">
-          <a href="/" className="hover:text-sabren-gold">Accueil</a>
+          <Link href="/" className="hover:text-sabren-gold">Accueil</Link>
           <span>/</span>
           <a href="/boutique" className="hover:text-sabren-gold">Boutique</a>
           <span>/</span>

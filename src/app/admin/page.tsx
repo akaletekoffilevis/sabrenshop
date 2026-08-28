@@ -32,7 +32,7 @@ export default async function AdminDashboard() {
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="font-display font-black text-2xl">Tableau de bord</h1>
-          <p className="text-sm text-sabren-black/50 mt-0.5">Vue d'ensemble de la boutique</p>
+          <p className="text-sm text-sabren-black/50 mt-0.5">Vue d’ensemble de la boutique</p>
         </div>
         <Link href="/admin/produits/nouveau" className="inline-flex items-center gap-2 bg-sabren-gold text-sabren-black font-bold rounded-full px-5 py-2.5 text-sm hover:bg-sabren-gold-hover transition shadow-gold">
           <Plus className="w-4 h-4" /> Nouveau produit
@@ -103,8 +103,8 @@ export default async function AdminDashboard() {
             </div>
           )}
           <div className="mt-5 bg-sabren-cream border border-sabren-gold/30 rounded-2xl p-4 text-sm">
-            <p className="font-bold">Besoin d'aide ?</p>
-            <p className="text-sabren-black/55 mt-1">Gérez produits, catégories, commandes et avis clients depuis ce panneau. Tout s'enregistre en base.</p>
+            <p className="font-bold">Besoin d’aide ?</p>
+            <p className="text-sabren-black/55 mt-1">Gérez produits, catégories, commandes et avis clients depuis ce panneau. Tout s’enregistre en base.</p>
           </div>
         </Card>
       </div>

@@ -80,7 +80,7 @@ export function CategoryManager({ initial }: { initial: Cat[] }) {
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="font-display font-black text-2xl">Catégories</h1>
-          <p className="text-sm text-sabren-black/50 mt-0.5">Gérées en base, elles apparaissent dans le header, la boutique et l'accueil.</p>
+          <p className="text-sm text-sabren-black/50 mt-0.5">Gérées en base, elles apparaissent dans le header, la boutique et l’accueil.</p>
         </div>
         {!creating && (
           <Btn type="button" variant="gold" onClick={() => { setCreating(true); setForm(blank); }}>

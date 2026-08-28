@@ -6,6 +6,7 @@ import { ProductCard } from "@/components/shop/ProductCard";
 import { CategoryIcon } from "@/components/ui/category-icon";
 import { prisma } from "@/lib/prisma";
 import { getActiveCategories } from "@/lib/data";
+import Link from "next/link";
 import { SlidersHorizontal, Sparkles, Flame, Tags, Truck, Search } from "lucide-react";
 
 const smartLinks = [
@@ -77,7 +78,7 @@ export default async function BoutiquePage({
       <main className="flex-1 max-w-7xl mx-auto container-px lg:px-8 py-6 w-full">
         {/* Fil d'ariane */}
         <nav className="flex items-center gap-1.5 text-xs text-sabren-black/45 mb-4">
-          <a href="/" className="hover:text-sabren-gold">Accueil</a>
+          <Link href="/" className="hover:text-sabren-gold">Accueil</Link>
           <span>/</span>
           <span className="text-sabren-black/70 font-semibold">Boutique</span>
           {params.cat && (
