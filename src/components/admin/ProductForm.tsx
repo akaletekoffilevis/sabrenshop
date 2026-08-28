@@ -115,8 +115,8 @@ export function ProductForm({ product, categories }: { product?: Product | null;
           <Field label="Nom du produit">
             <input className={inputCls} value={form.name} onChange={(e) => set("name", e.target.value)} required />
           </Field>
-          <Field label="Slug (URL)" hint="Généré automatiquement si vide. Ex : tshirt-sabren-noir">
-            <input className={inputCls} value={form.slug} onChange={(e) => set("slug", e.target.value)} placeholder="tshirt-sabren-noir" />
+          <Field label="Slug (URL)" hint="Généré automatiquement si vide. Ex : tshirt-sabreen-noir">
+            <input className={inputCls} value={form.slug} onChange={(e) => set("slug", e.target.value)} placeholder="tshirt-sabreen-noir" />
           </Field>
         </div>
 

@@ -20,9 +20,7 @@ const steps = [
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const best = await getHomeProducts();
-  const fresh = await getNewProducts();
-  const deals = await getDealProducts();
+  const [best, fresh, deals] = await Promise.all([getHomeProducts(), getNewProducts(), getDealProducts()]);
 
   return (
     <div className="min-h-screen flex flex-col">

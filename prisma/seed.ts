@@ -62,7 +62,7 @@ const PRODUCTS: PD[] = [
   { name: "Nounours 40cm Marron", slug: "nounours-40cm-marron", price: 9000, stock: 30, images: IMG.teddy, colors: ["Marron", "Blanc"], sizes: ["40cm"], categoryId: "nounours", description: "Nounours tout doux en peluche premium." },
   { name: "Peluche Kawaii Lapin", slug: "peluche-kawaii-lapin", price: 6000, stock: 40, images: IMG.teddy, colors: ["Blanc", "Rose"], sizes: ["30cm"], categoryId: "nounours", isNew: true, description: "Peluche kawaii irrésistible, idéale en cadeau." },
   // Vêtements
-  { name: "T-Shirt Premium Noir", slug: "tshirt-sabren-noir", price: 8500, stock: 30, images: IMG.shirt, colors: ["Noir", "Blanc", "Gris"], sizes: ["S", "M", "L", "XL"], categoryId: "vetements", isFeatured: true, description: "T-shirt coton premium, coupe moderne." },
+  { name: "T-Shirt Premium Noir", slug: "tshirt-sabreen-noir", price: 8500, stock: 30, images: IMG.shirt, colors: ["Noir", "Blanc", "Gris"], sizes: ["S", "M", "L", "XL"], categoryId: "vetements", isFeatured: true, description: "T-shirt coton premium, coupe moderne." },
   { name: "Robe d'été Fleurie", slug: "robe-ete-fleurie", price: 22000, stock: 18, images: IMG.dress, colors: ["Fleuri", "Pétale"], sizes: ["S", "M", "L"], categoryId: "vetements", isNew: true, description: "Robe légère et élégante pour toutes les occasions." },
   { name: "Jeans Homme Slim", slug: "jeans-homme-slim", price: 18000, compareAtPrice: 23000, stock: 22, images: IMG.jeans, colors: ["Bleu foncé", "Noir"], sizes: ["30", "32", "34", "36"], categoryId: "vetements", description: "Jean slim stretch, confortable au quotidien." },
   // Téléphones
@@ -122,6 +122,24 @@ async function main() {
 
   const settings = { id: "default", shopName: "SABREEN'SHOP", whatsapp: "22789148454", phone: "+227 89 14 84 54", email: "soumanabaaminata@gmail.com", deliveryFee: 100, promoBarText: "BIENVENUE CHEZ SABREEN'SHOP — DÉCOUVREZ NOS NOUVEAUTÉS" };
   await prisma.settings.upsert({ where: { id: "default" }, update: settings, create: settings as any });
+
+  if ((await prisma.faq.count()) === 0) {
+    const faqs = [
+      { question: "Comment passer commande ?", answer: "Ajoutez vos articles au panier puis validez la commande. Vous pouvez aussi commander directement via WhatsApp : nous confirmons et livrons rapidement.", position: 1 },
+      { question: "Quels sont les moyens de paiement ?", answer: "Paiement à la livraison en espèces ou paiement par avance via WhatsApp (Mobile Money). Le retrait en boutique reste possible.", position: 2 },
+      { question: "Quels sont les frais de livraison ?", answer: "Les frais de livraison sont à la charge du client, partout au Niger. Le retrait en boutique est gratuit.", position: 3 },
+      { question: "Comment suivre ma commande ?", answer: "Rendez-vous sur la page « Suivre ma commande » avec votre numéro (ex : SAB-2026-0001) et le numéro de téléphone utilisé à la commande.", position: 4 },
+      { question: "Puis-je échanger ou retourner un article ?", answer: "Oui, vous pouvez échanger ou retourner un article sous 7 jours s'il est en bon état et dans son emballage d'origine.", position: 5 },
+      { question: "Comment utiliser un code promo ?", answer: "Ajoutez vos articles au panier, collez le code dans le champ « Code promo » et cliquez sur Appliquer : la réduction s'applique immédiatement.", position: 6 },
+    ];
+    for (const f of faqs) await prisma.faq.create({ data: f });
+  }
+
+  if ((await prisma.promoCode.count()) === 0) {
+    await prisma.promoCode.create({
+      data: { code: "BIENVENUE10", description: "-10% sur votre première commande (panier minimum 10 000 FCFA)", type: "PERCENT", value: 10, minSubtotal: 10000 },
+    });
+  }
 
   console.log(`Seed done — ${CATEGORIES.length} catégories, ${PRODUCTS.length} produits`);
 }

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { validatePromo } from "@/lib/promo";
 import { z } from "zod";
 
 const itemSchema = z.object({
@@ -23,6 +24,7 @@ const orderSchema = z.object({
   notes: z.string().optional().nullable(),
   isPickup: z.boolean().optional().default(false),
   paymentMethod: z.enum(["WHATSAPP", "COD"]).optional().default("COD"),
+  promoCode: z.string().optional().nullable(),
   items: z.array(itemSchema).min(1, "Panier vide"),
 });
 
@@ -34,7 +36,17 @@ export async function POST(req: Request) {
   const settings = await prisma.settings.findUnique({ where: { id: "default" } });
   const deliveryFee = parsed.data.isPickup ? 0 : (settings?.deliveryFee ?? 100);
   const subTotal = parsed.data.items.reduce((a, i) => a + i.price * i.quantity, 0);
-  const total = subTotal + deliveryFee;
+
+  let discount = 0;
+  let promoApplied: string | null = null;
+  if (parsed.data.promoCode) {
+    const v = await validatePromo(parsed.data.promoCode, subTotal);
+    if (v.valid) {
+      discount = v.discount;
+      promoApplied = v.code;
+    }
+  }
+  const total = subTotal - discount + deliveryFee;
 
   const year = new Date().getFullYear();
   const count = await prisma.order.count();
@@ -55,6 +67,8 @@ export async function POST(req: Request) {
         isPickup: parsed.data.isPickup,
         paymentMethod: parsed.data.paymentMethod,
         deliveryFee,
+        discount,
+        promoCode: promoApplied,
         total,
         userId: (session?.user as { id?: string } | undefined)?.id ?? null,
         items: { create: parsed.data.items.map((i) => ({ productId: i.id, name: i.name, price: i.price, quantity: i.quantity, color: i.color ?? null, size: i.size ?? null, image: i.image ?? null })) },
@@ -64,6 +78,10 @@ export async function POST(req: Request) {
 
     for (const i of parsed.data.items) {
       await prisma.$executeRaw`UPDATE Product SET stock = MAX(0, stock - ${i.quantity}) WHERE id = ${i.id}`;
+    }
+
+    if (promoApplied) {
+      await prisma.promoCode.update({ where: { code: promoApplied }, data: { usedCount: { increment: 1 } } });
     }
 
     return Response.json({ ok: true, order });

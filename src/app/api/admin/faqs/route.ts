@@ -1,0 +1,30 @@
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { z } from "zod";
+
+async function guard() {
+  const session = await auth();
+  if (!session?.user || (session.user as { role?: string }).role !== "ADMIN") return false;
+  return true;
+}
+
+const schema = z.object({
+  question: z.string().min(3, "Question requise"),
+  answer: z.string().min(3, "Réponse requise"),
+  position: z.number().int().min(0).default(0),
+  isActive: z.boolean().default(true),
+});
+
+export async function GET() {
+  if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });
+  const faqs = await prisma.faq.findMany({ orderBy: [{ position: "asc" }, { createdAt: "desc" }] });
+  return Response.json({ faqs });
+}
+
+export async function POST(req: Request) {
+  if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });
+  const parsed = schema.safeParse(await req.json());
+  if (!parsed.success) return Response.json({ error: parsed.error.issues[0]?.message ?? "Données invalides" }, { status: 400 });
+  const faq = await prisma.faq.create({ data: parsed.data });
+  return Response.json({ ok: true, faq });
+}

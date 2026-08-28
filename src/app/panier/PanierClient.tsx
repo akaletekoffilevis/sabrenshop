@@ -3,15 +3,17 @@ import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
 import { whatsappLink, cartWhatsappMessage } from "@/lib/whatsapp";
-import { ShoppingBag, Trash2, Minus, Plus, MessageCircle, Tag } from "lucide-react";
+import { ShoppingBag, Trash2, Minus, Plus, MessageCircle, Tag, X } from "lucide-react";
 import { useState } from "react";
 
 export function PanierClient({ deliveryFee = 100 }: { deliveryFee?: number }) {
-  const { items, updateQuantity, removeItem, total } = useCart();
-  const [promo, setPromo] = useState("");
-  const [promoMsg, setPromoMsg] = useState("");
+  const { items, updateQuantity, removeItem, total, promo, setPromo } = useCart();
+  const [code, setCode] = useState("");
+  const [promoMsg, setPromoMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [applying, setApplying] = useState(false);
   const subTotal = total();
-  const grandTotal = subTotal + (items.length ? deliveryFee : 0);
+  const discount = promo ? Math.min(promo.type === "FIXED" ? promo.value : Math.round((subTotal * promo.value) / 100), subTotal) : 0;
+  const grandTotal = subTotal - discount + (items.length ? deliveryFee : 0);
 
   const waLink = whatsappLink(
     cartWhatsappMessage(
@@ -20,12 +22,32 @@ export function PanierClient({ deliveryFee = 100 }: { deliveryFee?: number }) {
     )
   );
 
-  const applyPromo = () => {
-    if (!promo.trim()) {
-      setPromoMsg("Entrez un code promo.");
+  const applyPromo = async () => {
+    const promoCode = code.trim().toUpperCase();
+    if (!promoCode) {
+      setPromoMsg({ ok: false, text: "Entrez un code promo." });
       return;
     }
-    setPromoMsg("Les codes promo arrivent en phase 2. Contactez-nous sur WhatsApp pour une offre spéciale.");
+    setApplying(true);
+    try {
+      const res = await fetch("/api/promo/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: promoCode, subTotal }),
+      });
+      const data = await res.json();
+      if (res.ok && data.valid) {
+        setPromo({ code: data.code, type: data.type, value: data.value });
+        setCode("");
+        setPromoMsg({ ok: true, text: `Code appliqué : -${formatPrice(data.discount)}` });
+      } else {
+        setPromoMsg({ ok: false, text: data.message ?? "Code promo invalide." });
+      }
+    } catch {
+      setPromoMsg({ ok: false, text: "Erreur réseau, réessayez." });
+    } finally {
+      setApplying(false);
+    }
   };
 
   return (
@@ -92,12 +114,29 @@ export function PanierClient({ deliveryFee = 100 }: { deliveryFee?: number }) {
             <h2 className="font-display font-bold text-lg">Résumé de commande</h2>
 
             <div>
-              <div className="flex items-center gap-2 bg-sabren-cream rounded-full pl-4 border border-transparent focus-within:border-sabren-gold focus-within:bg-white transition">
-                <Tag className="w-4 h-4 text-sabren-gold shrink-0" />
-                <input value={promo} onChange={(e) => setPromo(e.target.value)} placeholder="Code promo" className="flex-1 bg-transparent outline-none text-sm py-2.5" />
-                <button onClick={applyPromo} className="bg-sabren-black text-white text-xs font-bold rounded-full px-4 py-2.5 hover:bg-black transition shrink-0">Appliquer</button>
-              </div>
-              {promoMsg && <p className="text-[11px] text-sabren-black/50 mt-1.5 px-1">{promoMsg}</p>}
+              {promo ? (
+                <div className="flex items-center justify-between gap-2 bg-sabren-gold/15 border border-sabren-gold/40 rounded-full pl-4 pr-2 py-2">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <Tag className="w-4 h-4 text-sabren-gold shrink-0" />
+                    <span className="font-bold text-sm truncate">{promo.code}</span>
+                    <span className="text-xs text-sabren-gold-ink bg-white rounded-full px-2.5 py-1">
+                      {promo.type === "FIXED" ? `-${formatPrice(promo.value)}` : `-${promo.value}%`}
+                    </span>
+                  </div>
+                  <button onClick={() => setPromo(null)} className="p-1 text-sabren-black/40 hover:text-red-500 transition shrink-0" aria-label="Retirer le code">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 bg-sabren-cream rounded-full pl-4 border border-transparent focus-within:border-sabren-gold focus-within:bg-white transition">
+                  <Tag className="w-4 h-4 text-sabren-gold shrink-0" />
+                  <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Code promo" className="flex-1 bg-transparent outline-none text-sm py-2.5" />
+                  <button onClick={applyPromo} disabled={applying} className="bg-sabren-black text-white text-xs font-bold rounded-full px-4 py-2.5 hover:bg-black transition shrink-0 disabled:opacity-50">
+                    {applying ? "…" : "Appliquer"}
+                  </button>
+                </div>
+              )}
+              {promoMsg && <p className={`text-[11px] mt-1.5 px-1 ${promoMsg.ok ? "text-green-600" : "text-red-500"}`}>{promoMsg.text}</p>}
             </div>
 
             <div className="space-y-2.5 text-sm">
@@ -105,6 +144,12 @@ export function PanierClient({ deliveryFee = 100 }: { deliveryFee?: number }) {
                 <span className="text-sabren-black/60">Sous-total</span>
                 <span className="font-semibold">{formatPrice(subTotal)}</span>
               </div>
+              {discount > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Remise ({promo?.code})</span>
+                  <span className="font-semibold">-{formatPrice(discount)}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-sabren-black/60">Frais de livraison</span>
                 <span className="font-semibold">{formatPrice(deliveryFee)}</span>

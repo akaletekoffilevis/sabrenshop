@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Field, inputCls, Btn, Toggle, Card } from "./ui";
+import { ImageUploader } from "./ImageUploader";
 import { Loader2, Save, Megaphone, Truck, Home, Share2 } from "lucide-react";
 
 type Settings = {
@@ -70,8 +71,8 @@ export function SettingsForm({ settings }: { settings: Settings }) {
           <Field label="Sous-titre du hero">
             <input className={inputCls} value={form.heroSubtitle ?? ""} onChange={(e) => set("heroSubtitle", e.target.value)} />
           </Field>
-          <Field label="Image du hero (URL)" hint="URL hébergée (https://...) ou fichier /uploads/...">
-            <input className={inputCls} value={form.heroImage ?? ""} onChange={(e) => set("heroImage", e.target.value)} placeholder="/uploads/....jpg ou https://..." />
+          <Field label="Image du hero" hint="Importer un fichier depuis votre appareil, ou coller une URL si besoin">
+            <ImageUploader value={form.heroImage ?? ""} onChange={(url) => set("heroImage", url)} name="hero" />
           </Field>
           <div className="grid grid-cols-2 gap-3 self-end">
             <Field label="CTA 1"><input className={inputCls} value={form.heroCta1Text ?? ""} onChange={(e) => set("heroCta1Text", e.target.value)} /></Field>

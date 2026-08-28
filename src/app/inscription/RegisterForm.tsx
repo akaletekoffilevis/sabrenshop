@@ -44,7 +44,7 @@ export function RegisterForm() {
   return (
     <div className="w-full max-w-md bg-white rounded-3xl border border-sabren-gray shadow-card-hover p-7 md:p-9 animate-fade-up">
       <div className="text-center mb-7">
-        <img src="/logosabrenshop.jpeg" alt="Sabren'Shop" className="w-14 h-14 mx-auto rounded-2xl object-cover mb-4" loading="lazy" decoding="async" />
+        <img src="/logosabrenshop.jpeg" alt="Sabreen'Shop" className="w-14 h-14 mx-auto rounded-2xl object-cover mb-4" loading="lazy" decoding="async" />
         <h1 className="font-display font-black text-2xl">Créer un compte</h1>
         <p className="text-sm text-sabren-black/55 mt-1">Commandez plus vite, suivez vos achats.</p>
       </div>

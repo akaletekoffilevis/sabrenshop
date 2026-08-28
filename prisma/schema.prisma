@@ -126,6 +126,8 @@ model Order {
   notes         String?      
   total         Int // total FCFA
   deliveryFee   Int           @default(0)
+  discount      Int           @default(0)
+  promoCode     String?
   status        OrderStatus   @default(NEW)
   paymentMethod PaymentMethod @default(WHATSAPP)
   isPickup      Boolean       @default(false)
@@ -161,6 +163,31 @@ model Review {
   name      String? // pour avis invité
   isApproved Boolean @default(false)
   createdAt DateTime @default(now())
+}
+
+model PromoCode {
+  id          String    @id @default(cuid())
+  code        String    @unique // affiché en MAJUSCULES
+  description String?
+  type        String    @default("PERCENT") // PERCENT | FIXED
+  value       Int // % (1-100) ou montant en FCFA
+  minSubtotal Int? // montant minimum du panier (sous-total)
+  maxUses     Int? // 0 ou null = illimité
+  usedCount   Int       @default(0)
+  isActive    Boolean   @default(true)
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  position  Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Settings {

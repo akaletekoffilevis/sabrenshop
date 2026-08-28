@@ -2,10 +2,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Field, inputCls, Btn, Badge, Card } from "./ui";
+import { ImageUploader } from "./ImageUploader";
 import { CategoryIcon, CATEGORY_ICON_KEYS } from "@/components/ui/category-icon";
 import { Pencil, Trash2, Plus, X, Loader2, Check } from "lucide-react";
 
-type Cat = { id: string; name: string; slug: string; description?: string | null; icon: string; isActive: boolean; position: number; _count?: { products: number } };
+type Cat = { id: string; name: string; slug: string; description?: string | null; icon: string; image?: string | null; isActive: boolean; position: number; _count?: { products: number } };
 
 const iconKeys = CATEGORY_ICON_KEYS;
 
@@ -15,7 +16,7 @@ export function CategoryManager({ initial }: { initial: Cat[] }) {
   const [creating, setCreating] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const blank = { name: "", description: "", icon: "package", isActive: true, position: initial.length };
+  const blank = { name: "", description: "", icon: "package", image: "", isActive: true, position: initial.length };
   const [form, setForm] = useState(blank);
 
   const save = async () => {
@@ -61,6 +62,9 @@ export function CategoryManager({ initial }: { initial: Cat[] }) {
         <Field label="Description" hint="Affichée sous le nom si remplie">
           <input className={inputCls} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         </Field>
+        <Field label="Image" hint="Bannière / vignette de la catégorie">
+          <ImageUploader value={form.image ?? ""} onChange={(url) => setForm({ ...form, image: url })} name={form.name.trim() || "categorie"} />
+        </Field>
       </div>
       <div className="mt-4 flex items-center justify-between">
         <label className="flex items-center gap-2 text-sm font-medium">
@@ -94,8 +98,8 @@ export function CategoryManager({ initial }: { initial: Cat[] }) {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {initial.map((c) => (
           <Card key={c.id} className="p-4 flex items-center gap-3">
-            <span className="w-11 h-11 rounded-xl bg-sabren-cream border border-sabren-gold/30 flex items-center justify-center shrink-0">
-              <CategoryIcon icon={c.icon} className="w-5 h-5 text-sabren-gold" />
+            <span className="w-11 h-11 rounded-xl bg-sabren-cream border border-sabren-gold/30 flex items-center justify-center shrink-0 overflow-hidden">
+              {c.image ? <img src={c.image} alt={c.name} className="w-full h-full object-cover" loading="lazy" decoding="async" /> : <CategoryIcon icon={c.icon} className="w-5 h-5 text-sabren-gold" />}
             </span>
             <div className="flex-1 min-w-0">
               <p className="font-bold text-sm truncate">{c.name}</p>
@@ -107,7 +111,7 @@ export function CategoryManager({ initial }: { initial: Cat[] }) {
               </div>
             </div>
             <div className="flex items-center gap-0.5 shrink-0">
-              <button onClick={() => { setEditing(c); setCreating(false); setForm({ name: c.name, description: c.description ?? "", icon: c.icon, isActive: c.isActive, position: c.position }); }} className="p-2 rounded-lg text-sabren-black/40 hover:text-sabren-gold hover:bg-sabren-cream transition" aria-label="Modifier">
+              <button onClick={() => { setEditing(c); setCreating(false); setForm({ name: c.name, description: c.description ?? "", icon: c.icon, image: c.image ?? "", isActive: c.isActive, position: c.position }); }} className="p-2 rounded-lg text-sabren-black/40 hover:text-sabren-gold hover:bg-sabren-cream transition" aria-label="Modifier">
                 <Pencil className="w-4 h-4" />
               </button>
               <button onClick={() => del(c)} className="p-2 rounded-lg text-sabren-black/40 hover:text-red-500 hover:bg-red-50 transition" aria-label="Supprimer">
@@ -138,6 +142,9 @@ export function CategoryManager({ initial }: { initial: Cat[] }) {
                 </div>
               </Field>
               <Field label="Description"><input className={inputCls} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></Field>
+            </div>
+            <div className="mt-4">
+              <Field label="Image"><ImageUploader value={form.image ?? ""} onChange={(url) => setForm({ ...form, image: url })} name={form.name.trim() || "categorie"} /></Field>
             </div>
             <div className="mt-4 flex items-center justify-between">
               <label className="flex items-center gap-2 text-sm font-medium">

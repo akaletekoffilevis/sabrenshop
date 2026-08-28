@@ -4,13 +4,13 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
 import { useState } from "react";
-import { ShoppingBag, UserRound, Phone, MapPin, MessageCircle, Banknote, Loader2, Store, Truck, ChevronLeft } from "lucide-react";
+import { ShoppingBag, UserRound, Phone, MapPin, MessageCircle, Banknote, Loader2, Store, Truck, ChevronLeft, Tag } from "lucide-react";
 
 const inputCls = "w-full bg-white border border-sabren-gray rounded-xl pl-10 pr-3.5 py-2.5 text-sm outline-none focus:border-sabren-gold transition";
 
 export function CheckoutClient({ deliveryFee = 100 }: { deliveryFee?: number }) {
   const router = useRouter();
-  const { items, total, clear } = useCart();
+  const { items, total, clear, promo } = useCart();
 
   const [form, setForm] = useState({
     customerName: "", phone: "", whatsapp: "", email: "", ville: "", quartier: "", address: "", notes: "",
@@ -21,7 +21,8 @@ export function CheckoutClient({ deliveryFee = 100 }: { deliveryFee?: number }) 
   const [error, setError] = useState("");
 
   const subTotal = total();
-  const grandTotal = subTotal + (items.length && !isPickup ? deliveryFee : 0);
+  const discount = promo ? Math.min(promo.type === "FIXED" ? promo.value : Math.round((subTotal * promo.value) / 100), subTotal) : 0;
+  const grandTotal = subTotal - discount + (items.length && !isPickup ? deliveryFee : 0);
 
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -41,6 +42,7 @@ export function CheckoutClient({ deliveryFee = 100 }: { deliveryFee?: number }) 
           notes: form.notes || null,
           isPickup,
           paymentMethod,
+          promoCode: promo?.code ?? null,
           items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, color: i.color ?? null, size: i.size ?? null, image: i.image ?? null })),
         }),
       });
@@ -168,6 +170,12 @@ export function CheckoutClient({ deliveryFee = 100 }: { deliveryFee?: number }) 
           </div>
           <div className="border-t border-sabren-gray pt-3 space-y-1.5 text-sm">
             <div className="flex justify-between"><span className="text-sabren-black/55">Sous-total</span><span className="font-semibold">{formatPrice(subTotal)}</span></div>
+            {discount > 0 && (
+              <div className="flex justify-between text-green-600 items-center">
+                <span className="flex items-center gap-1"><Tag className="w-3.5 h-3.5" /> Remise ({promo?.code})</span>
+                <span className="font-semibold">-{formatPrice(discount)}</span>
+              </div>
+            )}
             <div className="flex justify-between"><span className="text-sabren-black/55">Frais de livraison</span><span className="font-semibold">{isPickup ? "0 FCFA" : formatPrice(deliveryFee)}</span></div>
             <div className="flex justify-between items-center pt-1"><span className="font-bold">Total</span><span className="font-black text-lg">{formatPrice(grandTotal)}</span></div>
           </div>
