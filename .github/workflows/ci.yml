@@ -1,0 +1,55 @@
+name: CI — Vérification auto (typecheck + lint + build)
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Vérification du build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_PUBLIC_WHATSAPP_NUMBER: "22789148454"
+      NEXT_PUBLIC_BASE_URL: "https://sabrenshop-test-app.vercel.app"
+      DATABASE_URL: ${{ secrets.DATABASE_URL || '' }}
+      AUTH_SECRET: ${{ secrets.AUTH_SECRET || '' }}
+      SABREN_STORE_ID: ${{ secrets.SABREN_STORE_ID || '' }}
+      SABREN_READ_WRITE_TOKEN: ${{ secrets.SABREN_READ_WRITE_TOKEN || '' }}
+      BLOB_READ_WRITE_TOKEN: ${{ secrets.SABREN_READ_WRITE_TOKEN || '' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Générer le client Prisma (PostgreSQL, schéma prod)
+        run: npx prisma generate --schema prisma/schema.postgresql.prisma
+
+      - name: Vérification TypeScript (tsc --noEmit)
+        run: npx tsc --noEmit
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Build Next.js
+        run: npm run build
+
+      - name: Résumé
+        run: |
+          echo "TypeScript : OK"
+          echo "ESLint : OK"
+          echo "Build Next.js : OK"
+          [ -n "${{ secrets.DATABASE_URL }}" ] && echo "Base de données : configurée (les pages dynamiques ont accès à la DB)" || echo "Base de données : non fournie (le build passe sans données — ajoutez le secret DATABASE_URL pour une validation complète)"

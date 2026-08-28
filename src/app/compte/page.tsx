@@ -9,6 +9,7 @@ import { Header } from "@/components/shop/Header";
 import { Footer } from "@/components/shop/Footer";
 import { WhatsappFloat } from "@/components/shop/WhatsappFloat";
 import { AccountLogout } from "./AccountLogout";
+import { PasswordChange } from "./PasswordChange";
 import { Package, ShoppingCart, MessageCircle, UserRound } from "lucide-react";
 
 const badge: Record<string, { label: string; cls: string }> = {
@@ -68,7 +69,9 @@ export default async function ComptePage() {
           </div>
         </div>
 
-        <h2 className="font-display font-bold text-xl mb-4">Mes commandes</h2>
+        <PasswordChange />
+
+        <h2 className="font-display font-bold text-xl mb-4 mt-4">Mes commandes</h2>
 
         {orders.length === 0 ? (
           <div className="bg-white rounded-2xl border border-sabren-gray shadow-card p-10 text-center">
@@ -100,7 +103,7 @@ export default async function ComptePage() {
                     <span className="font-black text-base">{formatPrice(o.total)}</span>
                     <div className="flex gap-2">
                       {!["CANCELLED", "DELIVERED"].includes(o.status) && (
-                        <a href={whatsappLink(`Bonjour Sabren'Shop, j'ai une question sur ma commande ${o.orderNumber}.`)} target="_blank" className="inline-flex items-center gap-1.5 text-xs font-bold bg-whatsapp text-white rounded-full px-3.5 py-2 hover:bg-whatsapp-dark transition">
+                        <a href={whatsappLink(`Bonjour Sabreen Shop, j'ai une question sur ma commande ${o.orderNumber}.`)} target="_blank" className="inline-flex items-center gap-1.5 text-xs font-bold bg-whatsapp text-white rounded-full px-3.5 py-2 hover:bg-whatsapp-dark transition">
                           <MessageCircle className="w-3.5 h-3.5" /> Suivi WhatsApp
                         </a>
                       )}

@@ -165,17 +165,17 @@ model Review {
 
 model Settings {
   id                    String   @id @default(cuid())
-  shopName              String   @default("SABREN'SHOP")
+  shopName              String   @default("SABREEN'SHOP")
   logo                  String?
   phone                 String   @default("+227 89 14 84 54")
   whatsapp              String   @default("22789148454")
   email                 String?
   address               String?
-  promoBarText          String?  @default("BIENVENUE CHEZ SABREN'SHOP — DÉCOUVREZ NOS NOUVEAUTÉS")
+  promoBarText          String?  @default("BIENVENUE CHEZ SABREEN'SHOP — DÉCOUVREZ NOS NOUVEAUTÉS")
   promoBarActive        Boolean  @default(true)
   deliveryFee           Int      @default(100)
   freeDeliveryThreshold Int? // ex: 50000 FCFA
-  heroTitle             String?  @default("SABREN'SHOP")
+  heroTitle             String?  @default("SABREEN'SHOP")
   heroSubtitle          String?  @default("Les produits tendance qui correspondent à votre style.")
   heroImage             String?
   heroCta1Text          String?  @default("DÉCOUVRIR LA BOUTIQUE")

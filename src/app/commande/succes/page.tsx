@@ -24,7 +24,7 @@ export default async function CommandeSucces({ searchParams }: { searchParams: P
           </p>
           <p className="text-sm text-sabren-black/55 mt-3">Nous vous contactons rapidement sur WhatsApp pour confirmer la livraison.</p>
           <div className="grid gap-2.5 mt-7">
-            <a href={whatsappLink(`Bonjour Sabren'Shop, je viens de passer la commande ${num ?? ""} et je souhaite confirmer.`)} target="_blank" className="inline-flex items-center justify-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold rounded-full py-3.5 text-sm transition">
+            <a href={whatsappLink(`Bonjour Sabreen Shop, je viens de passer la commande ${num ?? ""} et je souhaite confirmer.`)} target="_blank" className="inline-flex items-center justify-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold rounded-full py-3.5 text-sm transition">
               <MessageCircle className="w-4 h-4" /> Confirmer sur WhatsApp
             </a>
             <Link href="/boutique" className="inline-flex items-center justify-center gap-2 border border-sabren-gray font-bold rounded-full py-3 text-sm hover:border-sabren-gold transition">

@@ -26,7 +26,7 @@ export const dynamic = "force-dynamic";
 export default async function BoutiquePage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; cat?: string; best?: string; nouveau?: string; promo?: string; sort?: string }>;
+  searchParams: Promise<{ q?: string; cat?: string; best?: string; nouveau?: string; promo?: string; sort?: string; min?: string; max?: string; minRating?: string; inStock?: string }>;
 }) {
   const params = await searchParams;
   let products: any[] = [];
@@ -38,9 +38,16 @@ export default async function BoutiquePage({
       if (category) where.categoryId = category.id;
     }
     if (params.best) where.isFeatured = true;
-    if (params.nouveau) where.isNew = true;
+    if (params.nouveau) where.OR = [{ isNew: true }, { createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } }];
     if (params.promo) where.compareAtPrice = { not: null };
     if (params.q) where.name = { contains: params.q, mode: "insensitive" };
+    const minPrice = params.min ? Number(params.min) : null;
+    const maxPrice = params.max ? Number(params.max) : null;
+    const minRating = params.minRating ? Number(params.minRating) : null;
+    if (minPrice && !Number.isNaN(minPrice)) where.price = { ...(where.price ?? {}), gte: minPrice };
+    if (maxPrice && !Number.isNaN(maxPrice)) where.price = { ...(where.price ?? {}), lte: maxPrice };
+    if (minRating && !Number.isNaN(minRating)) where.rating = { gte: minRating };
+    if (params.inStock) where.stock = { gt: 0 };
 
     const orderBy =
       params.sort === "price_asc"
@@ -86,22 +93,55 @@ export default async function BoutiquePage({
             <h1 className="font-display font-black text-2xl md:text-3xl">La Boutique</h1>
             <p className="text-sm text-sabren-black/55 mt-1 flex items-center gap-1.5">
               {products.length} produit{products.length > 1 ? "s" : ""} disponible{products.length > 1 ? "s" : ""}
-              <span className="inline-flex items-center gap-1 text-sabren-black/35">
-                <Truck className="w-3.5 h-3.5" /> Livraison partout au Niger
+              <span className="inline-flex items-center gap-1 text-sabren-black/55">
+                <Truck className="w-3.5 h-3.5" /> Livraison partout au Niger · frais à la charge du client
               </span>
             </p>
           </div>
-          <form method="get" className="flex items-center gap-2">
-            {params.cat && <input type="hidden" name="cat" value={params.cat} />}
-            {params.q && <input type="hidden" name="q" value={params.q} />}
-            <span className="hidden md:inline-flex items-center gap-1.5 text-xs font-semibold text-sabren-black/50"><SlidersHorizontal className="w-3.5 h-3.5" /> Trier :</span>
-            <select name="sort" defaultValue={sort} className="bg-white border border-sabren-gray rounded-full px-4 py-2 text-sm font-semibold outline-none focus:border-sabren-gold">
-              {sorts.map((s) => (
-                <option key={s.value} value={s.value}>{s.label}</option>
-              ))}
-            </select>
-            <button type="submit" className="bg-sabren-black text-white text-sm font-bold rounded-full px-4 py-2 hover:bg-black transition">Appliquer</button>
-          </form>
+          <details className="group relative">
+            <summary className="inline-flex items-center gap-1.5 text-xs font-semibold text-sabren-black/70 cursor-pointer list-none bg-white border border-sabren-gray rounded-full px-4 py-2 hover:border-sabren-gold transition">
+              <SlidersHorizontal className="w-3.5 h-3.5" /> Trier & filtrez
+            </summary>
+            <form method="get" className="absolute right-0 top-full mt-2 w-[300px] max-w-[85vw] z-20 bg-white border border-sabren-gray rounded-2xl shadow-card-hover p-5 space-y-4 animate-fade-up">
+              {params.cat && <input type="hidden" name="cat" value={params.cat} />}
+              {params.q && <input type="hidden" name="q" value={params.q} />}
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wide text-sabren-black/50 mb-1.5">Trier par</label>
+                <select name="sort" defaultValue={sort} className="w-full bg-white border border-sabren-gray rounded-xl px-3.5 py-2.5 text-sm font-semibold outline-none focus:border-sabren-gold">
+                  {sorts.map((s) => (
+                    <option key={s.value} value={s.value}>{s.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wide text-sabren-black/50 mb-1.5">Prix (FCFA)</label>
+                <div className="flex items-center gap-2">
+                  <input name="min" type="number" min={0} placeholder="Min" defaultValue={params.min} className="w-full bg-white border border-sabren-gray rounded-xl px-3 py-2 text-sm outline-none focus:border-sabren-gold placeholder:text-sabren-black/30" />
+                  <span className="text-sabren-black/40">–</span>
+                  <input name="max" type="number" min={0} placeholder="Max" defaultValue={params.max} className="w-full bg-white border border-sabren-gray rounded-xl px-3 py-2 text-sm outline-none focus:border-sabren-gold placeholder:text-sabren-black/30" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wide text-sabren-black/50 mb-1.5">Note minimale</label>
+                  <select name="minRating" defaultValue={params.minRating ?? ""} className="w-full bg-white border border-sabren-gray rounded-xl px-3 py-2 text-sm font-semibold outline-none focus:border-sabren-gold">
+                    <option value="">Toutes</option>
+                    <option value="4">4+</option>
+                    <option value="3">3+</option>
+                    <option value="5">5</option>
+                  </select>
+                </div>
+                <label className="flex items-center gap-2 text-sm font-medium text-sabren-black/70 mt-5 cursor-pointer">
+                  <input type="checkbox" name="inStock" value="1" defaultChecked={Boolean(params.inStock)} className="accent-sabren-gold w-4 h-4" />
+                  En stock
+                </label>
+              </div>
+              <div className="flex gap-2">
+                <a href={params.cat ? `/boutique?cat=${params.cat}` : "/boutique"} className="flex-1 text-center border border-sabren-gray rounded-full px-4 py-2 text-sm font-semibold hover:border-sabren-gold transition">Réinitialiser</a>
+                <button type="submit" className="flex-1 bg-sabren-black text-white text-sm font-bold rounded-full px-4 py-2 hover:bg-black transition">Appliquer</button>
+              </div>
+            </form>
+          </details>
         </div>
 
         {/* Chips filtres (dynamiques) */}

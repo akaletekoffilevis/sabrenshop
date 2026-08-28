@@ -6,11 +6,10 @@ import { whatsappLink, cartWhatsappMessage } from "@/lib/whatsapp";
 import { ShoppingBag, Trash2, Minus, Plus, MessageCircle, Tag } from "lucide-react";
 import { useState } from "react";
 
-export function PanierClient() {
+export function PanierClient({ deliveryFee = 100 }: { deliveryFee?: number }) {
   const { items, updateQuantity, removeItem, total } = useCart();
   const [promo, setPromo] = useState("");
   const [promoMsg, setPromoMsg] = useState("");
-  const deliveryFee = 100;
   const subTotal = total();
   const grandTotal = subTotal + (items.length ? deliveryFee : 0);
 
@@ -107,12 +106,12 @@ export function PanierClient() {
                 <span className="font-semibold">{formatPrice(subTotal)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sabren-black/60">Livraison</span>
+                <span className="text-sabren-black/60">Frais de livraison</span>
                 <span className="font-semibold">{formatPrice(deliveryFee)}</span>
               </div>
-              <div className="flex justify-between text-xs text-sabren-black/45">
-                <span>Livraison partout au Niger</span>
-                <button className="text-sabren-gold-ink hover:underline">Retrait boutique ?</button>
+              <div className="flex justify-between text-xs text-sabren-black/60">
+                <span>Partout au Niger — frais à la charge du client</span>
+                <span className="text-sabren-gold-ink">Retrait boutique : 0 FCFA</span>
               </div>
               <div className="flex justify-between items-center border-t border-sabren-gray pt-3">
                 <span className="font-bold">Total</span>

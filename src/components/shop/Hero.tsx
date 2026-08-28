@@ -23,8 +23,8 @@ export async function Hero() {
             <Sparkles className="w-3.5 h-3.5 text-sabren-gold" />
             Nouveautés & Meilleures ventes du moment
           </span>
-          <h1 className="font-display font-black text-4xl md:text-6xl leading-[1.05] tracking-tight">
-            {title.includes("SABREN") ? (
+          <h1 className="font-display font-black text-[34px] sm:text-5xl md:text-6xl leading-[1.05] tracking-tight">
+            {title.includes("SABREEN") ? (
               <>
                 SABREN<span className="text-sabren-gold">’</span>SHOP
               </>

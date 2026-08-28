@@ -8,10 +8,9 @@ import { ShoppingBag, UserRound, Phone, MapPin, MessageCircle, Banknote, Loader2
 
 const inputCls = "w-full bg-white border border-sabren-gray rounded-xl pl-10 pr-3.5 py-2.5 text-sm outline-none focus:border-sabren-gold transition";
 
-export function CheckoutClient() {
+export function CheckoutClient({ deliveryFee = 100 }: { deliveryFee?: number }) {
   const router = useRouter();
   const { items, total, clear } = useCart();
-  const deliveryFee = 100;
 
   const [form, setForm] = useState({
     customerName: "", phone: "", whatsapp: "", email: "", ville: "", quartier: "", address: "", notes: "",
@@ -110,11 +109,13 @@ export function CheckoutClient() {
           <div className="bg-white rounded-2xl border border-sabren-gray shadow-card p-5">
             <h2 className="flex items-center gap-2 font-bold text-sm mb-4"><MapPin className="w-4 h-4 text-sabren-gold" /> Livraison ou retrait</h2>
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <button type="button" onClick={() => setIsPickup(false)} className={`flex items-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-bold transition ${!isPickup ? "border-sabren-gold bg-sabren-gold/10" : "border-sabren-gray"}`}>
-                <Truck className="w-4 h-4" /> Livraison
+              <button type="button" onClick={() => setIsPickup(false)} className={`flex flex-col items-start gap-0.5 rounded-xl border-2 px-4 py-3 text-sm font-bold transition text-left ${!isPickup ? "border-sabren-gold bg-sabren-gold/10" : "border-sabren-gray"}`}>
+                <span className="flex items-center gap-2"><Truck className="w-4 h-4" /> Livraison</span>
+                <span className="text-[11px] font-normal text-sabren-black/60">+ {formatPrice(deliveryFee)} (frais à la charge du client)</span>
               </button>
-              <button type="button" onClick={() => setIsPickup(true)} className={`flex items-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-bold transition ${isPickup ? "border-sabren-gold bg-sabren-gold/10" : "border-sabren-gray"}`}>
-                <Store className="w-4 h-4" /> Retrait boutique
+              <button type="button" onClick={() => setIsPickup(true)} className={`flex flex-col items-start gap-0.5 rounded-xl border-2 px-4 py-3 text-sm font-bold transition text-left ${isPickup ? "border-sabren-gold bg-sabren-gold/10" : "border-sabren-gray"}`}>
+                <span className="flex items-center gap-2"><Store className="w-4 h-4" /> Retrait boutique</span>
+                <span className="text-[11px] font-normal text-sabren-black/60">0 FCFA — Niamey</span>
               </button>
             </div>
             {!isPickup ? (
@@ -167,7 +168,7 @@ export function CheckoutClient() {
           </div>
           <div className="border-t border-sabren-gray pt-3 space-y-1.5 text-sm">
             <div className="flex justify-between"><span className="text-sabren-black/55">Sous-total</span><span className="font-semibold">{formatPrice(subTotal)}</span></div>
-            <div className="flex justify-between"><span className="text-sabren-black/55">Livraison</span><span className="font-semibold">{isPickup ? "Gratuit" : formatPrice(deliveryFee)}</span></div>
+            <div className="flex justify-between"><span className="text-sabren-black/55">Frais de livraison</span><span className="font-semibold">{isPickup ? "0 FCFA" : formatPrice(deliveryFee)}</span></div>
             <div className="flex justify-between items-center pt-1"><span className="font-bold">Total</span><span className="font-black text-lg">{formatPrice(grandTotal)}</span></div>
           </div>
 
@@ -177,7 +178,7 @@ export function CheckoutClient() {
             {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
             {submitting ? "Envoi de la commande..." : "Confirmer ma commande"}
           </button>
-          <p className="text-[11px] text-center text-sabren-black/45">Total en FCFA, payable à la livraison ou via WhatsApp. Retour possible sous 7 jours.</p>
+          <p className="text-[11px] text-center text-sabren-black/55">Total en FCFA, payable à la livraison ou via WhatsApp. Frais de livraison à la charge du client. Retour possible sous 7 jours.</p>
         </div>
       </form>
     </>

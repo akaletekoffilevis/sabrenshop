@@ -14,7 +14,7 @@ import { ArrowRight, Flame, Gift, MessageCircle, PackageOpen, Sparkles, Tags } f
 const steps = [
   { n: "1", title: "Choisissez vos produits", desc: "Parcourez la boutique, ajoutez au panier ou commandez en 1 clic." },
   { n: "2", title: "Commandez facilement", desc: "Paiement à la livraison ou via WhatsApp — on confirme votre commande directement." },
-  { n: "3", title: "Recevez chez vous", desc: "Livraison rapide partout au Niger ou retrait en boutique." },
+  { n: "3", title: "Recevez chez vous", desc: "Livraison partout au Niger ou retrait en boutique — frais de livraison à la charge du client." },
 ];
 
 export const dynamic = "force-dynamic";
@@ -128,7 +128,7 @@ export default async function HomePage() {
             ))}
           </div>
           <div className="mt-6 text-center">
-            <a href={whatsappLink("Bonjour Sabren'Shop, je souhaite passer ma commande.")} target="_blank" className="inline-flex items-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold rounded-full px-8 py-3.5 text-sm transition shadow-card">
+            <a href={whatsappLink("Bonjour Sabreen Shop, je souhaite passer ma commande.")} target="_blank" className="inline-flex items-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold rounded-full px-8 py-3.5 text-sm transition shadow-card">
               <MessageCircle className="w-4 h-4" /> Passer ma commande sur WhatsApp
             </a>
             <p className="text-xs text-sabren-black/45 mt-2">Réponse rapide • Lun–Sam 8h–20h</p>

@@ -14,7 +14,7 @@ type Settings = {
 export function SettingsForm({ settings }: { settings: Settings }) {
   const router = useRouter();
   const [form, setForm] = useState<Settings>({
-    shopName: settings.shopName ?? "SABREN'SHOP",
+    shopName: settings.shopName ?? "SABREEN'SHOP",
     phone: settings.phone ?? "+227 89 14 84 54",
     whatsapp: settings.whatsapp ?? "22789148454",
     email: settings.email ?? "",

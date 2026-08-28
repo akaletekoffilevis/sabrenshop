@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
-import { Providers } from "@/components/providers";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -16,23 +15,25 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://sabrenshop-test-app.vercel.app"),
   title: {
-    default: "SABREN’SHOP — Votre boutique, votre style, votre choix",
-    template: "%s | SABREN’SHOP",
+    default: "SABREEN’SHOP — Votre boutique, votre style, votre choix",
+    template: "%s | SABREEN’SHOP",
   },
   description:
-    "SABREN’SHOP — Stanley, gourdes, nounours, vêtements, accessoires et cadeaux tendance au Niger. Commande facile via WhatsApp +227 89 14 84 54. Livraison partout au Niger, paiement à la livraison.",
+    "SABREEN’SHOP — Stanley, gourdes, nounours, vêtements, accessoires, téléphones et cadeaux tendance au Niger. Commande facile via WhatsApp +227 89 14 84 54. Livraison partout au Niger, frais de livraison à la charge du client, paiement à la livraison.",
   keywords: [
-    "SABREN'SHOP",
+    "SABREEN'SHOP",
     "boutique en ligne Niger",
     "Stanley gourde",
     "nounours",
     "vêtements Niamey",
     "accessoires mode",
+    "téléphones Niamey",
     "achat WhatsApp Niger",
   ],
   openGraph: {
-    title: "SABREN’SHOP",
+    title: "SABREEN’SHOP",
     description: "Les produits tendance qui correspondent à votre style. Livraison partout au Niger.",
     type: "website",
     locale: "fr_NE",
@@ -48,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={`${playfair.variable} ${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-sabren-cream text-sabren-black">
-        <Providers>{children}</Providers>
+        {children}
       </body>
     </html>
   );

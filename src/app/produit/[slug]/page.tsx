@@ -3,7 +3,7 @@ import { PromoBar } from "@/components/shop/PromoBar";
 import { Header } from "@/components/shop/Header";
 import { Footer } from "@/components/shop/Footer";
 import { WhatsappFloat } from "@/components/shop/WhatsappFloat";
-import { formatPrice, discountPercent } from "@/lib/utils";
+import { formatPrice, discountPercent, isNewProduct } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { ProductGallery } from "./ProductGallery";
 import { ProductActions } from "./ProductActions";
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const base = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
   const firstImg = Array.isArray(product.images) ? (product.images as string[])[0] : null;
-  const desc = (product.description || `Commandez ${product.name} sur SABREN'SHOP — livraison partout au Niger, paiement à la livraison.`).slice(0, 160);
+  const desc = (product.description || `Commandez ${product.name} sur SABREEN'SHOP — livraison partout au Niger, paiement à la livraison.`).slice(0, 160);
 
   return {
     title: product.name,
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: desc,
       type: "website",
       locale: "fr_NE",
-      siteName: "SABREN'SHOP",
+      siteName: "SABREEN'SHOP",
       images: firstImg ? [{ url: new URL(firstImg, base).toString(), alt: product.name }] : undefined,
     },
   };
@@ -80,7 +80,7 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
   const catLabel = product.category?.name || "Boutique";
 
   const trusts = [
-    { icon: Truck, title: "Livraison rapide", desc: "Partout au Niger, 1 à 3 jours" },
+    { icon: Truck, title: "Livraison disponible", desc: "Partout au Niger, frais à la charge du client" },
     { icon: ShieldCheck, title: "Paiement sécurisé", desc: "À la livraison ou WhatsApp" },
     { icon: MessageCircle, title: "Service client", desc: "Réponse rapide WhatsApp" },
     { icon: RotateCcw, title: "Retour facile", desc: "Retrait & échange en boutique" },
@@ -110,7 +110,7 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
               <span className="inline-flex items-center gap-1.5 bg-sabren-gold/15 text-sabren-gold-ink text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full">
                 <Layers className="w-3.5 h-3.5" /> {catLabel}
               </span>
-              {product.isNew && <span className="bg-sabren-black text-sabren-gold text-[11px] font-bold px-3 py-1 rounded-full">NOUVEAU</span>}
+              {isNewProduct(product.createdAt, product.isNew) && <span className="bg-sabren-black text-sabren-gold text-[11px] font-bold px-3 py-1 rounded-full">NOUVEAU</span>}
               {product.isFeatured && <span className="bg-sabren-gold text-sabren-black text-[11px] font-bold px-3 py-1 rounded-full">MEILLEUR VENDU</span>}
             </div>
 
@@ -197,7 +197,7 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
                 <li className="flex justify-between"><span>Paiement</span><b className="text-sabren-black">À la livraison</b></li>
               </ul>
             </div>
-            <a href={`https://wa.me/22789148454?text=${encodeURIComponent(`Bonjour Sabren'Shop, des questions sur : ${product.name}`)}`} target="_blank" className="flex items-center justify-center gap-2 bg-sabren-cream border-2 border-dashed border-whatsapp/40 text-whatsapp-dark font-bold rounded-2xl py-4 text-sm hover:bg-whatsapp/5 transition">
+            <a href={`https://wa.me/22789148454?text=${encodeURIComponent(`Bonjour Sabreen Shop, des questions sur : ${product.name}`)}`} target="_blank" className="flex items-center justify-center gap-2 bg-sabren-cream border-2 border-dashed border-whatsapp/40 text-whatsapp-dark font-bold rounded-2xl py-4 text-sm hover:bg-whatsapp/5 transition">
               <MessageCircle className="w-4 h-4" /> Une question ? Écrivez-nous
             </a>
           </div>

@@ -2,12 +2,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Field, inputCls, Btn, Badge, Card } from "./ui";
-import { CategoryIcon } from "@/components/ui/category-icon";
+import { CategoryIcon, CATEGORY_ICON_KEYS } from "@/components/ui/category-icon";
 import { Pencil, Trash2, Plus, X, Loader2, Check } from "lucide-react";
 
 type Cat = { id: string; name: string; slug: string; description?: string | null; icon: string; isActive: boolean; position: number; _count?: { products: number } };
 
-const iconKeys = ["package", "cup", "toys", "shirt", "bag", "gift", "tags", "sparkles", "watch", "shoe", "heart", "baby", "home", "star"];
+const iconKeys = CATEGORY_ICON_KEYS;
 
 export function CategoryManager({ initial }: { initial: Cat[] }) {
   const router = useRouter();

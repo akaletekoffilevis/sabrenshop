@@ -38,7 +38,7 @@ export function LoginForm() {
   return (
     <div className="w-full max-w-md bg-white rounded-3xl border border-sabren-gray shadow-card-hover p-7 md:p-9 animate-fade-up">
       <div className="text-center mb-7">
-        <img src="/logosabrenshop.jpeg" alt="Sabren'Shop" className="w-14 h-14 mx-auto rounded-2xl object-cover mb-4" loading="lazy" decoding="async" />
+        <img src="/logosabrenshop.jpeg" alt="Sabreen'Shop" className="w-14 h-14 mx-auto rounded-2xl object-cover mb-4" loading="lazy" decoding="async" />
         <h1 className="font-display font-black text-2xl">Bon retour !</h1>
         <p className="text-sm text-sabren-black/55 mt-1">Connectez-vous pour commander plus vite.</p>
       </div>
@@ -68,7 +68,7 @@ export function LoginForm() {
         <span className="relative bg-white px-3 text-xs text-sabren-black/40">ou</span>
       </div>
 
-      <a href={whatsappLink("Bonjour Sabren'Shop, je souhaite commander sans compte.")} target="_blank" className="flex items-center justify-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold rounded-full py-3 text-sm transition">
+      <a href={whatsappLink("Bonjour Sabreen'Shop, je souhaite commander sans compte.")} target="_blank" className="flex items-center justify-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold rounded-full py-3 text-sm transition">
         <MessageCircle className="w-4 h-4" /> Commander via WhatsApp sans compte
       </a>
 

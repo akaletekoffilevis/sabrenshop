@@ -12,12 +12,12 @@ export type SiteSettings = {
 };
 
 export const DEFAULT_SETTINGS: SiteSettings = {
-  heroTitle: "SABREN'SHOP",
+  heroTitle: "SABREEN'SHOP",
   heroSubtitle: "Les produits tendance qui correspondent à votre style.",
   heroImage: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1600",
   heroCta1Text: "DÉCOUVRIR LA BOUTIQUE",
   heroCta2Text: "VOIR LES PROMOTIONS",
-  promoBarText: "BIENVENUE CHEZ SABREN'SHOP — DÉCOUVREZ NOS NOUVEAUTÉS !",
+  promoBarText: "BIENVENUE CHEZ SABREEN'SHOP — DÉCOUVREZ NOS NOUVEAUTÉS !",
   promoBarActive: true,
   deliveryFee: null,
 };

@@ -16,7 +16,7 @@ export function WhatsappFloat() {
                 <MessageCircle className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-sm font-bold">Sabren’Shop</p>
+                <p className="text-sm font-bold">Sabreen’Shop</p>
                 <p className="text-[11px] text-green-100">En ligne — répond en quelques min</p>
               </div>
             </div>
@@ -29,7 +29,7 @@ export function WhatsappFloat() {
           </div>
           <div className="px-4 pb-4">
             <a
-              href={whatsappLink("Bonjour Sabren'Shop ! Une question ? Besoin de commander ?")}
+              href={whatsappLink("Bonjour Sabreen Shop ! Une question ? Besoin de commander ?")}
               target="_blank"
               className="flex items-center justify-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white text-sm font-bold rounded-full py-2.5 transition"
             >
@@ -40,7 +40,7 @@ export function WhatsappFloat() {
       )}
 
       <a
-        href={open ? undefined : whatsappLink("Bonjour Sabren'Shop ! Une question ? Besoin de commander ?")}
+        href={open ? undefined : whatsappLink("Bonjour Sabreen Shop ! Une question ? Besoin de commander ?")}
         target={open ? undefined : "_blank"}
         onClick={() => {
           if (open) setOpen(false);

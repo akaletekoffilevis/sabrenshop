@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { formatPrice, discountPercent } from "@/lib/utils";
+import { formatPrice, discountPercent, isNewProduct } from "@/lib/utils";
 import { Heart, Star, Image as ImageIcon, ShoppingCart } from "lucide-react";
 import { AddToCartButton } from "./AddToCartButton";
 import { useWishlist } from "@/hooks/useWishlist";
@@ -12,6 +12,7 @@ export function ProductCard({ product }: { product: any }) {
   const { ids, toggle } = useWishlist();
   const key = product.id || product.slug;
   const wished = ids.includes(key);
+  const isNew = isNewProduct(product.createdAt, product.isNew);
 
   return (
     <div className="group relative bg-white rounded-2xl overflow-hidden border border-sabren-gray shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300">
@@ -25,8 +26,8 @@ export function ProductCard({ product }: { product: any }) {
         )}
         <div className="absolute top-2 left-2 flex flex-col gap-1.5 items-start">
           {disc > 0 && <span className="bg-sabren-pink text-sabren-black text-[11px] font-black px-2 py-1 rounded-full shadow">-{disc}%</span>}
-          {product.isNew && <span className="bg-sabren-black text-sabren-gold text-[10px] font-bold px-2 py-1 rounded-full">NOUVEAU</span>}
-          {product.isFeatured && !product.isNew && <span className="bg-sabren-gold text-sabren-black text-[10px] font-bold px-2 py-1 rounded-full">MEILLEUR VENDU</span>}
+          {isNew && <span className="bg-sabren-black text-sabren-gold text-[10px] font-bold px-2 py-1 rounded-full">NOUVEAU</span>}
+          {product.isFeatured && !isNew && <span className="bg-sabren-gold text-sabren-black text-[10px] font-bold px-2 py-1 rounded-full">MEILLEUR VENDU</span>}
         </div>
         <button
           onClick={(e) => { e.preventDefault(); toggle(key); }}

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
-import { Send, ShieldCheck, Truck, RotateCcw, MessageCircle, Phone, MapPin, Clock, Heart, Globe, Camera } from "lucide-react";
+import { ShieldCheck, Truck, RotateCcw, MessageCircle, Phone, MapPin, Clock, Heart, Globe, Camera, Mail, Send } from "lucide-react";
 
 export function Footer() {
   return (
@@ -29,11 +29,11 @@ export function Footer() {
       <div className="max-w-7xl mx-auto container-px py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
         <div className="col-span-2 md:col-span-1">
           <div className="flex items-center gap-2.5">
-            <img src="/logosabrenshop.jpeg" alt="Sabren'Shop" className="w-10 h-10 rounded-xl object-cover" loading="lazy" decoding="async" />
-            <span className="font-display font-black text-lg">SABREN<span className="text-sabren-gold">’</span>SHOP</span>
+            <img src="/logosabrenshop.jpeg" alt="Sabreen'Shop" className="w-10 h-10 rounded-xl object-cover" loading="lazy" decoding="async" />
+            <span className="font-display font-black text-lg">SABREEN<span className="text-sabren-gold">’</span>SHOP</span>
           </div>
-          <p className="text-sm text-white/60 mt-4 leading-relaxed">
-            Les produits tendance qui correspondent à votre style. Stanley, nounours, vêtements et accessoires de mode — livrés partout au Niger.
+          <p className="text-sm text-white/75 mt-4 leading-relaxed">
+            Les produits tendance qui correspondent à votre style. Stanley, nounours, vêtements, téléphones et accessoires de mode — livrés partout au Niger (frais de livraison à la charge du client).
           </p>
           <div className="flex gap-3 mt-5">
             <a href="#" aria-label="Facebook" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><Globe className="w-4 h-4" /></a>
@@ -44,7 +44,7 @@ export function Footer() {
 
         <div>
           <h4 className="text-sabren-gold font-bold text-sm uppercase tracking-wide mb-4">La Boutique</h4>
-          <ul className="space-y-2.5 text-sm text-white/65">
+          <ul className="space-y-2.5 text-sm text-white/75">
             <li><Link href="/boutique" className="hover:text-sabren-gold transition">Tous les produits</Link></li>
             <li><Link href="/boutique?nouveau=1" className="hover:text-sabren-gold transition">Nouveautés</Link></li>
             <li><Link href="/boutique?promo=1" className="hover:text-sabren-gold transition">Promotions</Link></li>
@@ -55,9 +55,10 @@ export function Footer() {
 
         <div>
           <h4 className="text-sabren-gold font-bold text-sm uppercase tracking-wide mb-4">Aide & Services</h4>
-          <ul className="space-y-2.5 text-sm text-white/65">
+          <ul className="space-y-2.5 text-sm text-white/75">
             <li><Link href="/#comment-commander" className="hover:text-sabren-gold transition">Comment commander ?</Link></li>
-            <li className="hover:text-sabren-gold transition cursor-pointer">Livraison & retrait</li>
+            <li><Link href="/suivi" className="hover:text-sabren-gold transition">Suivre ma commande</Link></li>
+            <li className="hover:text-sabren-gold transition cursor-pointer">Livraison & retrait (frais à la charge du client)</li>
             <li className="hover:text-sabren-gold transition cursor-pointer">Politique de retour</li>
             <li className="hover:text-sabren-gold transition cursor-pointer">Paiement à la livraison</li>
           </ul>
@@ -65,8 +66,13 @@ export function Footer() {
 
         <div>
           <h4 className="text-sabren-gold font-bold text-sm uppercase tracking-wide mb-4">Contact</h4>
-          <ul className="space-y-3 text-sm text-white/65">
+          <ul className="space-y-3 text-sm text-white/75">
             <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-sabren-gold shrink-0" /> {WHATSAPP_DISPLAY}</li>
+            <li>
+              <a href="mailto:soumanabaaminata@gmail.com" className="flex items-center gap-2 hover:text-sabren-gold transition">
+                <Mail className="w-4 h-4 text-sabren-gold shrink-0" /> <span className="break-all">soumanabaaminata@gmail.com</span>
+              </a>
+            </li>
             <li className="flex items-center gap-2"><MapPin className="w-4 h-4 text-sabren-gold shrink-0" /> Niamey, Niger</li>
             <li className="flex items-center gap-2"><Clock className="w-4 h-4 text-sabren-gold shrink-0" /> Lun–Sam : 8h – 20h</li>
           </ul>
@@ -74,8 +80,8 @@ export function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="max-w-7xl mx-auto container-px py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/45">
-          <span>© {new Date().getFullYear()} SABREN’SHOP — Votre boutique, votre style, votre choix.</span>
+        <div className="max-w-7xl mx-auto container-px py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/55">
+          <span>© {new Date().getFullYear()} SABREEN’SHOP — Votre boutique, votre style, votre choix.</span>
           <span className="flex items-center gap-1.5">
             Fait avec <Heart className="w-3 h-3 text-sabren-pink fill-sabren-pink" /> au Niger
           </span>

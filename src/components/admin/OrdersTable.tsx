@@ -81,7 +81,7 @@ export function OrdersTable({ orders }: { orders: Order[] }) {
                   </div>
                   <div className="flex flex-wrap gap-2 mt-4">
                     {o.whatsapp && (
-                      <a href={whatsappLink(`Bonjour ${o.customerName}, concernant votre commande ${o.orderNumber} chez Sabren'Shop.`)} target="_blank" className="inline-flex items-center gap-1.5 text-xs font-bold bg-whatsapp text-white rounded-full px-3 py-1.5 hover:bg-whatsapp-dark transition">
+                      <a href={whatsappLink(`Bonjour ${o.customerName}, concernant votre commande ${o.orderNumber} chez Sabreen Shop.`)} target="_blank" className="inline-flex items-center gap-1.5 text-xs font-bold bg-whatsapp text-white rounded-full px-3 py-1.5 hover:bg-whatsapp-dark transition">
                         <MessageCircle className="w-3.5 h-3.5" /> Contacter client
                       </a>
                     )}
