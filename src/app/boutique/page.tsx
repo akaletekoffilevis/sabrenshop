@@ -24,6 +24,8 @@ const sorts = [
 
 export const dynamic = "force-dynamic";
 
+const NEW_CUTOFF = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
 export default async function BoutiquePage({
   searchParams,
 }: {
@@ -39,7 +41,7 @@ export default async function BoutiquePage({
       if (category) where.categoryId = category.id;
     }
     if (params.best) where.isFeatured = true;
-    if (params.nouveau) where.OR = [{ isNew: true }, { createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } }];
+    if (params.nouveau) where.OR = [{ isNew: true }, { createdAt: { gte: NEW_CUTOFF } }];
     if (params.promo) where.compareAtPrice = { not: null };
     if (params.q) where.name = { contains: params.q, mode: "insensitive" };
     const minPrice = params.min ? Number(params.min) : null;
