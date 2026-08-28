@@ -199,6 +199,22 @@ model Faq {
   updatedAt DateTime @updatedAt
 }
 
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userEmail String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
 model Settings {
   id                    String   @id @default(cuid())
   shopName              String   @default("SABREEN'SHOP")

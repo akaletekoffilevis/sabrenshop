@@ -63,7 +63,11 @@ export function LoginForm() {
         </button>
       </form>
 
-      <div className="relative my-6 text-center">
+      <p className="text-sm text-center mt-3 text-sabren-black/55">
+          <Link href="/mot-de-passe-oublie" className="font-semibold text-sabren-gold hover:underline">Mot de passe oublié ?</Link>
+        </p>
+
+        <div className="relative my-6 text-center">
         <span className="absolute inset-x-0 top-1/2 border-t border-sabren-gray" />
         <span className="relative bg-white px-3 text-xs text-sabren-black/40">ou</span>
       </div>

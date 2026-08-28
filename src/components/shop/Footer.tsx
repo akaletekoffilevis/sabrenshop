@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { getSettings } from "@/lib/data";
-import { ShieldCheck, Truck, RotateCcw, MessageCircle, Phone, MapPin, Clock, Heart, Mail } from "lucide-react";
+import { ShieldCheck, Truck, RotateCcw, MessageCircle, Phone, MapPin, Clock, Heart } from "lucide-react";
 import { BrandSocialIcon } from "@/components/ui/social-icons";
+import { NewsletterForm } from "./NewsletterForm";
 
 export async function Footer() {
   const settings = await getSettings();
@@ -14,6 +15,7 @@ export async function Footer() {
 
   return (
     <footer className="bg-sabren-black text-white mt-14">
+      <NewsletterForm />
       <div className="border-b border-white/10">
         <div className="max-w-7xl mx-auto container-px py-5 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div className="flex items-center gap-2.5">
