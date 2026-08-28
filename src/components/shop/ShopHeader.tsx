@@ -219,7 +219,7 @@ export function ShopHeader({ categories, isAdmin = false, loggedIn = false }: { 
                 <LayoutGrid className="w-4 h-4" /> Catégories <ChevronDown className={`w-3 h-3 transition ${catsOpen ? "rotate-180" : ""}`} />
               </button>
               {catsOpen && (
-                <div className="absolute top-full left-0 mt-1 w-64 bg-white rounded-2xl border border-sabren-gray shadow-card-hover p-2 z-50 animate-fade-up">
+                <div className="absolute top-full left-0 mt-1 w-64 bg-white rounded-2xl border border-sabren-gray shadow-card-hover p-2 z-50 animate-fade-up max-h-[min(60vh,26rem)] overflow-y-auto">
                   {categories.map((c) => (
                     <Link
                       key={c.href}
