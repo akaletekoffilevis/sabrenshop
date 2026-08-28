@@ -59,6 +59,60 @@ export function productNewsletterHtml({ name, price, image, slug }: { name: stri
   );
 }
 
+export function welcomeEmailHtml({ name, shopName }: { name?: string | null; shopName: string }): string {
+  return wrapMail(
+    "Bienvenue chez SABREEN’SHOP 👋",
+    `
+    <p>Bonjour ${name || "et bienvenue"},</p>
+    <p>Votre compte <strong>${shopName}</strong> a bien été créé. Vous pouvez dès maintenant :</p>
+    <ul>
+      <li>suivre vos commandes depuis votre <a href="${appUrl()}/compte">espace client</a>,</li>
+      <li>retrouver vos favoris et commander en quelques clics.</li>
+    </ul>
+    <p><a class="btn" href="${appUrl()}/boutique">Découvrir la boutique</a></p>
+    <p class="muted">Livraison partout au Niger · Paiement à la livraison sur WhatsApp.</p>
+    `
+  );
+}
+
+export function digestEmailHtml({ products, promos, shopName }: { products: DigestProduct[]; promos: DigestPromo[]; shopName: string }): string {
+  const productCards = products
+    .map(
+      (p) => `
+      <div style="border:1px solid #eee;border-radius:14px;padding:14px;margin-bottom:14px;display:flex;gap:14px;align-items:center;">
+        ${p.image ? `<img src="${p.image}" alt="${p.name}" style="width:84px;height:84px;object-fit:cover;border-radius:12px;" />` : `<div style="width:84px;height:84px;background:#f5f0e6;border-radius:12px;flex-shrink:0;"></div>`}
+        <div style="flex:1;min-width:0;">
+          <p style="margin:0;font-weight:800;color:#111;">${p.name}</p>
+          <p style="margin:6px 0 0;font-size:17px;font-weight:800;color:#111;">${p.price}</p>
+          <a class="btn" style="margin:10px 0 0;font-size:13px;padding:9px 16px;" href="${appUrl()}/produit/${p.slug}">Voir le produit</a>
+        </div>
+      </div>`
+    )
+    .join("");
+
+  const promoChips = promos
+    .map((p) => `<span style="display:inline-block;background:#111;color:#fbbf24;font-weight:800;padding:8px 14px;border-radius:999px;margin:4px 4px 0 0;">${p.code} — ${p.valueLabel}</span>`)
+    .join("");
+
+  const hasProducts = products.length > 0;
+  const hasPromos = promos.length > 0;
+
+  return wrapMail(
+    "Vos nouveautés du jour — SABREEN’SHOP",
+    `
+    <p>Bonjour,</p>
+    <p>Voici ce qui est arrivé chez ${shopName} :</p>
+    ${hasProducts ? `<h3 style="margin:18px 0 8px;">🛍️ Nouveaux produits</h3>${productCards}` : ""}
+    ${hasPromos ? `<h3 style="margin:${hasProducts ? "10px" : "18px"} 0 8px;">🎁 Codes promo actifs</h3><p>${promoChips}</p>` : ""}
+    <p style="margin-top:20px;"><a class="btn" href="${appUrl()}/boutique">Voir tout dans la boutique</a></p>
+    <p class="muted">Recevez cet email une seule fois par jour. Vous pouvez vous désabonner à tout moment.</p>
+    `
+  );
+}
+
+type DigestProduct = { name: string; slug: string; price: string; image?: string | null };
+type DigestPromo = { code: string; valueLabel: string };
+
 export function passwordResetHtml({ link, shopName }: { link: string; shopName: string }): string {
   return wrapMail(
     "Réinitialisation de votre mot de passe",

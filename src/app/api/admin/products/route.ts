@@ -1,8 +1,7 @@
 import { prisma } from "@/lib/prisma";
-import { slugify, formatPrice } from "@/lib/utils";
+import { slugify } from "@/lib/utils";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
-import { sendMail, productNewsletterHtml } from "@/lib/email";
 
 const productSchema = z.object({
   name: z.string().min(2),
@@ -56,36 +55,10 @@ export async function POST(req: Request) {
   try {
     input.slug = await ensureUniqueSlug(input.slug);
     const product = await prisma.product.create({ data: input });
-
-    if (product.isActive) {
-      void announceNewProduct(product as any);
-    }
-
     return Response.json({ ok: true, product });
   } catch (e: any) {
     if (String(e?.message).includes("Unique")) return Response.json({ error: "Un produit avec ce slug existe déjà." }, { status: 409 });
     return Response.json({ error: "Erreur serveur" }, { status: 500 });
-  }
-}
-
-async function announceNewProduct(product: { name: string; slug: string; price: number; images?: string[] | null }) {
-  try {
-    const subscribers = await prisma.newsletterSubscriber.findMany({ where: { active: true }, select: { email: true } });
-    if (!subscribers.length) return;
-    const subject = `Nouveau · ${product.name}`;
-    const html = productNewsletterHtml({
-      name: product.name,
-      slug: product.slug,
-      price: formatPrice(product.price),
-      image: (product.images ?? [])[0] ?? null,
-    });
-    for (const s of subscribers) {
-      const ok = await sendMail({ to: s.email, subject, html });
-      if (!ok) return;
-    }
-    console.info(`[newsletter] annonce « ${product.name} » envoyée à ${subscribers.length} abonné(s)`);
-  } catch (e) {
-    console.error("[newsletter] annonce produit échouée:", e);
   }
 }
 

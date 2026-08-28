@@ -10,6 +10,7 @@ import { Footer } from "@/components/shop/Footer";
 import { WhatsappFloat } from "@/components/shop/WhatsappFloat";
 import { AccountLogout } from "./AccountLogout";
 import { PasswordChange } from "./PasswordChange";
+import { AccountSettings } from "@/components/shop/AccountSettings";
 import { Package, ShoppingCart, MessageCircle, UserRound } from "lucide-react";
 
 const badge: Record<string, { label: string; cls: string }> = {
@@ -70,6 +71,7 @@ export default async function ComptePage() {
         </div>
 
         <PasswordChange />
+        <AccountSettings email={user?.email || ""} />
 
         <h2 className="font-display font-bold text-xl mb-4 mt-4">Mes commandes</h2>
 

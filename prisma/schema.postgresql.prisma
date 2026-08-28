@@ -206,6 +206,12 @@ model NewsletterSubscriber {
   createdAt DateTime @default(now())
 }
 
+model NewsletterDigest {
+  id        String   @id
+  lastRunAt DateTime
+  updatedAt DateTime @updatedAt
+}
+
 model PasswordResetToken {
   id        String    @id @default(cuid())
   tokenHash String    @unique

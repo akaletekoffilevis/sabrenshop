@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { sendMail, welcomeEmailHtml, appUrl } from "@/lib/email";
 
 const schema = z.object({
   name: z.string().min(2, "Nom trop court"),
@@ -22,8 +23,25 @@ export async function POST(req: Request) {
     const user = await prisma.user.create({
       data: { name: parsed.data.name, email: parsed.data.email, password: hashed, role: "CUSTOMER" },
     });
+
+    void sendWelcome(user.email, user.name);
+
     return Response.json({ ok: true, user: { id: user.id, email: user.email, name: user.name } });
   } catch (e) {
     return Response.json({ error: "Erreur serveur, réessayez." }, { status: 500 });
+  }
+}
+
+async function sendWelcome(email: string, name?: string | null) {
+  try {
+    const s = await prisma.settings.findUnique({ where: { id: "default" } });
+    const ok = await sendMail({
+      to: email,
+      subject: "Bienvenue chez SABREEN’SHOP 👋",
+      html: welcomeEmailHtml({ name, shopName: s?.shopName || "SABREEN’SHOP" }),
+    });
+    if (ok) console.info(`[email] email de bienvenue envoyé à ${email}`);
+  } catch (err) {
+    console.error("[email] bienvenue échoué:", err);
   }
 }

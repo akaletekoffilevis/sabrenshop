@@ -24,9 +24,9 @@ export async function Hero() {
             Nouveautés & Meilleures ventes du moment
           </span>
           <h1 className="font-display font-black text-[34px] sm:text-5xl md:text-6xl leading-[1.05] tracking-tight">
-            {title.includes("SABREEN") ? (
+            {title.toUpperCase().includes("SABREEN") ? (
               <>
-                SABREN<span className="text-sabren-gold">’</span>SHOP
+                SABREEN<span className="text-sabren-gold">’</span>SHOP
               </>
             ) : (
               title

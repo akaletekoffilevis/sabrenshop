@@ -1,15 +1,22 @@
-# SABREN'SHOP — Boutique en ligne
+# SABREEN'SHOP — Boutique en ligne
 
 Boutique e-commerce au Niger : Stanley, gourdes, nounours, vêtements, accessoires. Commande via WhatsApp ou paiement à la livraison.
 
 ## Stack
 
 - **Next.js 16** (App Router, React 19, TypeScript)
-- **Tailwind CSS 4** (palette Sabren : or `#D4AF37`, noir `#111111`)
-- **Prisma** — SQLite en local, PostgreSQL en production (Vercel)
+- **Tailwind CSS 4** (palette Sabreen : or `#D4AF37`, noir `#111111`)
+- **Prisma** — SQLite en local, PostgreSQL en production (Vercel + Neon)
 - **NextAuth (Auth.js v5)** — connexion email/mot de passe, rôles ADMIN / CUSTOMER
 - **Zustand** — panier & favoris (persistés côté client)
-- **Vercel Blob** — images produits en production (fallback dossier `/public/uploads` en local)
+- **Vercel Blob** — images produits en production (fallback dossier local en dev, data-URL en dernier recours)
+
+## Fonctionnalités
+
+- **Boutique** : accueil (héro, catégories, nouveautés, promotions), catalogue filtrable + recherche, fiches produit (galerie, avis, similaires), panier & tunnel de commande, suivi de commande.
+- **Espace client** : inscription / connexion, mot de passe oublié (email + lien de réinitialisation), changement de mot de passe, **modification de l’adresse email**, **suppression de son compte**, suivi de ses commandes.
+- **Admin** : tableau de bord (stats, alertes stock), produits, catégories, codes promo, FAQ, avis, **comptes utilisateurs** (page `/admin/comptes`), **mon compte admin** (changement d’email/mot de passe, `/admin/compte`), newsletter, paramètres (réseaux sociaux, livraison, héro…).
+- **Newsletter** : les abonnés reçoivent **un email de bienvenue** à l’inscription (compte) et **un email récapitulatif quotidien** (nouveaux produits + codes promo) — **une seule fois par jour** grâce à un cron Vercel planifié à 9h00 UTC.
 
 ## Démarrage local
 
@@ -28,24 +35,40 @@ npm run db:seed      # catégories + produits de démo + compte admin
 
 Compte admin (seed) : **admin@sabrenshop.ne** / `admin123`.
 
+## Emails (gratuits, sans carte bancaire)
+
+Aucune API ne permet d’envoyer des emails sans clé, mais **Resend** propose 100 emails/jour gratuits (plans gratuits de 3 000 emails/mois) — c’est déjà intégré :
+
+1. Créez un compte gratuit sur [resend.com](https://resend.com) → **API Keys** → copiez la clé.
+2. Définissez dans Vercel (ou `.env`) :
+   ```
+   RESEND_API_KEY=re_...
+   RESEND_FROM=Sabreen’Shop <onboarding@resend.dev>   # ou votre domaine vérifié
+   NEWSLETTER_CRON_SECRET=<clé secrète pour protéger le cron, ex. openssl rand -base64 24>
+   ```
+3. Emails envoyés : bienvenue à l’inscription, récap newsletter quotidien, mot de passe oublié.
+
+Alternative gratuite compatible : **Brevo** (ex-Sendinblue, 300 emails/jour gratuits) ou **Mailtrap Sending** — à configurer en branchant leur API dans `src/lib/email.ts`.
+
 ## Arborescence clé
 
 ```
 src/
 ├── app/
-│   ├── page.tsx            # Accueil (héro, catégories, nouveautés, ventes, promos)
-│   ├── boutique/           # Catalogue (filtres catégorie, nouveautés, promos, tri)
+│   ├── page.tsx            # Accueil (héro, catégories, nouveautés, promos)
+│   ├── boutique/           # Catalogue (filtres, nouveautés, promos, tri, recherche)
 │   ├── produit/[slug]/     # Fiche produit (galerie, avis, similaires)
-│   ├── panier/ commande/   # Panier & tunnel de commande
-│   ├── compte/ favoris/    # Espace client, liste de souhaits
-│   ├── connexion/ inscription/
-│   └── admin/              # Dashboard (produits, commandes, avis, réglages)
-│       └── api/            # Routes API (admin, commandes, avis, upload, produits)
+│   ├── panier/ commande/ suivi/
+│   ├── compte/             # Espace client, mot de passe, email, suppression
+│   ├── connexion/ inscription/ mot-de-passe-oublie/ reinitialisation/
+│   ├── favoris/
+│   └── admin/              # Dashboard + produits + comptes + mon compte + newsletter…
+│       └── api/            # Routes API (admin, newsletter, upload, compte…)
 ├── components/
-│   ├── shop/               # UI publique (header, cartes, sections…)
-│   └── admin/              # UI dashboard
+│   ├── shop/               # UI publique (header, cartes, newsletter, sections…)
+│   └── admin/              # UI dashboard (sidebar repliable desktop, drawer mobile)
 ├── hooks/                  # useCart, useWishlist (zustand + persist)
-└── lib/                    # prisma, auth, data, storage, whatsapp, utils
+└── lib/                    # prisma, auth, data, storage, whatsapp, utils, email, newsletter
 prisma/
 ├── schema.prisma              # Schéma LOCAL (SQLite)
 ├── schema.postgresql.prisma   # Schéma PRODUCTION (PostgreSQL) — à garder synchronisé
@@ -83,18 +106,25 @@ Toutes à définir (Production + Preview) :
 | `SABREN_STORE_ID` | Vercel → **Storage → Blob** → copier |
 | `SABREN_READ_WRITE_TOKEN` | Vercel → **Storage → Blob** → copier |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | Votre numéro WhatsApp (ex. `22789148454`) |
+| `RESEND_API_KEY` + `RESEND_FROM` | Emails (bienvenue, newsletter, mot de passe oublié) |
+| `NEWSLETTER_CRON_SECRET` | Facultatif — protège le cron du récap quotidien |
 
-`AUTH_URL` n'est pas obligatoire : `trustHost` fait détecter l'URL automatiquement (valable en preview et en production).
+`AUTH_URL` n'est pas obligatoire : `trustHost` fait détecter l'URL automatiquement.
+
+> Sans token Blob, l’upload d’images **fonctionne quand même** par repli en data-URL
+> (conseillé : configurer le Blob pour des URLs propres et légères).
 
 ### 3. Import du dépôt
 
-Vercel → **Add New → Project** → importez le repo GitHub → le framework `Next.js` et la
-commande de build (`vercel-build`) sont détectés automatiquement → **Deploy**.
+Vercel → **Add New → Project** → importez le repo GitHub → framework `Next.js` et
+`vercel-build` détectés → **Deploy**. Le cron `/api/newsletter/digest` (9h00 UTC, une fois/jour,
+autorisé même sur le plan gratuit Hobby) est enregistré automatiquement.
 
 ### 4. Après le déploiement
 
-- Connexion admin : email/mot de passe du seed (ou inscrivez-vous puis passez votre rôle en ADMIN dans la base).
-- Les images uploadées en admin partent sur **Vercel Blob** (grâce à `SABREN_READ_WRITE_TOKEN`).
+- Connexion admin : email/mot de passe du seed (ou passez votre rôle en ADMIN dans la base).
+- Vérifiez le cron dans Vercel → onglet **Cron Jobs** : il doit apparaître comme actif.
+- Pensez à vérifier votre boîte mail (spam) après un premier récap ou un email de bienvenue.
 
 ## Commandes utiles
 
@@ -110,6 +140,8 @@ npm run db:push:prod  # Mettre à jour la base PostgreSQL (Neon)
 
 Le rôle Admin s'obtient :
 - via le seed (`admin@sabrenshop.ne` / `admin123`), ou
-- en passant `role = ADMIN` sur votre compte dans la base (SQLIte local : `sqlite3 prisma/dev.db "update User set role='ADMIN' where email='…'"`).
+- en passant `role = ADMIN` sur votre compte dans la base (SQLite local : `sqlite3 prisma/dev.db "update User set role='ADMIN' where email='…';"`).
 
-Le lien « Admin » n'apparaît dans le header que pour les comptes ADMIN.
+Le lien « Admin » n'apparaît dans le header que pour les comptes ADMIN. Le compte admin
+peut modifier son email/mot de passe via **Admin → Mon compte**, et gérer tous les comptes
+via **Admin → Comptes**.

@@ -1,15 +1,17 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, Mail, Loader2 } from "lucide-react";
-import { Badge, Card } from "./ui";
+import { Trash2, Mail, Loader2, Send, CalendarClock } from "lucide-react";
+import { Badge, Card, Btn } from "./ui";
 
 type Sub = { id: string; email: string; active: boolean; createdAt: string | Date };
 
-export function NewsletterAdmin({ initial }: { initial: Sub[] }) {
+export function NewsletterAdmin({ initial, lastDigestAt }: { initial: Sub[]; lastDigestAt?: string | Date | null }) {
   const router = useRouter();
   const [busyId, setBusyId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "active" | "inactive">("all");
+  const [busyDigest, setBusyDigest] = useState(false);
+  const [digestMsg, setDigestMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   const remove = async (s: Sub) => {
     if (!confirm(`Retirer ${s.email} de la newsletter ?`)) return;
@@ -24,11 +26,50 @@ export function NewsletterAdmin({ initial }: { initial: Sub[] }) {
     router.refresh();
   };
 
+  const sendDigest = async () => {
+    if (!confirm("Envoyer le récap quotidien à tous les abonnés actifs maintenant ?")) return;
+    setBusyDigest(true);
+    setDigestMsg(null);
+    try {
+      const res = await fetch("/api/admin/newsletter/digest", { method: "POST" });
+      const d = await res.json().catch(() => ({}));
+      setBusyDigest(false);
+      if (!res.ok) { setDigestMsg({ ok: false, text: d.error || "Erreur lors de l’envoi." }); return; }
+      if (!d.sent) {
+        setDigestMsg({ ok: true, text: "Rien de nouveau depuis le dernier récap (aucune envoi nécessaire)." });
+      } else {
+        setDigestMsg({ ok: true, text: `Récap envoyé à ${d.recipients} abonné(s) — ${d.products} produit(s), ${d.promos} code(s) promo.` });
+      }
+      router.refresh();
+    } catch {
+      setBusyDigest(false);
+      setDigestMsg({ ok: false, text: "Erreur serveur, réessayez." });
+    }
+  };
+
   const list = initial.filter((s) => (filter === "all" ? true : filter === "active" ? s.active : !s.active));
   const activeCount = initial.filter((s) => s.active).length;
 
   return (
     <div>
+      <Card className="p-5 mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-start gap-3 min-w-0">
+          <span className="w-10 h-10 rounded-xl bg-sabren-gold/15 text-sabren-gold flex items-center justify-center shrink-0">
+            <CalendarClock className="w-5 h-5" />
+          </span>
+          <div className="min-w-0">
+            <p className="font-bold text-sm">Récap quotidien automatisé</p>
+            <p className="text-xs text-sabren-black/50 mt-0.5">
+              Dernier récap : {lastDigestAt ? new Date(lastDigestAt).toLocaleString("fr-FR") : "jamais"} — un seul email par jour (nouveaux produits + codes promo). Déclenché par le cron Vercel à 9h00 UTC.
+            </p>
+            {digestMsg && <p className={`text-xs font-semibold mt-1.5 flex items-center gap-1.5 ${digestMsg.ok ? "text-green-600" : "text-red-500"}`}>{digestMsg.text}</p>}
+          </div>
+        </div>
+        <Btn variant="gold" onClick={sendDigest} disabled={busyDigest}>
+          {busyDigest ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />} Envoyer le récap maintenant
+        </Btn>
+      </Card>
+
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <Card className="p-5">
           <p className="text-xs font-bold uppercase tracking-wide text-sabren-black/45">Abonnés</p>
