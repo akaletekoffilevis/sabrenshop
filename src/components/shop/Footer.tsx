@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { getSettings } from "@/lib/data";
-import { ShieldCheck, Truck, RotateCcw, MessageCircle, Phone, MapPin, Clock, Heart, Globe, Camera, Mail, Send, Facebook, Instagram, Youtube, Twitter, Music2, type LucideIcon } from "lucide-react";
+import { ShieldCheck, Truck, RotateCcw, MessageCircle, Phone, MapPin, Clock, Heart, Globe, Camera, Mail, Send, Play, AtSign, Music2, type LucideIcon } from "lucide-react";
 
 const SOCIAL_ICONS: Record<string, LucideIcon> = {
-  facebook: Facebook,
-  instagram: Instagram,
+  facebook: Globe,
+  instagram: Camera,
   tiktok: Music2,
-  youtube: Youtube,
-  twitter: Twitter,
+  youtube: Play,
+  twitter: AtSign,
   whatsa: MessageCircle,
   snapchat: Camera,
   telegram: Send,
@@ -68,7 +68,7 @@ export async function Footer() {
           <div className="flex gap-3 mt-5">
             {socials.length === 0 ? (
               <>
-                <a href="#" aria-label="Facebook" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><Facebook className="w-4 h-4" /></a>
+                <a href="#" aria-label="Facebook" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><Globe className="w-4 h-4" /></a>
                 <a href="#" aria-label="Instagram" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><Camera className="w-4 h-4" /></a>
               </>
             ) : (
