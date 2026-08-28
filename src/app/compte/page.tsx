@@ -8,7 +8,6 @@ import { PromoBar } from "@/components/shop/PromoBar";
 import { Header } from "@/components/shop/Header";
 import { Footer } from "@/components/shop/Footer";
 import { WhatsappFloat } from "@/components/shop/WhatsappFloat";
-import { MobileBottomNav } from "@/components/shop/MobileBottomNav";
 import { AccountLogout } from "./AccountLogout";
 import { Package, ShoppingCart, MessageCircle, UserRound } from "lucide-react";
 
@@ -31,7 +30,7 @@ export default async function ComptePage() {
   const orders = await prisma.order.findMany({ where: { userId }, include: { items: true }, orderBy: { createdAt: "desc" } });
 
   return (
-    <div className="min-h-screen flex flex-col pb-14 lg:pb-0">
+    <div className="min-h-screen flex flex-col">
       <PromoBar />
       <Header />
       <main className="flex-1 max-w-5xl mx-auto container-px lg:px-8 py-6 w-full">
@@ -118,7 +117,6 @@ export default async function ComptePage() {
       </main>
       <Footer />
       <WhatsappFloat />
-      <MobileBottomNav />
     </div>
   );
 }

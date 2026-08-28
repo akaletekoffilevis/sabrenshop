@@ -3,7 +3,6 @@ import { PromoBar } from "@/components/shop/PromoBar";
 import { Header } from "@/components/shop/Header";
 import { Footer } from "@/components/shop/Footer";
 import { WhatsappFloat } from "@/components/shop/WhatsappFloat";
-import { MobileBottomNav } from "@/components/shop/MobileBottomNav";
 import { formatPrice, discountPercent } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { ProductGallery } from "./ProductGallery";
@@ -88,7 +87,7 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
   ];
 
   return (
-    <div className="min-h-screen flex flex-col pb-14 lg:pb-0">
+    <div className="min-h-screen flex flex-col">
       <PromoBar />
       <Header />
       <main className="flex-1 max-w-7xl mx-auto container-px lg:px-8 py-6 w-full">
@@ -224,7 +223,6 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
       </main>
       <Footer />
       <WhatsappFloat />
-      <MobileBottomNav />
     </div>
   );
 }

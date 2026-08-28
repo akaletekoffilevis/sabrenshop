@@ -2,7 +2,6 @@ import { PromoBar } from "@/components/shop/PromoBar";
 import { Header } from "@/components/shop/Header";
 import { Footer } from "@/components/shop/Footer";
 import { WhatsappFloat } from "@/components/shop/WhatsappFloat";
-import { MobileBottomNav } from "@/components/shop/MobileBottomNav";
 import { Hero } from "@/components/shop/Hero";
 import { TrustStrip } from "@/components/shop/TrustStrip";
 import { CategoryGrid } from "@/components/shop/CategoryGrid";
@@ -26,7 +25,7 @@ export default async function HomePage() {
   const deals = await getDealProducts();
 
   return (
-    <div className="min-h-screen flex flex-col pb-14 lg:pb-0">
+    <div className="min-h-screen flex flex-col">
       <PromoBar />
       <Header />
       <main className="flex-1">
@@ -138,7 +137,6 @@ export default async function HomePage() {
       </main>
       <Footer />
       <WhatsappFloat />
-      <MobileBottomNav />
     </div>
   );
 }

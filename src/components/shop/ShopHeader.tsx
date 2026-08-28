@@ -96,9 +96,9 @@ export function ShopHeader({ categories }: { categories: Cat[] }) {
         {/* Actions */}
         <div className="flex items-center gap-1.5 ml-auto lg:ml-0">
           {isAdmin && (
-            <Link href="/admin" className="hidden sm:flex flex-col items-center px-3 py-1 rounded-xl hover:bg-sabren-gray transition">
+            <Link href="/admin" className="flex flex-col items-center px-3 py-1 rounded-xl hover:bg-sabren-gray transition">
               <LayoutDashboard className="w-5 h-5 text-sabren-gold" />
-              <span className="text-[10px] font-semibold mt-0.5">Admin</span>
+              <span className="hidden sm:block text-[10px] font-semibold mt-0.5">Admin</span>
             </Link>
           )}
           <Link href={session ? "/compte" : "/connexion"} className="hidden sm:flex flex-col items-center px-3 py-1 rounded-xl hover:bg-sabren-gray transition">
@@ -197,62 +197,68 @@ export function ShopHeader({ categories }: { categories: Cat[] }) {
       </form>
 
       {/* Drawer mobile */}
-      {open && (
-        <div className="lg:hidden">
-          <div className="fixed inset-0 z-40 bg-sabren-black/50 animate-fade-in" onClick={() => setOpen(false)} />
-          <div className="fixed left-0 top-0 bottom-0 z-50 w-[300px] max-w-[85vw] bg-white animate-slide-in flex flex-col shadow-2xl">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-sabren-gray">
-              <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2.5">
-                <img src="/logosabrenshop.jpeg" alt="Sabren'Shop" className="w-9 h-9 rounded-xl object-cover" loading="lazy" decoding="async" />
-                <span className="font-display font-black tracking-tight text-lg">SABREN<span className="text-sabren-gold">’</span>SHOP</span>
-              </Link>
-              <button onClick={() => setOpen(false)} className="p-2 hover:bg-sabren-gray rounded-xl" aria-label="Fermer le menu">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      <div className={`lg:hidden fixed inset-0 z-50 ${open ? "" : "pointer-events-none"}`} aria-hidden={!open}>
+        <div
+          className={`absolute inset-0 bg-sabren-black/50 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
+          onClick={() => setOpen(false)}
+        />
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu de navigation"
+          className={`absolute left-0 top-0 bottom-0 w-[300px] max-w-[85vw] bg-white flex flex-col shadow-2xl transition-transform duration-300 ease-out ${open ? "translate-x-0" : "-translate-x-full"}`}
+        >
+          <div className="flex items-center justify-between px-4 py-3 border-b border-sabren-gray">
+            <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2.5">
+              <img src="/logosabrenshop.jpeg" alt="Sabren'Shop" className="w-9 h-9 rounded-xl object-cover" loading="lazy" decoding="async" />
+              <span className="font-display font-black tracking-tight text-lg">SABREN<span className="text-sabren-gold">’</span>SHOP</span>
+            </Link>
+            <button onClick={() => setOpen(false)} className="p-2 hover:bg-sabren-gray rounded-xl" aria-label="Fermer le menu">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
-            <div className="flex-1 overflow-y-auto px-4 py-3">
-              <span className="block px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-sabren-gold-ink">Menu</span>
-              <Link href="/" onClick={() => setOpen(false)} className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-bold">
-                Accueil
-              </Link>
-              <Link href="/boutique" onClick={() => setOpen(false)} className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-bold">
-                Boutique
-              </Link>
+          <div className="flex-1 overflow-y-auto px-4 py-3">
+            <span className="block px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-sabren-gold-ink">Menu</span>
+            <Link href="/" onClick={() => setOpen(false)} className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-bold">
+              Accueil
+            </Link>
+            <Link href="/boutique" onClick={() => setOpen(false)} className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-bold">
+              Boutique
+            </Link>
 
-              <span className="block mt-3 mb-1 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-sabren-gold-ink">Catégories</span>
-              {categories.map((c) => (
-                <Link key={c.href} href={c.href} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-medium">
-                  <CategoryIcon icon={c.icon} className="w-4 h-4 text-sabren-gold" /> {c.label}
-                </Link>
-              ))}
-
-              <div className="my-3 border-t border-sabren-gray" />
-              {smartLinks.map((n) => (
-                <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
-                  <NavItemIcon label={n.label} icon={n.icon} /> {n.label}
-                </Link>
-              ))}
-              <Link href="/favoris" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
-                <Heart className="w-4 h-4 text-sabren-gold" /> Mes favoris{wishCount > 0 ? ` (${wishCount})` : ""}
+            <span className="block mt-3 mb-1 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-sabren-gold-ink">Catégories</span>
+            {categories.map((c) => (
+              <Link key={c.href} href={c.href} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-medium">
+                <CategoryIcon icon={c.icon} className="w-4 h-4 text-sabren-gold" /> {c.label}
               </Link>
-              <Link href={session ? "/compte" : "/connexion"} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
-                <UserRound className="w-4 h-4 text-sabren-gold" /> {session ? "Mon compte" : "Se connecter"}
-              </Link>
-              {isAdmin && (
-                <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
-                  <LayoutDashboard className="w-4 h-4 text-sabren-gold" /> Administration
-                </Link>
-              )}
-            </div>
+            ))}
 
-            <div className="border-t border-sabren-gray px-4 py-3 text-xs text-sabren-black/50 space-y-2">
-              <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-sabren-gold" /> {WHATSAPP_DISPLAY}</span>
-              <span className="flex items-center gap-1.5"><TruckMini className="w-3.5 h-3.5 text-sabren-gold" /> Livraison partout au Niger · Paiement à la livraison</span>
-            </div>
+            <div className="my-3 border-t border-sabren-gray" />
+            {smartLinks.map((n) => (
+              <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
+                <NavItemIcon label={n.label} icon={n.icon} /> {n.label}
+              </Link>
+            ))}
+            <Link href="/favoris" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
+              <Heart className="w-4 h-4 text-sabren-gold" /> Mes favoris{wishCount > 0 ? ` (${wishCount})` : ""}
+            </Link>
+            <Link href={session ? "/compte" : "/connexion"} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
+              <UserRound className="w-4 h-4 text-sabren-gold" /> {session ? "Mon compte" : "Se connecter"}
+            </Link>
+            {isAdmin && (
+              <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
+                <LayoutDashboard className="w-4 h-4 text-sabren-gold" /> Administration
+              </Link>
+            )}
+          </div>
+
+          <div className="border-t border-sabren-gray px-4 py-3 text-xs text-sabren-black/50 space-y-2">
+            <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-sabren-gold" /> {WHATSAPP_DISPLAY}</span>
+            <span className="flex items-center gap-1.5"><TruckMini className="w-3.5 h-3.5 text-sabren-gold" /> Livraison partout au Niger · Paiement à la livraison</span>
           </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }

@@ -2,7 +2,6 @@ import { PromoBar } from "@/components/shop/PromoBar";
 import { Header } from "@/components/shop/Header";
 import { Footer } from "@/components/shop/Footer";
 import { WhatsappFloat } from "@/components/shop/WhatsappFloat";
-import { MobileBottomNav } from "@/components/shop/MobileBottomNav";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { CategoryIcon } from "@/components/ui/category-icon";
 import { prisma } from "@/lib/prisma";
@@ -65,7 +64,7 @@ export default async function BoutiquePage({
   const smartActive = Boolean(params.best || params.nouveau || params.promo);
 
   return (
-    <div className="min-h-screen flex flex-col pb-14 lg:pb-0">
+    <div className="min-h-screen flex flex-col">
       <PromoBar />
       <Header />
       <main className="flex-1 max-w-7xl mx-auto container-px lg:px-8 py-6 w-full">
@@ -148,7 +147,6 @@ export default async function BoutiquePage({
       </main>
       <Footer />
       <WhatsappFloat />
-      <MobileBottomNav />
     </div>
   );
 }

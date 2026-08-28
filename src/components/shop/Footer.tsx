@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { WHATSAPP_DISPLAY, whatsappLink } from "@/lib/whatsapp";
+import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 import { Send, ShieldCheck, Truck, RotateCcw, MessageCircle, Phone, MapPin, Clock, Heart, Globe, Camera } from "lucide-react";
 
 export function Footer() {
@@ -70,13 +70,6 @@ export function Footer() {
             <li className="flex items-center gap-2"><MapPin className="w-4 h-4 text-sabren-gold shrink-0" /> Niamey, Niger</li>
             <li className="flex items-center gap-2"><Clock className="w-4 h-4 text-sabren-gold shrink-0" /> Lun–Sam : 8h – 20h</li>
           </ul>
-          <a
-            href={whatsappLink("Bonjour Sabren'Shop, j'aimerais plus d'informations.")}
-            target="_blank"
-            className="mt-4 inline-flex items-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white text-sm font-bold rounded-full px-5 py-2.5 transition"
-          >
-            <MessageCircle className="w-4 h-4" /> Écrire sur WhatsApp
-          </a>
         </div>
       </div>
 
