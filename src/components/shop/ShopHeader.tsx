@@ -137,7 +137,7 @@ export function ShopHeader({ categories, isAdmin = false, loggedIn = false }: { 
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/95 border-b border-sabren-gray shadow-[0_2px_12px_-8px_rgba(17,17,17,0.12)]">
+      <header className="sticky top-0 z-40 bg-white border-b border-sabren-gray shadow-[0_2px_12px_-8px_rgba(17,17,17,0.12)]">
         {/* Barre utilitaire */}
         <div className="hidden md:flex items-center justify-between text-xs py-1.5 px-6 bg-sabren-black text-white/80">
           <div className="flex items-center gap-6">
