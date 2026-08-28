@@ -42,8 +42,8 @@ export function ProductCard({ product }: { product: any }) {
         )}
       </Link>
 
-      <div className="p-3 md:p-4">
-        <div className="flex items-center gap-1 text-[11px]">
+      <div className="p-2.5 md:p-4">
+        <div className="flex items-center text-[10px] md:text-[11px]">
           <span className="flex text-sabren-gold">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star key={i} className={`w-3 h-3 ${i < Math.round(product.rating || 5) ? "fill-sabren-gold text-sabren-gold" : "text-sabren-gray-dark"}`} />
@@ -52,19 +52,20 @@ export function ProductCard({ product }: { product: any }) {
           <span className="text-sabren-black/40 ml-1">({product.rating ?? 5})</span>
         </div>
 
-        <Link href={`/produit/${product.slug}`} className="block mt-1.5 text-sm font-semibold leading-snug line-clamp-2 min-h-[2.4em] hover:text-sabren-gold transition-colors">
+        <Link href={`/produit/${product.slug}`} className="block mt-1.5 text-[13px] md:text-sm font-semibold leading-snug line-clamp-2 min-h-[2.4em] hover:text-sabren-gold transition-colors">
           {product.name}
         </Link>
 
-        <div className="mt-2 flex items-baseline gap-2 flex-wrap">
-          <span className="text-base font-black text-sabren-black">{formatPrice(product.price)}</span>
+        <div className="mt-1.5 md:mt-2 flex items-baseline gap-1.5 md:gap-2 flex-wrap">
+          <span className="text-[15px] md:text-base font-black text-sabren-black">{formatPrice(product.price)}</span>
           {product.compareAtPrice && product.compareAtPrice > product.price && (
-            <span className="text-xs line-through text-sabren-black/35">{formatPrice(product.compareAtPrice)}</span>
+            <span className="text-[11px] md:text-xs line-through text-sabren-black/35">{formatPrice(product.compareAtPrice)}</span>
           )}
         </div>
 
-        <div className="mt-3">
-          <AddToCartButton product={product} className="w-full" />
+        <div className="mt-2 md:mt-3">
+          <AddToCartButton product={product} round className="ml-auto lg:hidden" />
+          <AddToCartButton product={product} className="hidden lg:flex" />
         </div>
       </div>
     </div>

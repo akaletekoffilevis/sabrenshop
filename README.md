@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SABREN'SHOP — Boutique en ligne
 
-## Getting Started
+Boutique e-commerce au Niger : Stanley, gourdes, nounours, vêtements, accessoires. Commande via WhatsApp ou paiement à la livraison.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router, React 19, TypeScript)
+- **Tailwind CSS 4** (palette Sabren : or `#D4AF37`, noir `#111111`)
+- **Prisma** — SQLite en local, PostgreSQL en production (Vercel)
+- **NextAuth (Auth.js v5)** — connexion email/mot de passe, rôles ADMIN / CUSTOMER
+- **Zustand** — panier & favoris (persistés côté client)
+- **Vercel Blob** — images produits en production (fallback dossier `/public/uploads` en local)
+
+## Démarrage local
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install          # installe + prisma generate (schéma SQLite)
+cp .env.example .env # valeurs par défaut valides pour le local
+npm run dev          # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+La base SQLite (`prisma/dev.db`) est créée automatiquement. Pour la peupler :
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run db:push      # pousse le schéma (SQLite)
+npm run db:seed      # catégories + produits de démo + compte admin
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Compte admin (seed) : **admin@sabrenshop.com** / `admin123`.
 
-## Learn More
+## Arborescence clé
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/
+│   ├── page.tsx            # Accueil (héro, catégories, nouveautés, ventes, promos)
+│   ├── boutique/           # Catalogue (filtres catégorie, nouveautés, promos, tri)
+│   ├── produit/[slug]/     # Fiche produit (galerie, avis, similaires)
+│   ├── panier/ commande/   # Panier & tunnel de commande
+│   ├── compte/ favoris/    # Espace client, liste de souhaits
+│   ├── connexion/ inscription/
+│   └── admin/              # Dashboard (produits, commandes, avis, réglages)
+│       └── api/            # Routes API (admin, commandes, avis, upload, produits)
+├── components/
+│   ├── shop/               # UI publique (header, cartes, sections…)
+│   └── admin/              # UI dashboard
+├── hooks/                  # useCart, useWishlist (zustand + persist)
+└── lib/                    # prisma, auth, data, storage, whatsapp, utils
+prisma/
+├── schema.prisma              # Schéma LOCAL (SQLite)
+├── schema.postgresql.prisma   # Schéma PRODUCTION (PostgreSQL) — à garder synchronisé
+└── seed.ts                    # Données de démo + admin
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Déploiement sur Vercel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Vercel exécute automatiquement `vercel-build` (défini dans `package.json` + `vercel.json`) :
+génère le client Prisma depuis le schéma PostgreSQL, puis `next build`.
 
-## Deploy on Vercel
+### 1. Base de données (Neon — compte gratuit)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Créez un projet sur [neon.tech](https://neon.tech) → **Create project**.
+2. Copiez la **connection string** PostgreSQL.
+3. Poussez le schéma **une seule fois** depuis votre machine :
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+# Unix/macOS
+DATABASE_URL="postgresql://user:pass@host/sabrenshop?sslmode=require" npm run db:push:prod
+DATABASE_URL="postgresql://user:pass@host/sabrenshop?sslmode=require" npm run db:seed:prod
+```
+
+4. Vérifiez la connexion : `DATABASE_URL="<url>" npx prisma validate --schema prisma/schema.postgresql.prisma`
+
+### 2. Variables d'environnement (Vercel → projet → Settings → Environment Variables)
+
+Toutes à définir (Production + Preview) :
+
+| Nom | Valeur |
+| --- | --- |
+| `DATABASE_URL` | Votre connection string Neon |
+| `AUTH_SECRET` | `openssl rand -base64 32` |
+| `AUTH_URL` | `https://<votre-projet>.vercel.app` |
+| `NEXT_PUBLIC_BASE_URL` | idem `AUTH_URL` |
+| `BLOB_READ_WRITE_TOKEN` | Vercel → **Storage** → **Create → Blob** → copier le token |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Votre numéro WhatsApp (ex. `22789148454`) |
+
+### 3. Import du dépôt
+
+Vercel → **Add New → Project** → importez le repo GitHub → le framework `Next.js` et la
+commande de build (`vercel-build`) sont détectés automatiquement → **Deploy**.
+
+### 4. Après le déploiement
+
+- Connexion admin : email/mot de passe du seed (ou inscrivez-vous puis passez votre rôle en ADMIN dans la base).
+- Les images uploadées en admin partent sur **Vercel Blob** (grâce à `BLOB_READ_WRITE_TOKEN`).
+
+## Commandes utiles
+
+```bash
+npm run lint          # ESLint
+npx tsc --noEmit      # Vérification de types
+npm run build         # Build en local (SQLite)
+npm run db:push       # Mettre à jour la base locale (dev)
+npm run db:push:prod  # Mettre à jour la base PostgreSQL (Neon)
+```
+
+## Rôle / compte admin
+
+Le rôle Admin s'obtient :
+- via le seed (`admin@sabrenshop.com` / `admin123`), ou
+- en passant `role = ADMIN` sur votre compte dans la base (SQLIte local : `sqlite3 prisma/dev.db "update User set role='ADMIN' where email='…'"`).
+
+Le lien « Admin » n'apparaît dans le header que pour les comptes ADMIN.

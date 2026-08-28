@@ -1,0 +1,205 @@
+// ============================================================
+// SCHÉMA PRODUCTION (PostgreSQL) — utilisé pour le déploiement
+// Vercel (Neon / Supabase). Le schéma LOCAL (prisma/schema.prisma)
+// reste en SQLite. GARDEZ CE FICHIER SYNCHRONISÉ avec schema.prisma.
+// Commandes Vercel :
+//   prisma generate --schema prisma/schema.postgresql.prisma
+//   DATABASE_URL="<url_postgres>" prisma db push --schema prisma/schema.postgresql.prisma
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+enum OrderStatus {
+  NEW
+  CONFIRMED
+  PREPARING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  WHATSAPP
+  COD
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  role          Role      @default(CUSTOMER)
+  orders        Order[]
+  reviews       Review[]
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  image       String?
+  icon        String    @default("package") // clé lucide (package, cup, toys, shirt, bag, gift, tags, sparkles...)
+  isActive    Boolean   @default(true)
+  position    Int       @default(0)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id             String     @id @default(cuid())
+  name           String
+  slug           String     @unique
+  description    String?
+  price          Int // en FCFA (centimes non nécessaires)
+  compareAtPrice Int? // ancien prix barré
+  stock          Int        @default(0)
+  images         Json // URLS (Vercel Blob ou /uploads) — liste
+  colors         Json       @default("[]") // liste de couleurs
+  sizes          Json       @default("[]") // liste de tailles
+  categoryId     String?
+  category       Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  isFeatured     Boolean    @default(false) // Meilleure vente
+  isNew          Boolean    @default(false)
+  isActive       Boolean    @default(true)
+  rating         Float      @default(0)
+  reviews        Review[]
+  orderItems     OrderItem[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model Order {
+  id            String        @id @default(cuid())
+  orderNumber   String        @unique // ex: SAB-2026-0001
+  customerName  String
+  phone         String
+  whatsapp      String?
+  email         String?
+  address       String?
+  quartier      String?
+  ville         String?
+  notes         String?
+  total         Int // total FCFA
+  deliveryFee   Int           @default(0)
+  status        OrderStatus   @default(NEW)
+  paymentMethod PaymentMethod @default(WHATSAPP)
+  isPickup      Boolean       @default(false)
+  userId        String?
+  user          User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items         OrderItem[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Int // prix au moment de la commande
+  color     String?
+  size      String?
+  name      String // snapshot nom
+  image     String?
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int // 1-5
+  comment   String?
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name      String? // pour avis invité
+  isApproved Boolean @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Settings {
+  id                    String   @id @default(cuid())
+  shopName              String   @default("SABREN'SHOP")
+  logo                  String?
+  phone                 String   @default("+227 89 14 84 54")
+  whatsapp              String   @default("22789148454")
+  email                 String?
+  address               String?
+  promoBarText          String?  @default("BIENVENUE CHEZ SABREN'SHOP — DÉCOUVREZ NOS NOUVEAUTÉS")
+  promoBarActive        Boolean  @default(true)
+  deliveryFee           Int      @default(100)
+  freeDeliveryThreshold Int? // ex: 50000 FCFA
+  heroTitle             String?  @default("SABREN'SHOP")
+  heroSubtitle          String?  @default("Les produits tendance qui correspondent à votre style.")
+  heroImage             String?
+  heroCta1Text          String?  @default("DÉCOUVRIR LA BOUTIQUE")
+  heroCta2Text          String?  @default("VOIR LES PROMOTIONS")
+  facebook              String?
+  instagram             String?
+  tiktok                String?
+  updatedAt             DateTime @updatedAt
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  url       String
+  filename  String
+  size      Int?
+  type      String?
+  createdAt DateTime @default(now())
+}

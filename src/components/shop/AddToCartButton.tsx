@@ -6,6 +6,7 @@ import { useState } from "react";
 export function AddToCartButton({
   product,
   variant,
+  round,
   className = "",
 }: {
   product: {
@@ -17,6 +18,7 @@ export function AddToCartButton({
     image?: string;
   };
   variant?: "black" | "gold";
+  round?: boolean;
   className?: string;
 }) {
   const addItem = useCart((s) => s.addItem);
@@ -30,8 +32,9 @@ export function AddToCartButton({
     setTimeout(() => setAdded(false), 1500);
   };
 
-  const base =
-    "inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-bold transition w-full";
+  const base = round
+    ? "flex items-center justify-center w-10 h-10 rounded-full shrink-0 transition shadow-card"
+    : "flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-bold transition w-full";
   const style = added
     ? "bg-whatsapp text-white"
     : variant === "gold"
@@ -42,11 +45,11 @@ export function AddToCartButton({
     <button onClick={handle} className={`${base} ${style} ${className}`}>
       {added ? (
         <>
-          <Check className="w-3.5 h-3.5" /> Ajouté !
+          <Check className="w-4 h-4" /> {!round && "Ajouté !"}
         </>
       ) : (
         <>
-          <ShoppingBag className="w-3.5 h-3.5" /> Ajouter
+          <ShoppingBag className="w-4 h-4" /> {!round && "Ajouter"}
         </>
       )}
     </button>

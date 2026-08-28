@@ -70,9 +70,9 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
     return [];
   });
 
-  if (typeof product.images === "string") product.images = [];
-  if (typeof product.colors === "string") product.colors = [];
-  if (typeof product.sizes === "string") product.sizes = [];
+  product.images = (Array.isArray(product.images) ? product.images : []) as string[];
+  product.colors = (Array.isArray(product.colors) ? product.colors : []) as string[];
+  product.sizes = (Array.isArray(product.sizes) ? product.sizes : []) as string[];
 
   const disc = discountPercent(product.price, product.compareAtPrice);
   const inStock = product.stock > 0;
@@ -101,7 +101,7 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Galerie */}
-          <ProductGallery images={product.images ?? []} name={product.name} />
+          <ProductGallery images={(product.images ?? []) as string[]} name={product.name} />
 
           {/* Infos */}
           <div className="flex flex-col">
@@ -129,7 +129,7 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
               <span className="text-3xl font-black text-sabren-black">{formatPrice(product.price)}</span>
               {disc > 0 && (
                 <>
-                  <span className="text-lg line-through text-sabren-black/35">{formatPrice(product.compareAtPrice)}</span>
+                  <span className="text-lg line-through text-sabren-black/35">{formatPrice(product.compareAtPrice ?? 0)}</span>
                   <span className="bg-sabren-pink text-sabren-black text-xs font-black px-2.5 py-1 rounded-full">-{disc}%</span>
                 </>
               )}

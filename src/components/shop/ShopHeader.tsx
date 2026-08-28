@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
 import { ShoppingBag, Search, UserRound, Menu, X, Phone, ChevronDown, LayoutGrid, Flame, Sparkles, Tags, Truck as TruckMini, Store as StoreIcon, LayoutDashboard, Heart } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 import { CategoryIcon } from "@/components/ui/category-icon";
@@ -37,6 +37,11 @@ export function ShopHeader({ categories }: { categories: Cat[] }) {
   const [open, setOpen] = useState(false);
   const [catsOpen, setCatsOpen] = useState(false);
   const [q, setQ] = useState("");
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -193,36 +198,58 @@ export function ShopHeader({ categories }: { categories: Cat[] }) {
 
       {/* Drawer mobile */}
       {open && (
-        <div className="lg:hidden border-t bg-white max-h-[70vh] overflow-y-auto">
-          <div className="px-4 py-3">
-            <Link href="/" onClick={() => setOpen(false)} className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-bold">
-              Accueil
-            </Link>
-            <Link href="/boutique" onClick={() => setOpen(false)} className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-bold">
-              Boutique
-            </Link>
-            {categories.map((c) => (
-              <Link key={c.href} href={c.href} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-medium">
-                <CategoryIcon icon={c.icon} className="w-4 h-4 text-sabren-gold" /> {c.label}
+        <div className="lg:hidden">
+          <div className="fixed inset-0 z-40 bg-sabren-black/50 animate-fade-in" onClick={() => setOpen(false)} />
+          <div className="fixed left-0 top-0 bottom-0 z-50 w-[300px] max-w-[85vw] bg-white animate-slide-in flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-sabren-gray">
+              <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2.5">
+                <img src="/logosabrenshop.jpeg" alt="Sabren'Shop" className="w-9 h-9 rounded-xl object-cover" loading="lazy" decoding="async" />
+                <span className="font-display font-black tracking-tight text-lg">SABREN<span className="text-sabren-gold">’</span>SHOP</span>
               </Link>
-            ))}
-            <div className="my-2 border-t border-sabren-gray" />
-            {smartLinks.map((n) => (
-              <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
-                <NavItemIcon label={n.label} icon={n.icon} /> {n.label}
+              <button onClick={() => setOpen(false)} className="p-2 hover:bg-sabren-gray rounded-xl" aria-label="Fermer le menu">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-4 py-3">
+              <span className="block px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-sabren-gold-ink">Menu</span>
+              <Link href="/" onClick={() => setOpen(false)} className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-bold">
+                Accueil
               </Link>
-            ))}
-            {isAdmin && (
-              <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
-                <LayoutDashboard className="w-4 h-4 text-sabren-gold" /> Administration
+              <Link href="/boutique" onClick={() => setOpen(false)} className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-bold">
+                Boutique
               </Link>
-            )}
-            <Link href={session ? "/compte" : "/connexion"} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
-              <UserRound className="w-4 h-4 text-sabren-gold" /> {session ? "Mon compte" : "Se connecter"}
-            </Link>
-            <Link href="/favoris" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
-              <Heart className="w-4 h-4 text-sabren-gold" /> Mes favoris{wishCount > 0 ? ` (${wishCount})` : ""}
-            </Link>
+
+              <span className="block mt-3 mb-1 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-sabren-gold-ink">Catégories</span>
+              {categories.map((c) => (
+                <Link key={c.href} href={c.href} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-medium">
+                  <CategoryIcon icon={c.icon} className="w-4 h-4 text-sabren-gold" /> {c.label}
+                </Link>
+              ))}
+
+              <div className="my-3 border-t border-sabren-gray" />
+              {smartLinks.map((n) => (
+                <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
+                  <NavItemIcon label={n.label} icon={n.icon} /> {n.label}
+                </Link>
+              ))}
+              <Link href="/favoris" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
+                <Heart className="w-4 h-4 text-sabren-gold" /> Mes favoris{wishCount > 0 ? ` (${wishCount})` : ""}
+              </Link>
+              <Link href={session ? "/compte" : "/connexion"} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
+                <UserRound className="w-4 h-4 text-sabren-gold" /> {session ? "Mon compte" : "Se connecter"}
+              </Link>
+              {isAdmin && (
+                <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
+                  <LayoutDashboard className="w-4 h-4 text-sabren-gold" /> Administration
+                </Link>
+              )}
+            </div>
+
+            <div className="border-t border-sabren-gray px-4 py-3 text-xs text-sabren-black/50 space-y-2">
+              <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-sabren-gold" /> {WHATSAPP_DISPLAY}</span>
+              <span className="flex items-center gap-1.5"><TruckMini className="w-3.5 h-3.5 text-sabren-gold" /> Livraison partout au Niger · Paiement à la livraison</span>
+            </div>
           </div>
         </div>
       )}
