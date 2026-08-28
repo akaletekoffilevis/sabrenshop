@@ -59,7 +59,7 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
       <div className="flex items-center gap-2 px-2 mb-6">
         <span className="w-9 h-9 rounded-xl bg-sabren-gold text-sabren-black font-display font-black flex items-center justify-center">S</span>
         <div className="leading-tight">
-          <p className="font-display font-bold text-sabren-gold">SABREEN'SHOP</p>
+          <p className="font-display font-bold text-sabren-gold">SABREEN’SHOP</p>
           <p className="text-[10px] text-white/50 uppercase tracking-wide">Administration</p>
         </div>
       </div>
