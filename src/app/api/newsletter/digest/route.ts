@@ -4,7 +4,7 @@ export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
-  const secret = process.env.NEWSLETTER_CRON_SECRET;
+  const secret = process.env.NEWSLETTER_CRON_SECRET || process.env.CRON_SECRET;
   const url = new URL(req.url);
   const authHeader = req.headers.get("authorization");
   const isVercelCron = req.headers.get("x-vercel-cron") === "1";

@@ -107,7 +107,7 @@ Toutes à définir (Production + Preview) :
 | `SABREN_READ_WRITE_TOKEN` | Vercel → **Storage → Blob** → copier |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | Votre numéro WhatsApp (ex. `22789148454`) |
 | `RESEND_API_KEY` + `RESEND_FROM` | Emails (bienvenue, newsletter, mot de passe oublié) |
-| `NEWSLETTER_CRON_SECRET` | Facultatif — protège le cron du récap quotidien |
+| `NEWSLETTER_CRON_SECRET` | Facultatif — sécurise le cron du récap quotidien (ou `CRON_SECRET` Vercel) |
 
 `AUTH_URL` n'est pas obligatoire : `trustHost` fait détecter l'URL automatiquement.
 
