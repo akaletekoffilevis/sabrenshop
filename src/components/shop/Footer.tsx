@@ -1,28 +1,7 @@
 import Link from "next/link";
 import { getSettings } from "@/lib/data";
-import { ShieldCheck, Truck, RotateCcw, MessageCircle, Phone, MapPin, Clock, Heart, Globe, Camera, Mail, Send, Play, AtSign, Music2, type LucideIcon } from "lucide-react";
-
-const SOCIAL_ICONS: Record<string, LucideIcon> = {
-  facebook: Globe,
-  instagram: Camera,
-  tiktok: Music2,
-  youtube: Play,
-  twitter: AtSign,
-  whatsa: MessageCircle,
-  snapchat: Camera,
-  telegram: Send,
-};
-
-function SocialIcon({ label, className }: { label: string; className?: string }) {
-  const key = label.toLowerCase();
-  for (const k of Object.keys(SOCIAL_ICONS)) {
-    if (key.includes(k)) {
-      const Icon = SOCIAL_ICONS[k];
-      return <Icon className={className} />;
-    }
-  }
-  return <Globe className={className} />;
-}
+import { ShieldCheck, Truck, RotateCcw, MessageCircle, Phone, MapPin, Clock, Heart, Mail } from "lucide-react";
+import { BrandSocialIcon } from "@/components/ui/social-icons";
 
 export async function Footer() {
   const settings = await getSettings();
@@ -68,13 +47,13 @@ export async function Footer() {
           <div className="flex gap-3 mt-5">
             {socials.length === 0 ? (
               <>
-                <a href="#" aria-label="Facebook" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><Globe className="w-4 h-4" /></a>
-                <a href="#" aria-label="Instagram" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><Camera className="w-4 h-4" /></a>
+                <a href="#" aria-label="Facebook" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><BrandSocialIcon label="Facebook" className="w-4 h-4" /></a>
+                <a href="#" aria-label="Instagram" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><BrandSocialIcon label="Instagram" className="w-4 h-4" /></a>
               </>
             ) : (
               socials.map((s) => (
                 <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition">
-                  <SocialIcon label={s.label} className="w-4 h-4" />
+                  <BrandSocialIcon label={s.label} className="w-4 h-4" />
                 </a>
               ))
             )}
