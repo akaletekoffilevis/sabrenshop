@@ -2,15 +2,15 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { LayoutDashboard, Package, Tags, ShoppingCart, Settings2, LogOut, ExternalLink, Menu, X, MessageSquareQuote, Tag, HelpCircle } from "lucide-react";
+import { LayoutDashboard, Package, Tags, Settings2, LogOut, ExternalLink, Menu, X, MessageSquareQuote, Tag, HelpCircle, Mail } from "lucide-react";
 import { useState } from "react";
 
 export const adminLinks = [
   { label: "Tableau de bord", href: "/admin", icon: LayoutDashboard },
   { label: "Produits", href: "/admin/produits", icon: Package },
   { label: "Catégories", href: "/admin/categories", icon: Tags },
-  { label: "Commandes", href: "/admin/commandes", icon: ShoppingCart },
   { label: "Codes promo", href: "/admin/promos", icon: Tag },
+  { label: "Newsletter", href: "/admin/newsletter", icon: Mail },
   { label: "FAQ", href: "/admin/faq", icon: HelpCircle },
   { label: "Avis", href: "/admin/avis", icon: MessageSquareQuote },
   { label: "Paramètres", href: "/admin/parametres", icon: Settings2 },
@@ -74,35 +74,64 @@ export function AdminMobileTop() {
   const pathname = usePathname();
   const router = useRouter();
 
+  const linkCls = (href: string) =>
+    `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition ${
+      pathname === href || (href !== "/admin" && pathname.startsWith(href + "/"))
+        ? "bg-sabren-gold text-sabren-black font-bold"
+        : "text-white/70 hover:bg-white/10 hover:text-white"
+    }`;
+
   return (
-    <div className="md:hidden sticky top-0 z-50 bg-sabren-black text-white px-4 py-3 flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <span className="w-8 h-8 rounded-lg bg-sabren-gold text-sabren-black font-display font-black flex items-center justify-center">S</span>
-        <span className="font-display font-bold text-sabren-gold text-sm">ADMIN</span>
+    <>
+      <div className="md:hidden sticky top-0 z-50 bg-sabren-black text-white px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="w-8 h-8 rounded-lg bg-sabren-gold text-sabren-black font-display font-black flex items-center justify-center">S</span>
+          <span className="font-display font-bold text-sabren-gold text-sm">ADMIN</span>
+        </div>
+        <button onClick={() => setOpen(!open)} className="p-2 rounded-lg hover:bg-white/10" aria-label="Menu">
+          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
-      <button onClick={() => setOpen(!open)} className="p-2 rounded-lg hover:bg-white/10" aria-label="Menu">
-        {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-      </button>
-      {open && (
-        <div className="fixed inset-0 top-[52px] bg-sabren-black text-white p-4 z-50 overflow-y-auto">
-          <nav className="space-y-1">
+
+      {/* Drawer coulissant — HORS du top bar pour un backdrop pleine fenêtre */}
+      <div className={`md:hidden fixed inset-0 z-50 ${open ? "" : "pointer-events-none"}`} aria-hidden={!open}>
+        <div
+          className={`absolute inset-0 bg-sabren-black/60 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
+          onClick={() => setOpen(false)}
+        />
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu d’administration"
+          className={`absolute left-0 top-0 bottom-0 w-[290px] max-w-[82vw] bg-sabren-black text-white flex flex-col shadow-2xl transition-transform duration-300 ease-out ${open ? "translate-x-0" : "-translate-x-full"}`}
+        >
+          <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
+            <div className="flex items-center gap-2">
+              <span className="w-9 h-9 rounded-xl bg-sabren-gold text-sabren-black font-display font-black flex items-center justify-center">S</span>
+              <div className="leading-tight">
+                <p className="font-display font-bold text-sabren-gold text-sm">SABREEN’SHOP</p>
+                <p className="text-[10px] text-white/50 uppercase tracking-wide">Administration</p>
+              </div>
+            </div>
+            <button onClick={() => setOpen(false)} className="p-2 rounded-lg hover:bg-white/10" aria-label="Fermer le menu">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-1">
+            <span className="block px-3 pb-1 text-[10px] font-bold uppercase tracking-wide text-white/40">Menu</span>
             {adminLinks.map((l) => {
               const Icon = l.icon;
-              const active = pathname === l.href || (l.href !== "/admin" && pathname.startsWith(l.href + "/"));
               return (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition ${active ? "bg-sabren-gold text-sabren-black font-bold" : "text-white/70 hover:bg-white/10 hover:text-white"}`}
-                >
+                <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className={linkCls(l.href)}>
                   <Icon className="w-4 h-4 shrink-0" />
                   {l.label}
                 </Link>
               );
             })}
           </nav>
-          <div className="space-y-1 pt-4 border-t border-white/10 mt-4">
+
+          <div className="border-t border-white/10 px-3 py-3 space-y-1">
             <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-white/70 hover:bg-white/10 transition">
               <ExternalLink className="w-4 h-4" /> Voir la boutique
             </Link>
@@ -114,7 +143,7 @@ export function AdminMobileTop() {
             </button>
           </div>
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }

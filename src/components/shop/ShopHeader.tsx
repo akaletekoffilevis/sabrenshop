@@ -208,8 +208,8 @@ export function ShopHeader({ categories, isAdmin = false, loggedIn = false }: { 
 
         {/* Navigation desktop */}
         <nav className="hidden lg:block border-t border-sabren-gray">
-          <div className="max-w-7xl mx-auto px-8 flex items-center gap-1 overflow-x-auto no-scrollbar">
-            <div className="relative">
+          <div className="max-w-7xl mx-auto px-8 flex items-center">
+            <div className="relative shrink-0">
               <button
                 onClick={() => setCatsOpen(!catsOpen)}
                 className={`inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wide py-3 px-3.5 transition ${catsOpen ? "text-sabren-black" : "text-sabren-gold-ink hover:text-sabren-black"}`}
@@ -235,30 +235,32 @@ export function ShopHeader({ categories, isAdmin = false, loggedIn = false }: { 
               )}
             </div>
 
-            {staticLinks.map((n) => (
-              <Link key={n.href} href={n.href} className="px-3.5 py-3 text-sm whitespace-nowrap text-sabren-black/80 hover:text-sabren-black hover:after:absolute hover:after:left-3 hover:after:right-3 hover:after:bottom-1 hover:after:h-0.5 hover:after:bg-sabren-gold hover:after:rounded-full relative transition-colors">
-                {n.label}
-              </Link>
-            ))}
+            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar flex-1 min-w-0">
+              {staticLinks.map((n) => (
+                <Link key={n.href} href={n.href} className="px-3.5 py-3 text-sm whitespace-nowrap text-sabren-black/80 hover:text-sabren-black hover:after:absolute hover:after:left-3 hover:after:right-3 hover:after:bottom-1 hover:after:h-0.5 hover:after:bg-sabren-gold hover:after:rounded-full relative transition-colors">
+                  {n.label}
+                </Link>
+              ))}
 
-            {/* Catégories inline (desktop) */}
-            {categories.slice(0, 5).map((c) => (
-              <Link key={c.href} href={c.href} className="px-3.5 py-3 text-sm whitespace-nowrap text-sabren-black/80 hover:text-sabren-gold relative transition-colors">
-                {c.label}
-              </Link>
-            ))}
+              {/* Catégories inline (desktop) */}
+              {categories.slice(0, 5).map((c) => (
+                <Link key={c.href} href={c.href} className="px-3.5 py-3 text-sm whitespace-nowrap text-sabren-black/80 hover:text-sabren-gold relative transition-colors">
+                  {c.label}
+                </Link>
+              ))}
 
-            {smartLinks.map((n) => (
-              <Link
-                key={n.href}
-                href={n.href}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-3 text-sm whitespace-nowrap relative ${
-                  n.label === "Promotions" ? "text-sabren-gold-ink font-bold" : "text-sabren-black/80"
-                } hover:text-sabren-gold transition-colors`}
-              >
-                <NavItemIcon label={n.label} icon={n.icon} /> {n.label}
-              </Link>
-            ))}
+              {smartLinks.map((n) => (
+                <Link
+                  key={n.href}
+                  href={n.href}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-3 text-sm whitespace-nowrap relative ${
+                    n.label === "Promotions" ? "text-sabren-gold-ink font-bold" : "text-sabren-black/80"
+                  } hover:text-sabren-gold transition-colors`}
+                >
+                  <NavItemIcon label={n.label} icon={n.icon} /> {n.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </nav>
 
