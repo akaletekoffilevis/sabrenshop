@@ -1,24 +1,33 @@
 "use client";
 import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, deliveryCost } from "@/lib/utils";
 import { whatsappLink, cartWhatsappMessage } from "@/lib/whatsapp";
-import { ShoppingBag, Trash2, Minus, Plus, MessageCircle, Tag, X } from "lucide-react";
+import { ShoppingBag, Trash2, Minus, Plus, MessageCircle, Tag, X, Truck } from "lucide-react";
 import { useState } from "react";
 
-export function PanierClient({ deliveryFee = 100 }: { deliveryFee?: number }) {
+export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }: { deliveryFee?: number; freeDeliveryThreshold?: number | null }) {
   const { items, updateQuantity, removeItem, total, promo, setPromo } = useCart();
   const [code, setCode] = useState("");
   const [promoMsg, setPromoMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [applying, setApplying] = useState(false);
   const subTotal = total();
   const discount = promo ? Math.min(promo.type === "FIXED" ? promo.value : Math.round((subTotal * promo.value) / 100), subTotal) : 0;
-  const grandTotal = subTotal - discount + (items.length ? deliveryFee : 0);
+  const ship = items.length ? deliveryCost(subTotal, deliveryFee, freeDeliveryThreshold, false) : 0;
+  const freeDelivery = items.length > 0 && ship === 0;
+  const grandTotal = subTotal - discount + ship;
 
   const waLink = whatsappLink(
     cartWhatsappMessage(
       items.map((i) => ({ name: i.name, price: i.price, quantity: i.quantity, color: i.color, size: i.size })),
-      grandTotal
+      {
+        subtotal: subTotal,
+        discount,
+        deliveryFee: ship,
+        total: grandTotal,
+        promoCode: promo?.code ?? null,
+        isPickup: false,
+      }
     )
   );
 
@@ -152,8 +161,19 @@ export function PanierClient({ deliveryFee = 100 }: { deliveryFee?: number }) {
               )}
               <div className="flex justify-between">
                 <span className="text-sabren-black/60">Frais de livraison</span>
-                <span className="font-semibold">{formatPrice(deliveryFee)}</span>
+                <span className={`font-semibold ${freeDelivery ? "text-green-600" : ""}`}>{freeDelivery ? "Offerts" : formatPrice(ship)}</span>
               </div>
+              {freeDeliveryThreshold ? (
+                freeDelivery ? (
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-green-600 bg-green-50 rounded-full px-3 py-2">
+                    <Truck className="w-3.5 h-3.5 shrink-0" /> Livraison offerte ! Votre commande atteint le seuil minimal.
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between gap-2 text-xs text-sabren-gold-ink bg-sabren-cream rounded-full px-3 py-2">
+                    <span className="font-semibold">Plus que {formatPrice(freeDeliveryThreshold - subTotal)} pour la livraison offerte</span>
+                  </div>
+                )
+              ) : null}
               <div className="flex justify-between text-xs text-sabren-black/60">
                 <span>Partout au Niger — frais à la charge du client</span>
                 <span className="text-sabren-gold-ink">Retrait boutique : 0 FCFA</span>

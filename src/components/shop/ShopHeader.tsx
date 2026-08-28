@@ -2,12 +2,108 @@
 import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
-import { ShoppingBag, Search, UserRound, Menu, X, Phone, ChevronDown, LayoutGrid, Flame, Sparkles, Tags, Truck as TruckMini, Store as StoreIcon, LayoutDashboard, Heart } from "lucide-react";
-import { useState, useEffect } from "react";
+import { ShoppingBag, Search, UserRound, Menu, X, Phone, ChevronDown, LayoutGrid, Flame, Sparkles, Tags, Truck as TruckMini, Store as StoreIcon, LayoutDashboard, Heart, Loader2, PackageX } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 import { CategoryIcon } from "@/components/ui/category-icon";
 
 type Cat = { label: string; href: string; icon: string };
+type SearchResult = { slug: string; name: string; price: number; stock: number; image?: string | null };
+
+function HeaderSearch({ placeholder, className = "" }: { placeholder: string; className?: string }) {
+  const [q, setQ] = useState("");
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const boxRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    const onDown = (e: MouseEvent) => {
+      if (boxRef.current && !boxRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, []);
+
+  useEffect(() => {
+    const term = q.trim();
+    if (term.length < 2) {
+      setResults([]);
+      setLoading(false);
+      setOpen(false);
+      return;
+    }
+    setLoading(true);
+    const t = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(term)}`);
+        const data = await res.json();
+        setResults((data.results as SearchResult[]) ?? []);
+        setOpen(true);
+      } catch {
+        setResults([]);
+      }
+      setLoading(false);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [q]);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (q.trim()) {
+      setOpen(false);
+      window.location.href = `/boutique?q=${encodeURIComponent(q.trim())}`;
+    }
+  };
+
+  return (
+    <form ref={boxRef} onSubmit={submit} className={`relative ${className}`}>
+      <div className="flex items-center bg-sabren-gray rounded-full pl-4 border border-transparent focus-within:border-sabren-gold focus-within:bg-white transition">
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          onFocus={() => q.trim().length >= 2 && setOpen(true)}
+          placeholder={placeholder}
+          className="flex-1 bg-transparent outline-none text-sm py-2.5"
+          aria-label="Rechercher"
+        />
+        {loading && <Loader2 className="w-4 h-4 text-sabren-black/40 animate-spin mr-2 shrink-0" />}
+        <button type="submit" className="bg-sabren-gold hover:bg-sabren-gold-hover text-sabren-black rounded-full p-2 m-1 transition shadow-gold" aria-label="Rechercher">
+          <Search className="w-4 h-4" />
+        </button>
+      </div>
+
+      {open && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-sabren-gray shadow-card-hover z-50 overflow-hidden animate-fade-up">
+          {results.length === 0 ? (
+            <p className="px-4 py-5 text-sm text-sabren-black/45 flex items-center gap-2">
+              <PackageX className="w-4 h-4 text-sabren-black/30" /> Aucun produit trouvé pour {`"${q}"`}
+            </p>
+          ) : (
+            <ul>
+              {results.map((r) => (
+                <li key={r.slug}>
+                  <Link href={`/produit/${r.slug}`} onClick={() => setOpen(false)} className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-sabren-cream transition">
+                    {r.image ? (
+                      <img src={r.image} alt={r.name} className="w-10 h-10 rounded-lg object-cover border border-sabren-gray shrink-0" loading="lazy" decoding="async" />
+                    ) : (
+                      <span className="w-10 h-10 rounded-lg bg-sabren-gray flex items-center justify-center text-sabren-black/30 shrink-0"><ShoppingBag className="w-4 h-4" /></span>
+                    )}
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-sm font-semibold truncate">{r.name}</span>
+                      <span className="text-xs text-sabren-black/45">{r.price.toLocaleString("fr-FR")} FCFA{r.stock === 0 ? " · Épuisé" : ""}</span>
+                    </span>
+                    <span className="text-[10px] font-bold text-sabren-gold-ink uppercase">Voir →</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </form>
+  );
+}
 
 const staticLinks = [
   { label: "Accueil", href: "/" },
@@ -33,17 +129,11 @@ export function ShopHeader({ categories, isAdmin = false, loggedIn = false }: { 
   const wishCount = useWishlist((s) => s.ids.length);
   const [open, setOpen] = useState(false);
   const [catsOpen, setCatsOpen] = useState(false);
-  const [q, setQ] = useState("");
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (q) window.location.href = `/boutique?q=${encodeURIComponent(q)}`;
-  };
 
   return (
     <>
@@ -77,17 +167,7 @@ export function ShopHeader({ categories, isAdmin = false, loggedIn = false }: { 
           </Link>
 
           {/* Recherche */}
-          <form onSubmit={submit} className="hidden md:flex flex-1 max-w-xl items-center bg-sabren-gray rounded-full pl-4 border border-transparent focus-within:border-sabren-gold focus-within:bg-white transition">
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Rechercher Stanley, nounours, vêtements..."
-              className="flex-1 bg-transparent outline-none text-sm py-3"
-            />
-            <button type="submit" className="bg-sabren-gold hover:bg-sabren-gold-hover text-sabren-black rounded-full p-2.5 m-1 transition shadow-gold" aria-label="Rechercher">
-              <Search className="w-4 h-4" />
-            </button>
-          </form>
+          <HeaderSearch placeholder="Rechercher Stanley, nounours, vêtements..." className="hidden md:block flex-1 max-w-xl" />
 
           {/* Actions */}
           <div className="flex items-center gap-1.5 ml-auto lg:ml-0">
@@ -183,14 +263,9 @@ export function ShopHeader({ categories, isAdmin = false, loggedIn = false }: { 
         </nav>
 
         {/* Recherche mobile */}
-        <form onSubmit={submit} className="md:hidden px-4 pb-3">
-          <div className="flex items-center bg-sabren-gray rounded-full pl-4 border border-transparent focus-within:border-sabren-gold focus-within:bg-white transition">
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Rechercher un produit..." className="flex-1 bg-transparent outline-none text-sm py-2.5" />
-            <button type="submit" className="bg-sabren-gold text-sabren-black rounded-full p-2 m-1" aria-label="Rechercher">
-              <Search className="w-4 h-4" />
-            </button>
-          </div>
-        </form>
+        <div className="md:hidden px-4 pb-3">
+          <HeaderSearch placeholder="Rechercher un produit..." />
+        </div>
       </header>
 
       {/* Drawer mobile — HORS du <header> pour que `fixed` vise la fenêtre */}

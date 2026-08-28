@@ -23,6 +23,12 @@ export function discountPercent(price: number, compareAt?: number | null) {
   return Math.round(((compareAt - price) / compareAt) * 100);
 }
 
+export function deliveryCost(subTotal: number, deliveryFee: number, freeThreshold?: number | null, isPickup = false) {
+  if (isPickup) return 0;
+  if (typeof freeThreshold === "number" && freeThreshold > 0 && subTotal >= freeThreshold) return 0;
+  return Math.max(0, deliveryFee);
+}
+
 export function isNewProduct(createdAt: Date | string | null | undefined, isNewFlag = false, days = 7) {
   if (isNewFlag) return true;
   if (!createdAt) return false;

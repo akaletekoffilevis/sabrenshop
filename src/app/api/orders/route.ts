@@ -34,8 +34,10 @@ export async function POST(req: Request) {
   if (!parsed.success) return Response.json({ error: parsed.error.issues[0]?.message ?? "Données invalides" }, { status: 400 });
 
   const settings = await prisma.settings.findUnique({ where: { id: "default" } });
-  const deliveryFee = parsed.data.isPickup ? 0 : (settings?.deliveryFee ?? 100);
   const subTotal = parsed.data.items.reduce((a, i) => a + i.price * i.quantity, 0);
+  const freeThreshold = settings?.freeDeliveryThreshold ?? null;
+  const baseFee = settings?.deliveryFee ?? 100;
+  const deliveryFee = parsed.data.isPickup ? 0 : freeThreshold && subTotal >= freeThreshold ? 0 : baseFee;
 
   let discount = 0;
   let promoApplied: string | null = null;

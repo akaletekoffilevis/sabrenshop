@@ -9,6 +9,7 @@ export function ProductCard({ product }: { product: any }) {
   const disc = discountPercent(product.price, product.compareAtPrice);
   const img = product.images?.[0];
   const stockLow = product.stock !== undefined && product.stock > 0 && product.stock <= 5;
+  const outOfStock = product.stock !== undefined && product.stock === 0;
   const { ids, toggle } = useWishlist();
   const key = product.id || product.slug;
   const wished = ids.includes(key);
@@ -26,8 +27,9 @@ export function ProductCard({ product }: { product: any }) {
         )}
         <div className="absolute top-2 left-2 flex flex-col gap-1.5 items-start">
           {disc > 0 && <span className="bg-sabren-pink text-sabren-black text-[11px] font-black px-2 py-1 rounded-full shadow">-{disc}%</span>}
-          {isNew && <span className="bg-sabren-black text-sabren-gold text-[10px] font-bold px-2 py-1 rounded-full">NOUVEAU</span>}
-          {product.isFeatured && !isNew && <span className="bg-sabren-gold text-sabren-black text-[10px] font-bold px-2 py-1 rounded-full">MEILLEUR VENDU</span>}
+          {isNew && !outOfStock && <span className="bg-sabren-black text-sabren-gold text-[10px] font-bold px-2 py-1 rounded-full">NOUVEAU</span>}
+          {product.isFeatured && !isNew && !outOfStock && <span className="bg-sabren-gold text-sabren-black text-[10px] font-bold px-2 py-1 rounded-full">MEILLEUR VENDU</span>}
+          {outOfStock && <span className="bg-sabren-black/85 text-white text-[11px] font-black px-2.5 py-1 rounded-full tracking-wide">ÉPUISÉ</span>}
         </div>
         <button
           onClick={(e) => { e.preventDefault(); toggle(key); }}
@@ -65,8 +67,8 @@ export function ProductCard({ product }: { product: any }) {
         </div>
 
         <div className="mt-2 md:mt-3">
-          <AddToCartButton product={product} round className="ml-auto lg:hidden" />
-          <AddToCartButton product={product} className="hidden lg:flex" />
+          <AddToCartButton product={product} round outOfStock={outOfStock} className="ml-auto lg:hidden" />
+          <AddToCartButton product={product} outOfStock={outOfStock} className="hidden lg:flex" />
         </div>
       </div>
     </div>

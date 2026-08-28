@@ -23,9 +23,10 @@ export async function POST(req: Request) {
       name: parsed.data.name,
       rating: parsed.data.rating,
       comment: parsed.data.comment || null,
+      isApproved: true,
       userId: (session?.user as { id?: string } | undefined)?.id ?? null,
     },
   });
 
-  return Response.json({ ok: true, review: { ...review, isApproved: false } });
+  return Response.json({ ok: true, review: { ...review, isApproved: true } });
 }

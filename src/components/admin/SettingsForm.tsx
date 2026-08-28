@@ -3,16 +3,21 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Field, inputCls, Btn, Toggle, Card } from "./ui";
 import { ImageUploader } from "./ImageUploader";
-import { Loader2, Save, Megaphone, Truck, Home, Share2 } from "lucide-react";
+import { Loader2, Save, Megaphone, Truck, Home, Share2, Plus, Trash2 } from "lucide-react";
+
+type SocialLink = { label: string; url: string };
 
 type Settings = {
   shopName: string; phone: string; whatsapp: string; email?: string | null; address?: string | null;
   promoBarText?: string | null; promoBarActive: boolean; deliveryFee: number; freeDeliveryThreshold?: number | null;
   heroTitle?: string | null; heroSubtitle?: string | null; heroImage?: string | null; heroCta1Text?: string | null; heroCta2Text?: string | null;
   facebook?: string | null; instagram?: string | null; tiktok?: string | null;
+  socialLinks: SocialLink[];
 };
 
-export function SettingsForm({ settings }: { settings: Settings }) {
+const SOCIAL_PLATFORMS = ["Facebook", "Instagram", "TikTok", "YouTube", "Twitter / X", "WhatsApp", "Autre"];
+
+export function SettingsForm({ settings }: { settings: Settings & { socialLinksRaw?: string | null } }) {
   const router = useRouter();
   const [form, setForm] = useState<Settings>({
     shopName: settings.shopName ?? "SABREEN'SHOP",
@@ -32,6 +37,7 @@ export function SettingsForm({ settings }: { settings: Settings }) {
     facebook: settings.facebook ?? "",
     instagram: settings.instagram ?? "",
     tiktok: settings.tiktok ?? "",
+    socialLinks: settings.socialLinks ?? [],
   });
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
@@ -105,11 +111,48 @@ export function SettingsForm({ settings }: { settings: Settings }) {
 
       <Card className="p-5 md:p-6">
         <h2 className={section}><Share2 className={iconCls} /> Réseaux sociaux</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          <Field label="Facebook (URL)"><input className={inputCls} value={form.facebook ?? ""} onChange={(e) => set("facebook", e.target.value)} /></Field>
-          <Field label="Instagram (URL)"><input className={inputCls} value={form.instagram ?? ""} onChange={(e) => set("instagram", e.target.value)} /></Field>
-          <Field label="TikTok (URL)"><input className={inputCls} value={form.tiktok ?? ""} onChange={(e) => set("tiktok", e.target.value)} /></Field>
+        <p className="text-xs text-sabren-black/50 mb-4 -mt-2">Ajoutez ou supprimez librement vos liens : ils apparaissent dans le pied de page.</p>
+        <div className="space-y-2.5">
+          {(form.socialLinks ?? []).map((l, i) => (
+            <div key={i} className="flex flex-col sm:flex-row gap-2">
+              <select
+                className={inputCls + " sm:w-40 shrink-0"}
+                value={SOCIAL_PLATFORMS.includes(l.label) ? l.label : "Autre"}
+                onChange={(e) => {
+                  const next = [...(form.socialLinks ?? [])];
+                  next[i] = { ...next[i], label: e.target.value };
+                  set("socialLinks", next);
+                }}
+              >
+                {SOCIAL_PLATFORMS.map((p) => <option key={p} value={p}>{p}</option>)}
+              </select>
+              <input
+                className={inputCls}
+                placeholder="https://facebook.com/votre-page"
+                value={l.url}
+                onChange={(e) => {
+                  const next = [...(form.socialLinks ?? [])];
+                  next[i] = { ...next[i], url: e.target.value };
+                  set("socialLinks", next);
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => set("socialLinks", (form.socialLinks ?? []).filter((_, x) => x !== i))}
+                className="shrink-0 inline-flex items-center justify-center gap-1.5 rounded-xl border border-sabren-gray px-3 py-2.5 text-xs font-bold text-sabren-black/50 hover:text-red-500 hover:border-red-300 transition"
+              >
+                <Trash2 className="w-4 h-4" /> Retirer
+              </button>
+            </div>
+          ))}
         </div>
+        <button
+          type="button"
+          onClick={() => set("socialLinks", [...(form.socialLinks ?? []), { label: "Instagram", url: "" }])}
+          className="mt-3 inline-flex items-center gap-1.5 rounded-full border-2 border-dashed border-sabren-gold/50 text-sabren-gold-ink font-bold text-xs px-4 py-2 hover:bg-sabren-gold/10 transition"
+        >
+          <Plus className="w-4 h-4" /> Ajouter un lien
+        </button>
       </Card>
 
       {msg && <p className="text-sm font-semibold text-green-600 bg-green-50 rounded-xl px-4 py-2.5">{msg}</p>}

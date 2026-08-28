@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "./ui";
-import { whatsappLink } from "@/lib/whatsapp";
+import { whatsappLinkTo, orderClientConfirmationMessage } from "@/lib/whatsapp";
 import { MessageCircle, ChevronDown, MapPin, UserRound, Phone } from "lucide-react";
 
 const STATUSES = ["NEW", "CONFIRMED", "PREPARING", "SHIPPED", "DELIVERED", "CANCELLED"] as const;
@@ -30,6 +30,26 @@ export function OrdersTable({ orders }: { orders: Order[] }) {
   };
 
   const rel = (items: Item[]) => items.reduce((a, i) => a + i.quantity * i.price, 0);
+
+  const clientWa = (o: Order) => {
+    const subtotal = rel(o.items);
+    const discount = Math.max(0, o.total - o.deliveryFee - subtotal);
+    const target = o.whatsapp || o.phone;
+    const msg = orderClientConfirmationMessage({
+      orderNumber: o.orderNumber,
+      customerName: o.customerName,
+      items: o.items.map((i) => ({ name: i.name, price: i.price, quantity: i.quantity, color: i.color, size: i.size })),
+      subtotal,
+      discount,
+      deliveryFee: o.deliveryFee,
+      total: o.total,
+      isPickup: o.isPickup,
+      paymentMethod: o.paymentMethod,
+      ville: o.ville,
+      quartier: o.quartier,
+    });
+    return whatsappLinkTo(target, msg);
+  };
 
   return (
     <div className="space-y-3">
@@ -80,11 +100,11 @@ export function OrdersTable({ orders }: { orders: Order[] }) {
                     <p className="text-xs"><Badge tone={o.isPickup ? "gold" : "gray"}>{o.isPickup ? "Retrait boutique" : "Livraison"}</Badge></p>
                   </div>
                   <div className="flex flex-wrap gap-2 mt-4">
-                    {o.whatsapp && (
-                      <a href={whatsappLink(`Bonjour ${o.customerName}, concernant votre commande ${o.orderNumber} chez Sabreen Shop.`)} target="_blank" className="inline-flex items-center gap-1.5 text-xs font-bold bg-whatsapp text-white rounded-full px-3 py-1.5 hover:bg-whatsapp-dark transition">
+                    {o.whatsapp || o.phone ? (
+                      <a href={clientWa(o)} target="_blank" className="inline-flex items-center gap-1.5 text-xs font-bold bg-whatsapp text-white rounded-full px-3 py-1.5 hover:bg-whatsapp-dark transition" title="Message WhatsApp pré-rempli au client">
                         <MessageCircle className="w-3.5 h-3.5" /> Contacter client
                       </a>
-                    )}
+                    ) : null}
                     <select value={o.status} onChange={(e) => setStatus(o.id, e.target.value)} className="text-xs font-bold rounded-full border border-sabren-gray px-3 py-1.5 bg-white outline-none focus:border-sabren-gold">
                       {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>

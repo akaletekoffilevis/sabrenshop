@@ -9,7 +9,7 @@ export default async function AdminAvis() {
 
   return (
     <div>
-      <PageHeader title="Avis clients" subtitle={pending > 0 ? `${pending} avis en attente de modération` : "Tous les avis sont modérés"} />
+      <PageHeader title="Avis clients" subtitle={pending > 0 ? `${pending} avis masqués` : "Les avis sont publiés immédiatement — supprimez si besoin."} />
       {reviews.length === 0 ? (
         <div className="bg-white rounded-2xl border border-sabren-gray p-10 text-center">
           <MessageSquareQuote className="w-10 h-10 mx-auto text-sabren-gold mb-3" />

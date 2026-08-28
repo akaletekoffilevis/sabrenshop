@@ -20,6 +20,14 @@ const sSchema = z.object({
   facebook: z.string().optional().nullable(),
   instagram: z.string().optional().nullable(),
   tiktok: z.string().optional().nullable(),
+  socialLinks: z
+    .array(
+      z.object({
+        label: z.string().min(1),
+        url: z.string(),
+      })
+    )
+    .optional(),
 });
 
 async function guard() {
@@ -37,7 +45,21 @@ export async function PUT(req: Request) {
   if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });
   const parsed = sSchema.safeParse(await req.json());
   if (!parsed.success) return Response.json({ error: "Données invalides" }, { status: 400 });
-  const data = { ...parsed.data, email: parsed.data.email || null, address: parsed.data.address || null, promoBarText: parsed.data.promoBarText || null, freeDeliveryThreshold: parsed.data.freeDeliveryThreshold || null, promoBarActive: parsed.data.promoBarActive ?? true };
+  const socialLinks = (parsed.data.socialLinks ?? [])
+    .filter((l) => l.url.trim().length >= 3)
+    .map((l) => ({
+      label: l.label.trim() || "Autre",
+      url: /^https?:\/\//i.test(l.url) ? l.url : `https://${l.url}`,
+    }));
+  const data = {
+    ...parsed.data,
+    socialLinks: JSON.stringify(socialLinks),
+    email: parsed.data.email || null,
+    address: parsed.data.address || null,
+    promoBarText: parsed.data.promoBarText || null,
+    freeDeliveryThreshold: parsed.data.freeDeliveryThreshold || null,
+    promoBarActive: parsed.data.promoBarActive ?? true,
+  };
   const settings = await prisma.settings.upsert({ where: { id: "default" }, update: data, create: { id: "default", ...data } });
   return Response.json({ ok: true, settings });
 }

@@ -1,8 +1,38 @@
 import Link from "next/link";
-import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
-import { ShieldCheck, Truck, RotateCcw, MessageCircle, Phone, MapPin, Clock, Heart, Globe, Camera, Mail, Send } from "lucide-react";
+import { getSettings } from "@/lib/data";
+import { ShieldCheck, Truck, RotateCcw, MessageCircle, Phone, MapPin, Clock, Heart, Globe, Camera, Mail, Send, Facebook, Instagram, Youtube, Twitter, Music2, type LucideIcon } from "lucide-react";
 
-export function Footer() {
+const SOCIAL_ICONS: Record<string, LucideIcon> = {
+  facebook: Facebook,
+  instagram: Instagram,
+  tiktok: Music2,
+  youtube: Youtube,
+  twitter: Twitter,
+  whatsa: MessageCircle,
+  snapchat: Camera,
+  telegram: Send,
+};
+
+function SocialIcon({ label, className }: { label: string; className?: string }) {
+  const key = label.toLowerCase();
+  for (const k of Object.keys(SOCIAL_ICONS)) {
+    if (key.includes(k)) {
+      const Icon = SOCIAL_ICONS[k];
+      return <Icon className={className} />;
+    }
+  }
+  return <Globe className={className} />;
+}
+
+export async function Footer() {
+  const settings = await getSettings();
+  const socials = settings.socialLinks ?? [];
+  const shopName = settings.shopName || "SABREEN’SHOP";
+  const phone = settings.whatsapp ? settings.whatsapp.replace(/^\+?/g, "") : "22789148454";
+  const phoneDisplay = settings.phone || "+227 89 14 84 54";
+  const email = settings.email || "soumanabaaminata@gmail.com";
+  const address = settings.address || "Niamey, Niger";
+
   return (
     <footer className="bg-sabren-black text-white mt-14">
       <div className="border-b border-white/10">
@@ -29,16 +59,25 @@ export function Footer() {
       <div className="max-w-7xl mx-auto container-px py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
         <div className="col-span-2 md:col-span-1">
           <div className="flex items-center gap-2.5">
-            <img src="/logosabrenshop.jpeg" alt="Sabreen'Shop" className="w-10 h-10 rounded-xl object-cover" loading="lazy" decoding="async" />
-            <span className="font-display font-black text-lg">SABREEN<span className="text-sabren-gold">’</span>SHOP</span>
+            <img src="/logosabrenshop.jpeg" alt={shopName} className="w-10 h-10 rounded-xl object-cover" loading="lazy" decoding="async" />
+            <span className="font-display font-black text-lg">{shopName}</span>
           </div>
           <p className="text-sm text-white/75 mt-4 leading-relaxed">
             Les produits tendance qui correspondent à votre style. Stanley, nounours, vêtements, téléphones et accessoires de mode — livrés partout au Niger (frais de livraison à la charge du client).
           </p>
           <div className="flex gap-3 mt-5">
-            <a href="#" aria-label="Facebook" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><Globe className="w-4 h-4" /></a>
-            <a href="#" aria-label="Instagram" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><Camera className="w-4 h-4" /></a>
-            <a href="#" aria-label="TikTok" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><Send className="w-4 h-4" /></a>
+            {socials.length === 0 ? (
+              <>
+                <a href="#" aria-label="Facebook" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><Facebook className="w-4 h-4" /></a>
+                <a href="#" aria-label="Instagram" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><Camera className="w-4 h-4" /></a>
+              </>
+            ) : (
+              socials.map((s) => (
+                <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition">
+                  <SocialIcon label={s.label} className="w-4 h-4" />
+                </a>
+              ))
+            )}
           </div>
         </div>
 
@@ -68,13 +107,13 @@ export function Footer() {
         <div>
           <h4 className="text-sabren-gold font-bold text-sm uppercase tracking-wide mb-4">Contact</h4>
           <ul className="space-y-3 text-sm text-white/75">
-            <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-sabren-gold shrink-0" /> {WHATSAPP_DISPLAY}</li>
+            <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-sabren-gold shrink-0" /> {phoneDisplay}</li>
             <li>
-              <a href="mailto:soumanabaaminata@gmail.com" className="flex items-center gap-2 hover:text-sabren-gold transition">
-                <Mail className="w-4 h-4 text-sabren-gold shrink-0" /> <span className="break-all">soumanabaaminata@gmail.com</span>
+              <a href={`mailto:${email}`} className="flex items-center gap-2 hover:text-sabren-gold transition">
+                <Mail className="w-4 h-4 text-sabren-gold shrink-0" /> <span className="break-all">{email}</span>
               </a>
             </li>
-            <li className="flex items-center gap-2"><MapPin className="w-4 h-4 text-sabren-gold shrink-0" /> Niamey, Niger</li>
+            <li className="flex items-center gap-2"><MapPin className="w-4 h-4 text-sabren-gold shrink-0" /> {address}</li>
             <li className="flex items-center gap-2"><Clock className="w-4 h-4 text-sabren-gold shrink-0" /> Lun–Sam : 8h – 20h</li>
           </ul>
         </div>
@@ -82,7 +121,7 @@ export function Footer() {
 
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto container-px py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/55">
-          <span>© {new Date().getFullYear()} SABREEN’SHOP — Votre boutique, votre style, votre choix.</span>
+          <span>© {new Date().getFullYear()} {shopName} — Votre boutique, votre style, votre choix.</span>
           <span className="flex items-center gap-1.5">
             Fait avec <Heart className="w-3 h-3 text-sabren-pink fill-sabren-pink" /> au Niger
           </span>

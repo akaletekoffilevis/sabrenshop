@@ -9,6 +9,13 @@ export type SiteSettings = {
   promoBarText: string;
   promoBarActive: boolean;
   deliveryFee: number | null;
+  freeDeliveryThreshold?: number | null;
+  socialLinks?: Array<{ label: string; url: string }>;
+  shopName?: string | null;
+  phone?: string | null;
+  whatsapp?: string | null;
+  email?: string | null;
+  address?: string | null;
 };
 
 export const DEFAULT_SETTINGS: SiteSettings = {
@@ -26,6 +33,15 @@ export async function getSettings(): Promise<SiteSettings> {
   try {
     const s = await prisma.settings.findFirst();
     if (!s) return DEFAULT_SETTINGS;
+    let socialLinks: Array<{ label: string; url: string }> = [];
+    try {
+      const raw = JSON.parse(s.socialLinks || "[]");
+      socialLinks = Array.isArray(raw)
+        ? raw.filter((x: { label?: string; url?: string }) => x && typeof x.url === "string" && x.url.trim())
+        : [];
+    } catch {
+      socialLinks = [];
+    }
     return {
       heroTitle: s.heroTitle || DEFAULT_SETTINGS.heroTitle,
       heroSubtitle: s.heroSubtitle || DEFAULT_SETTINGS.heroSubtitle,
@@ -35,6 +51,13 @@ export async function getSettings(): Promise<SiteSettings> {
       promoBarText: s.promoBarText || DEFAULT_SETTINGS.promoBarText,
       promoBarActive: s.promoBarActive ?? true,
       deliveryFee: s.deliveryFee ?? null,
+      freeDeliveryThreshold: s.freeDeliveryThreshold ?? null,
+      socialLinks,
+      shopName: s.shopName ?? null,
+      phone: s.phone ?? null,
+      whatsapp: s.whatsapp ?? null,
+      email: s.email ?? null,
+      address: s.address ?? null,
     };
   } catch (err) {
     console.error("[data] settings load failed:", err);

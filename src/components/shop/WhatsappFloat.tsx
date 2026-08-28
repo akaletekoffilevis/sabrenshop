@@ -45,11 +45,10 @@ export function WhatsappFloat() {
         onClick={() => {
           if (open) setOpen(false);
         }}
-        className="fixed bottom-4 right-4 z-50 bg-whatsapp hover:bg-whatsapp-dark text-white rounded-full shadow-2xl p-3.5 flex items-center gap-2 transition hover:scale-105"
+        className="fixed bottom-4 right-4 z-50 bg-whatsapp hover:bg-whatsapp-dark text-white rounded-full shadow-2xl p-3.5 flex items-center justify-center transition hover:scale-105 w-14 h-14"
         aria-label="WhatsApp"
       >
-        <MessageCircle className="w-6 h-6" />
-        <span className="hidden sm:block text-sm font-bold pr-1">Commander sur WhatsApp</span>
+        <MessageCircle className="w-7 h-7" />
         <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
       </a>
     </>

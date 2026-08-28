@@ -12,7 +12,7 @@ export default async function CommandePage() {
       <PromoBar />
       <Header />
       <main className="flex-1 max-w-4xl mx-auto container-px lg:px-8 py-6 w-full">
-        <CheckoutClient deliveryFee={settings.deliveryFee ?? 100} />
+        <CheckoutClient deliveryFee={settings.deliveryFee ?? 100} freeDeliveryThreshold={settings.freeDeliveryThreshold ?? null} />
       </main>
       <Footer />
       <WhatsappFloat />

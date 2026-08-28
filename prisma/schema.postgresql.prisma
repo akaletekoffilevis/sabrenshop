@@ -219,6 +219,7 @@ model Settings {
   facebook              String?
   instagram             String?
   tiktok                String?
+  socialLinks           String?  @default("[]") // JSON: [{label, url}]
   updatedAt             DateTime @updatedAt
 }
 

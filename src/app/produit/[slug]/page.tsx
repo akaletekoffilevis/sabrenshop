@@ -60,17 +60,32 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
       return [];
     });
 
-  const similar = await (product.categoryId
-    ? prisma.product.findMany({
+  type SimilarProduct = NonNullable<Awaited<ReturnType<typeof getProduct>>>;
+
+  let similar: SimilarProduct[] = [];
+  let similarCrossed = false;
+  try {
+    if (product.categoryId) {
+      similar = (await prisma.product.findMany({
         where: { isActive: true, categoryId: product.categoryId, NOT: { id: product.id } },
         take: 4,
-        orderBy: { createdAt: "desc" },
-      })
-    : Promise.resolve([])
-  ).catch((err) => {
+        orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+      })) as SimilarProduct[];
+    }
+    if (similar.length < 4) {
+      const taken = similar.map((p) => p.id);
+      const fill = (await prisma.product.findMany({
+        where: { isActive: true, NOT: { id: { in: [...taken, product.id] } } },
+        take: 4 - similar.length,
+        orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+      })) as SimilarProduct[];
+      if (fill.length > 0) similarCrossed = similar.length > 0;
+      similar = [...similar, ...fill];
+    }
+  } catch (err) {
     console.error("[produit] produits similaires indisponibles", err);
-    return [];
-  });
+    similar = [];
+  }
 
   product.images = (Array.isArray(product.images) ? product.images : []) as string[];
   product.colors = (Array.isArray(product.colors) ? product.colors : []) as string[];
@@ -214,7 +229,7 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
         {similar.length > 0 && (
           <ProductSection
             id="similaires"
-            kicker="Dans la même catégorie"
+            kicker={similarCrossed ? "Sélection pour vous" : "Dans la même catégorie"}
             kickerIcon={<Sparkles className="w-4 h-4" />}
             title="Vous aimerez aussi"
             products={similar}

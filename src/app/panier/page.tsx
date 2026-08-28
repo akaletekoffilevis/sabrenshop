@@ -12,7 +12,7 @@ export default async function PanierPage() {
       <PromoBar />
       <Header />
       <main className="flex-1 max-w-6xl mx-auto container-px lg:px-8 py-6 w-full">
-        <PanierClient deliveryFee={settings.deliveryFee ?? 100} />
+        <PanierClient deliveryFee={settings.deliveryFee ?? 100} freeDeliveryThreshold={settings.freeDeliveryThreshold ?? null} />
       </main>
       <Footer />
       <WhatsappFloat />

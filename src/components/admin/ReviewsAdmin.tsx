@@ -30,7 +30,7 @@ export function ReviewsAdmin({ initial }: { initial: Rev[] }) {
       <div className="flex gap-2 mb-5">
         {(["all", "pending", "approved"] as const).map((f) => (
           <button key={f} onClick={() => setFilter(f)} className={`rounded-full px-4 py-1.5 text-xs font-bold transition ${filter === f ? "bg-sabren-black text-white" : "bg-white border border-sabren-gray hover:border-sabren-gold"}`}>
-            {f === "all" ? "Tous" : f === "pending" ? "À modérer" : "Approuvés"}
+            {f === "all" ? "Tous" : f === "pending" ? "Masqués" : "Publiés"}
           </button>
         ))}
       </div>
@@ -49,7 +49,7 @@ export function ReviewsAdmin({ initial }: { initial: Rev[] }) {
                       <Star key={i} className={`w-3.5 h-3.5 ${i < r.rating ? "fill-sabren-gold text-sabren-gold" : "text-black/10"}`} />
                     ))}
                   </span>
-                  <Badge tone={r.isApproved ? "green" : "gold"}>{r.isApproved ? "Publié" : "En attente"}</Badge>
+                  <Badge tone={r.isApproved ? "green" : "gold"}>{r.isApproved ? "Publié" : "Masqué"}</Badge>
                 </div>
                 <p className="text-xs text-sabren-black/45">{r.productName} · {new Date(r.createdAt).toLocaleDateString("fr-FR")}</p>
                 {r.comment && <p className="text-sm text-sabren-black/70 mt-2">{r.comment}</p>}

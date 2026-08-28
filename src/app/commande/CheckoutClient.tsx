@@ -2,13 +2,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, deliveryCost } from "@/lib/utils";
 import { useState } from "react";
 import { ShoppingBag, UserRound, Phone, MapPin, MessageCircle, Banknote, Loader2, Store, Truck, ChevronLeft, Tag } from "lucide-react";
 
 const inputCls = "w-full bg-white border border-sabren-gray rounded-xl pl-10 pr-3.5 py-2.5 text-sm outline-none focus:border-sabren-gold transition";
 
-export function CheckoutClient({ deliveryFee = 100 }: { deliveryFee?: number }) {
+export function CheckoutClient({ deliveryFee = 100, freeDeliveryThreshold = null }: { deliveryFee?: number; freeDeliveryThreshold?: number | null }) {
   const router = useRouter();
   const { items, total, clear, promo } = useCart();
 
@@ -22,7 +22,9 @@ export function CheckoutClient({ deliveryFee = 100 }: { deliveryFee?: number }) 
 
   const subTotal = total();
   const discount = promo ? Math.min(promo.type === "FIXED" ? promo.value : Math.round((subTotal * promo.value) / 100), subTotal) : 0;
-  const grandTotal = subTotal - discount + (items.length && !isPickup ? deliveryFee : 0);
+  const ship = items.length ? deliveryCost(subTotal, deliveryFee, freeDeliveryThreshold, isPickup) : 0;
+  const freeDelivery = items.length > 0 && !isPickup && ship === 0;
+  const grandTotal = subTotal - discount + ship;
 
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -110,16 +112,23 @@ export function CheckoutClient({ deliveryFee = 100 }: { deliveryFee?: number }) 
 
           <div className="bg-white rounded-2xl border border-sabren-gray shadow-card p-5">
             <h2 className="flex items-center gap-2 font-bold text-sm mb-4"><MapPin className="w-4 h-4 text-sabren-gold" /> Livraison ou retrait</h2>
-            <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
               <button type="button" onClick={() => setIsPickup(false)} className={`flex flex-col items-start gap-0.5 rounded-xl border-2 px-4 py-3 text-sm font-bold transition text-left ${!isPickup ? "border-sabren-gold bg-sabren-gold/10" : "border-sabren-gray"}`}>
                 <span className="flex items-center gap-2"><Truck className="w-4 h-4" /> Livraison</span>
-                <span className="text-[11px] font-normal text-sabren-black/60">+ {formatPrice(deliveryFee)} (frais à la charge du client)</span>
+                <span className={`text-[11px] font-normal ${freeDelivery ? "text-green-600 font-bold" : "text-sabren-black/60"}`}>
+                  {freeDelivery ? "Offerente dès ce montant" : `+ ${formatPrice(deliveryFee)} (frais à la charge du client)`}
+                </span>
               </button>
               <button type="button" onClick={() => setIsPickup(true)} className={`flex flex-col items-start gap-0.5 rounded-xl border-2 px-4 py-3 text-sm font-bold transition text-left ${isPickup ? "border-sabren-gold bg-sabren-gold/10" : "border-sabren-gray"}`}>
                 <span className="flex items-center gap-2"><Store className="w-4 h-4" /> Retrait boutique</span>
                 <span className="text-[11px] font-normal text-sabren-black/60">0 FCFA — Niamey</span>
               </button>
             </div>
+            {!isPickup && freeDeliveryThreshold ? (
+              <p className="mb-4 -mt-2 text-xs font-semibold text-green-600 bg-green-50 rounded-full px-3 py-2 inline-flex items-center gap-1.5">
+                <Truck className="w-3.5 h-3.5" /> Livraison offerte à partir de {formatPrice(freeDeliveryThreshold)}
+              </p>
+            ) : null}
             {!isPickup ? (
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="relative">
@@ -145,7 +154,7 @@ export function CheckoutClient({ deliveryFee = 100 }: { deliveryFee?: number }) 
 
           <div className="bg-white rounded-2xl border border-sabren-gray shadow-card p-5">
             <h2 className="flex items-center gap-2 font-bold text-sm mb-4"><Banknote className="w-4 h-4 text-sabren-gold" /> Paiement</h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button type="button" onClick={() => setPaymentMethod("COD")} className={`flex flex-col items-start gap-1 rounded-xl border-2 px-4 py-3 text-sm font-bold transition text-left ${paymentMethod === "COD" ? "border-sabren-gold bg-sabren-gold/10" : "border-sabren-gray"}`}>
                 <span>Paiement à la livraison</span>
                 <span className="text-[11px] font-normal text-sabren-black/50">Payez en espèces à la réception</span>
@@ -176,7 +185,8 @@ export function CheckoutClient({ deliveryFee = 100 }: { deliveryFee?: number }) 
                 <span className="font-semibold">-{formatPrice(discount)}</span>
               </div>
             )}
-            <div className="flex justify-between"><span className="text-sabren-black/55">Frais de livraison</span><span className="font-semibold">{isPickup ? "0 FCFA" : formatPrice(deliveryFee)}</span></div>
+            <div className="flex justify-between"><span className="text-sabren-black/55">Frais de livraison</span><span className={`font-semibold ${freeDelivery ? "text-green-600" : ""}`}>{isPickup || freeDelivery ? "0 FCFA" : formatPrice(ship)}</span></div>
+            {freeDelivery && <p className="text-[11px] font-bold text-green-600">Livraison offerte appliquée</p>}
             <div className="flex justify-between items-center pt-1"><span className="font-bold">Total</span><span className="font-black text-lg">{formatPrice(grandTotal)}</span></div>
           </div>
 
