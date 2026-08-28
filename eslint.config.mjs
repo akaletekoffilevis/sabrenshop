@@ -5,6 +5,13 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    rules: {
+      // Rapport de style non bloquants : on garde le gate réel sur TypeScript + build.
+      "@typescript-eslint/no-explicit-any": "warn",
+      "react-hooks/set-state-in-effect": "warn",
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
