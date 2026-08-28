@@ -38,7 +38,7 @@ export function LoginForm() {
   return (
     <div className="w-full max-w-md bg-white rounded-3xl border border-sabren-gray shadow-card-hover p-7 md:p-9 animate-fade-up">
       <div className="text-center mb-7">
-        <div className="w-14 h-14 mx-auto rounded-2xl bg-sabren-black flex items-center justify-center text-sabren-gold font-display font-black text-2xl mb-4">S</div>
+        <img src="/logosabrenshop.jpeg" alt="Sabren'Shop" className="w-14 h-14 mx-auto rounded-2xl object-cover mb-4" loading="lazy" decoding="async" />
         <h1 className="font-display font-black text-2xl">Bon retour !</h1>
         <p className="text-sm text-sabren-black/55 mt-1">Connectez-vous pour commander plus vite.</p>
       </div>

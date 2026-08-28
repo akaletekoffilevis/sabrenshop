@@ -1,22 +1,19 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
-import { ArrowRight, Sparkles, MessageCircle } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { getSettings } from "@/lib/data";
 
 export async function Hero() {
-  let s;
-  try {
-    s = await prisma.settings.findFirst();
-  } catch {}
-  const title = s?.heroTitle || "SABREN'SHOP";
-  const subtitle = s?.heroSubtitle || "Les produits tendance qui correspondent à votre style.";
-  const image = s?.heroImage || "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1600";
-  const cta1 = s?.heroCta1Text || "DÉCOUVRIR LA BOUTIQUE";
-  const cta2 = s?.heroCta2Text || "VOIR LES PROMOTIONS";
+  const s = await getSettings();
+  const title = s.heroTitle;
+  const subtitle = s.heroSubtitle;
+  const image = s.heroImage;
+  const cta1 = s.heroCta1Text;
+  const cta2 = s.heroCta2Text;
 
   return (
     <section className="max-w-7xl mx-auto container-px lg:px-8 pt-4">
       <div className="relative rounded-[2rem] overflow-hidden bg-sabren-black isolate min-h-[420px] md:min-h-[520px] flex items-center">
-        <img src={image} alt={title} className="absolute inset-0 w-full h-full object-cover opacity-55 scale-105" />
+        <img src={image} alt={title} className="absolute inset-0 w-full h-full object-cover opacity-55 scale-105" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-r from-sabren-black/90 via-sabren-black/55 to-transparent" />
         <div className="absolute -right-24 -top-24 w-72 h-72 rounded-full bg-sabren-pink/25 blur-3xl" />
         <div className="absolute -bottom-28 right-32 w-64 h-64 rounded-full bg-sabren-gold/20 blur-3xl" />
@@ -61,20 +58,8 @@ export async function Hero() {
               <CheckIcon className="w-3.5 h-3.5 text-sabren-gold" /> Livraison partout au Niger
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckIcon className="w-3.5 h-3.5 text-sabren-gold" /> Commande rapide WhatsApp
+              <CheckIcon className="w-3.5 h-3.5 text-sabren-gold" /> Retour facile & échange
             </span>
-          </div>
-        </div>
-
-        <div className="hidden lg:flex absolute bottom-8 right-10 items-center gap-3 bg-white/95 backdrop-blur rounded-2xl px-5 py-3.5 shadow-card-hover animate-float">
-          <div className="w-11 h-11 rounded-xl bg-whatsapp flex items-center justify-center text-white">
-            <MessageCircle className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-[10px] uppercase tracking-wider font-bold text-sabren-black/50">Commander sur WhatsApp</p>
-            <a href={`https://wa.me/22789148454`} target="_blank" className="text-sm font-bold text-sabren-black hover:text-whatsapp-dark transition">
-              +227 89 14 84 54
-            </a>
           </div>
         </div>
       </div>

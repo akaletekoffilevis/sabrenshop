@@ -36,6 +36,11 @@ export const metadata: Metadata = {
     description: "Les produits tendance qui correspondent à votre style. Livraison partout au Niger.",
     type: "website",
     locale: "fr_NE",
+    images: ["/logosabrenshop.jpeg"],
+  },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/logosabrenshop.jpeg",
   },
 };
 

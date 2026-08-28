@@ -104,7 +104,7 @@ export default async function AdminDashboard() {
           )}
           <div className="mt-5 bg-sabren-cream border border-sabren-gold/30 rounded-2xl p-4 text-sm">
             <p className="font-bold">Besoin d'aide ?</p>
-            <p className="text-sabren-black/55 mt-1">Gérez produits, catégories, commandes et médias depuis ce panneau. Tout s'enregistre en base.</p>
+            <p className="text-sabren-black/55 mt-1">Gérez produits, catégories, commandes et avis clients depuis ce panneau. Tout s'enregistre en base.</p>
           </div>
         </Card>
       </div>

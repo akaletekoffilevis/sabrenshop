@@ -70,7 +70,7 @@ export function ProductActions({ product }: { product: any }) {
           <MessageCircle className="w-4 h-4" /> COMMANDER SUR WHATSAPP
         </a>
       </div>
-      <p className="text-center text-xs text-sabren-black/45">WhatsApp : +227 89 14 84 54 — Réponse rapide</p>
+      <p className="text-center text-xs text-sabren-black/45">Paiement à la livraison possible, sans avance.</p>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { LayoutDashboard, Package, Tags, ShoppingCart, Images, Settings2, LogOut, ExternalLink, Menu, X } from "lucide-react";
+import { LayoutDashboard, Package, Tags, ShoppingCart, Settings2, LogOut, ExternalLink, Menu, X, MessageSquareQuote } from "lucide-react";
 import { useState } from "react";
 
 export const adminLinks = [
@@ -10,7 +10,7 @@ export const adminLinks = [
   { label: "Produits", href: "/admin/produits", icon: Package },
   { label: "Catégories", href: "/admin/categories", icon: Tags },
   { label: "Commandes", href: "/admin/commandes", icon: ShoppingCart },
-  { label: "Médias", href: "/admin/medias", icon: Images },
+  { label: "Avis", href: "/admin/avis", icon: MessageSquareQuote },
   { label: "Paramètres", href: "/admin/parametres", icon: Settings2 },
 ];
 

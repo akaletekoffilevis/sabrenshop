@@ -65,6 +65,7 @@ export function ProductForm({ product, categories }: { product?: Product | null;
       for (const file of Array.from(files)) {
         const fd = new FormData();
         fd.append("file", file);
+        fd.append("name", form.name.trim() || "produit");
         const res = await fetch("/api/upload", { method: "POST", body: fd });
         const data = await res.json();
         if (res.ok && data.url) set("images", [...form.images, data.url]);
@@ -140,7 +141,7 @@ export function ProductForm({ product, categories }: { product?: Product | null;
         </Field>
 
         <div className="space-y-4">
-          <Field label="Images" hint="Plusieurs photos possibles. Upload local (dev) ou Blob (prod).">
+          <Field label="Images" hint="Plusieurs photos acceptées — renommées d'après le nom du produit.">
             <div className="space-y-2">
               <div className="grid grid-cols-4 gap-2">
                 {form.images.map((img, i) => (

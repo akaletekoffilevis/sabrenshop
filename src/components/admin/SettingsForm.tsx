@@ -70,7 +70,7 @@ export function SettingsForm({ settings }: { settings: Settings }) {
           <Field label="Sous-titre du hero">
             <input className={inputCls} value={form.heroSubtitle ?? ""} onChange={(e) => set("heroSubtitle", e.target.value)} />
           </Field>
-          <Field label="Image du hero (URL)" hint="Copiez une URL depuis /admin/medias">
+          <Field label="Image du hero (URL)" hint="URL hébergée (https://...) ou fichier /uploads/...">
             <input className={inputCls} value={form.heroImage ?? ""} onChange={(e) => set("heroImage", e.target.value)} placeholder="/uploads/....jpg ou https://..." />
           </Field>
           <div className="grid grid-cols-2 gap-3 self-end">

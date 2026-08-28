@@ -1,10 +1,11 @@
 "use client";
 import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
-import { ShoppingBag, Search, UserRound, Menu, X, Phone, MessageCircle, ChevronDown, LayoutGrid, Flame, Sparkles, Tags, Truck as TruckMini, Store as StoreIcon, LayoutDashboard } from "lucide-react";
+import { useWishlist } from "@/hooks/useWishlist";
+import { ShoppingBag, Search, UserRound, Menu, X, Phone, ChevronDown, LayoutGrid, Flame, Sparkles, Tags, Truck as TruckMini, Store as StoreIcon, LayoutDashboard, Heart } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { WHATSAPP_DISPLAY, whatsappLink } from "@/lib/whatsapp";
+import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 import { CategoryIcon } from "@/components/ui/category-icon";
 
 type Cat = { label: string; href: string; icon: string };
@@ -30,6 +31,7 @@ function NavItemIcon({ label, icon }: { label: string; icon?: string }) {
 
 export function ShopHeader({ categories }: { categories: Cat[] }) {
   const count = useCart((s) => s.items.reduce((n, i) => n + i.quantity, 0));
+  const wishCount = useWishlist((s) => s.ids.length);
   const { data: session } = useSession();
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "ADMIN";
   const [open, setOpen] = useState(false);
@@ -66,12 +68,10 @@ export function ShopHeader({ categories }: { categories: Cat[] }) {
         </button>
 
         <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-          <div className="w-10 h-10 rounded-xl bg-sabren-black flex items-center justify-center text-sabren-gold font-display font-black text-xl group-hover:scale-105 transition shadow-card">
-            S
-          </div>
+          <img src="/logosabrenshop.jpeg" alt="Sabren'Shop" className="w-11 h-11 rounded-xl object-cover group-hover:scale-105 transition shadow-card" loading="lazy" decoding="async" />
           <div className="leading-none">
             <span className="font-display font-black tracking-tight text-lg md:text-xl">SABREN<span className="text-sabren-gold">’</span>SHOP</span>
-            <span className="hidden sm:block text-[10px] uppercase tracking-[0.2em] text-sabren-gold font-semibold">Votre style · Votre choix</span>
+            <span className="hidden sm:block text-[10px] uppercase tracking-[0.2em] text-sabren-gold-ink font-semibold">Votre style · Votre choix</span>
           </div>
         </Link>
 
@@ -96,9 +96,20 @@ export function ShopHeader({ categories }: { categories: Cat[] }) {
               <span className="text-[10px] font-semibold mt-0.5">Admin</span>
             </Link>
           )}
-          <Link href="/connexion" className="hidden sm:flex flex-col items-center px-3 py-1 rounded-xl hover:bg-sabren-gray transition">
+          <Link href={session ? "/compte" : "/connexion"} className="hidden sm:flex flex-col items-center px-3 py-1 rounded-xl hover:bg-sabren-gray transition">
             <UserRound className="w-5 h-5" />
-            <span className="text-[10px] font-semibold mt-0.5">Compte</span>
+            <span className="text-[10px] font-semibold mt-0.5">{session ? "Compte" : "Connexion"}</span>
+          </Link>
+          <Link href="/favoris" className="hidden sm:flex flex-col items-center px-3 py-1 rounded-xl hover:bg-sabren-gray transition">
+            <span className="relative">
+              <Heart className="w-5 h-5" />
+              {wishCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-sabren-pink text-sabren-black text-[10px] font-bold h-4 min-w-4 rounded-full flex items-center justify-center px-1">
+                  {wishCount}
+                </span>
+              )}
+            </span>
+            <span className="text-[10px] font-semibold mt-0.5">Favoris</span>
           </Link>
           <Link href="/panier" className="relative flex flex-col items-center px-3 py-1 rounded-xl hover:bg-sabren-gray transition">
             <span className="relative">
@@ -111,13 +122,6 @@ export function ShopHeader({ categories }: { categories: Cat[] }) {
             </span>
             <span className="text-[10px] font-semibold mt-0.5">Panier</span>
           </Link>
-          <a
-            href={whatsappLink("Bonjour Sabren'Shop !")}
-            target="_blank"
-            className="hidden xl:flex items-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white rounded-full px-4 py-2 text-sm font-semibold transition shadow-card"
-          >
-            <MessageCircle className="w-4 h-4" /> WhatsApp
-          </a>
         </div>
       </div>
 
@@ -127,7 +131,7 @@ export function ShopHeader({ categories }: { categories: Cat[] }) {
           <div className="relative">
             <button
               onClick={() => setCatsOpen(!catsOpen)}
-              className={`inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wide py-3 px-3.5 transition ${catsOpen ? "text-sabren-black" : "text-sabren-gold hover:text-sabren-gold-hover"}`}
+              className={`inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wide py-3 px-3.5 transition ${catsOpen ? "text-sabren-black" : "text-sabren-gold-ink hover:text-sabren-black"}`}
             >
               <LayoutGrid className="w-4 h-4" /> Catégories <ChevronDown className={`w-3 h-3 transition ${catsOpen ? "rotate-180" : ""}`} />
             </button>
@@ -168,7 +172,7 @@ export function ShopHeader({ categories }: { categories: Cat[] }) {
               key={n.href}
               href={n.href}
               className={`inline-flex items-center gap-1.5 px-3.5 py-3 text-sm whitespace-nowrap relative ${
-                n.label === "Promotions" ? "text-sabren-gold font-bold" : "text-sabren-black/80"
+                n.label === "Promotions" ? "text-sabren-gold-ink font-bold" : "text-sabren-black/80"
               } hover:text-sabren-gold transition-colors`}
             >
               <NavItemIcon label={n.label} icon={n.icon} /> {n.label}
@@ -213,8 +217,11 @@ export function ShopHeader({ categories }: { categories: Cat[] }) {
                 <LayoutDashboard className="w-4 h-4 text-sabren-gold" /> Administration
               </Link>
             )}
-            <Link href="/connexion" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
-              <UserRound className="w-4 h-4 text-sabren-gold" /> Mon compte
+            <Link href={session ? "/compte" : "/connexion"} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
+              <UserRound className="w-4 h-4 text-sabren-gold" /> {session ? "Mon compte" : "Se connecter"}
+            </Link>
+            <Link href="/favoris" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
+              <Heart className="w-4 h-4 text-sabren-gold" /> Mes favoris{wishCount > 0 ? ` (${wishCount})` : ""}
             </Link>
           </div>
         </div>

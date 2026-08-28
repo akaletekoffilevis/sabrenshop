@@ -38,7 +38,7 @@ export function ProductGallery({ images, name }: { images: string[]; name: strin
               onClick={() => setActive(i)}
               className={`relative w-20 h-20 shrink-0 rounded-xl overflow-hidden border-2 bg-sabren-cream transition ${active === i ? "border-sabren-gold shadow-gold" : "border-transparent opacity-70 hover:opacity-100"}`}
             >
-              {img ? <img src={img} alt={`${name} ${i + 1}`} className="w-full h-full object-cover" /> : <span className="flex items-center justify-center h-full text-sabren-black/20"><ImageIcon className="w-5 h-5" /></span>}
+              {img ? <img src={img} alt={`${name} ${i + 1}`} className="w-full h-full object-cover" loading="lazy" decoding="async" /> : <span className="flex items-center justify-center h-full text-sabren-black/20"><ImageIcon className="w-5 h-5" /></span>}
             </button>
           ))}
         </div>

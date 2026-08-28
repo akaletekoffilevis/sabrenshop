@@ -6,6 +6,7 @@ import { MobileBottomNav } from "@/components/shop/MobileBottomNav";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { CategoryIcon } from "@/components/ui/category-icon";
 import { prisma } from "@/lib/prisma";
+import { getActiveCategories } from "@/lib/data";
 import { SlidersHorizontal, Sparkles, Flame, Tags, Truck, Search } from "lucide-react";
 
 const smartLinks = [
@@ -31,9 +32,8 @@ export default async function BoutiquePage({
 
   try {
     const where: any = { isActive: true };
-    let category: any = null;
     if (params.cat) {
-      category = await prisma.category.findUnique({ where: { slug: params.cat } });
+      const category = await prisma.category.findUnique({ where: { slug: params.cat } });
       if (category) where.categoryId = category.id;
     }
     if (params.best) where.isFeatured = true;
@@ -51,21 +51,14 @@ export default async function BoutiquePage({
         : { createdAt: "desc" as const };
 
     products = await prisma.product.findMany({ where, orderBy });
-  } catch {
-    products = [
-      { id: "f1", slug: "stanley-rose-1-2l", name: "Stanley Gourde Rose 1.2L", price: 18500, compareAtPrice: 25000, images: ["https://images.unsplash.com/photo-1523369364227-24934b335841?w=600"], rating: 4.8, isNew: true, stock: 20 },
-      { id: "f2", slug: "nounours-geant-creme-80cm", name: "Nounours Géant Crème 80cm", price: 22000, compareAtPrice: 28000, images: ["https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=600"], rating: 5, stock: 12 },
-      { id: "f3", slug: "tshirt-sabren-noir", name: "T-Shirt Sabren Noir Premium", price: 8500, compareAtPrice: null, images: ["https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600"], rating: 4.6, stock: 30 },
-      { id: "f4", slug: "sac-tote-creme-or", name: "Sac Tote Crème & Or", price: 12000, compareAtPrice: 15000, images: ["https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=600"], rating: 4.9, isNew: true, stock: 8 },
-    ] as any[];
+  } catch (err) {
+    console.error("[boutique] chargement des produits échoué:", err);
+    products = [];
   }
 
   const sort = params.sort ?? "recent";
 
-  let dbCategories: { name: string; slug: string; icon: string | null }[] = [];
-  try {
-    dbCategories = await prisma.category.findMany({ where: { isActive: true }, orderBy: { position: "asc" }, select: { name: true, slug: true, icon: true } });
-  } catch {}
+  const dbCategories = await getActiveCategories();
 
   const smartActive = Boolean(params.best || params.nouveau || params.promo);
 
@@ -82,7 +75,7 @@ export default async function BoutiquePage({
           {params.cat && (
             <>
               <span>/</span>
-              <span className="capitalize text-sabren-gold font-semibold">{(params.q ?? params.cat)?.replace(/[-_]/g, " ")}</span>
+              <span className="capitalize text-sabren-gold-ink font-semibold">{(params.q ?? params.cat)?.replace(/[-_]/g, " ")}</span>
             </>
           )}
         </nav>

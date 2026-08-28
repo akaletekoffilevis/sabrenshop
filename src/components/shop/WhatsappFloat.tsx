@@ -35,7 +35,6 @@ export function WhatsappFloat() {
             >
               <MessageCircle className="w-4 h-4" /> Démarrer la conversation
             </a>
-            <p className="text-center text-[10px] text-sabren-black/40 mt-2">+227 89 14 84 54</p>
           </div>
         </div>
       )}

@@ -3,7 +3,7 @@ import { Truck, Wallet, MessageCircle, RotateCcw } from "lucide-react";
 const items = [
   { icon: Truck, title: "Livraison partout au Niger", desc: "Niamey & régions" },
   { icon: Wallet, title: "Paiement à la livraison", desc: "C'est vous qui voyez" },
-  { icon: MessageCircle, title: "Commande WhatsApp", desc: "+227 89 14 84 54" },
+  { icon: MessageCircle, title: "Commande WhatsApp", desc: "Réponse rapide" },
   { icon: RotateCcw, title: "Retrait en boutique", desc: "Satisfait ou remplacé" },
 ];
 

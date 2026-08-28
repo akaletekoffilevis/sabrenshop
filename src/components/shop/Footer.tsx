@@ -29,7 +29,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto container-px py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
         <div className="col-span-2 md:col-span-1">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-sabren-gold text-sabren-black flex items-center justify-center font-display font-black text-xl">S</div>
+            <img src="/logosabrenshop.jpeg" alt="Sabren'Shop" className="w-10 h-10 rounded-xl object-cover" loading="lazy" decoding="async" />
             <span className="font-display font-black text-lg">SABREN<span className="text-sabren-gold">’</span>SHOP</span>
           </div>
           <p className="text-sm text-white/60 mt-4 leading-relaxed">

@@ -1,12 +1,9 @@
-import { prisma } from "@/lib/prisma";
+import { getSettings } from "@/lib/data";
 
 export async function PromoBar() {
-  let settings;
-  try {
-    settings = await prisma.settings.findFirst();
-  } catch {}
+  const settings = await getSettings();
   if (settings && !settings.promoBarActive) return null;
-  const text = settings?.promoBarText || "BIENVENUE CHEZ SABREN'SHOP — DÉCOUVREZ NOS NOUVEAUTÉS !";
+  const text = settings.promoBarText;
 
   return (
     <div className="bg-sabren-black text-white text-xs md:text-sm font-medium overflow-hidden">

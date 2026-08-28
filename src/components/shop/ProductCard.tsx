@@ -1,18 +1,23 @@
+"use client";
 import Link from "next/link";
 import { formatPrice, discountPercent } from "@/lib/utils";
-import { Heart, Star, MessageCircle, Image as ImageIcon } from "lucide-react";
+import { Heart, Star, Image as ImageIcon, ShoppingCart } from "lucide-react";
 import { AddToCartButton } from "./AddToCartButton";
+import { useWishlist } from "@/hooks/useWishlist";
 
 export function ProductCard({ product }: { product: any }) {
   const disc = discountPercent(product.price, product.compareAtPrice);
   const img = product.images?.[0];
   const stockLow = product.stock !== undefined && product.stock > 0 && product.stock <= 5;
+  const { ids, toggle } = useWishlist();
+  const key = product.id || product.slug;
+  const wished = ids.includes(key);
 
   return (
     <div className="group relative bg-white rounded-2xl overflow-hidden border border-sabren-gray shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300">
       <Link href={`/produit/${product.slug}`} className="block relative aspect-square bg-sabren-cream overflow-hidden">
         {img ? (
-          <img src={img} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" />
+          <img src={img} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" decoding="async" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-sabren-black/25 bg-sabren-cream">
             <ImageIcon className="w-10 h-10" />
@@ -23,8 +28,12 @@ export function ProductCard({ product }: { product: any }) {
           {product.isNew && <span className="bg-sabren-black text-sabren-gold text-[10px] font-bold px-2 py-1 rounded-full">NOUVEAU</span>}
           {product.isFeatured && !product.isNew && <span className="bg-sabren-gold text-sabren-black text-[10px] font-bold px-2 py-1 rounded-full">MEILLEUR VENDU</span>}
         </div>
-        <button className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/95 backdrop-blur flex items-center justify-center shadow-card hover:text-sabren-pink transition" aria-label="Ajouter aux favoris">
-          <Heart className="w-4 h-4" />
+        <button
+          onClick={(e) => { e.preventDefault(); toggle(key); }}
+          className={`absolute top-2 right-2 w-8 h-8 rounded-full bg-white/95 backdrop-blur flex items-center justify-center shadow-card transition hover:scale-110 ${wished ? "text-sabren-pink" : "text-sabren-black/40 hover:text-sabren-pink"}`}
+          aria-label="Ajouter aux favoris"
+        >
+          <Heart className={`w-4 h-4 ${wished ? "fill-sabren-pink" : ""}`} />
         </button>
         {stockLow && (
           <span className="absolute bottom-2 left-2 bg-white/90 text-[10px] font-semibold text-orange-600 px-2 py-0.5 rounded-full backdrop-blur">
@@ -54,16 +63,8 @@ export function ProductCard({ product }: { product: any }) {
           )}
         </div>
 
-        <div className="mt-3 flex gap-2">
-          <AddToCartButton product={product} className="flex-1" />
-          <a
-            href={`https://wa.me/22789148454?text=${encodeURIComponent(`Bonjour Sabren'Shop,\nJe souhaite commander : ${product.name} - ${formatPrice(product.price)}`)}`}
-            target="_blank"
-            className="inline-flex items-center justify-center w-10 rounded-full bg-whatsapp hover:bg-whatsapp-dark text-white transition"
-            aria-label="Commander sur WhatsApp"
-          >
-            <MessageCircle className="w-4 h-4" />
-          </a>
+        <div className="mt-3">
+          <AddToCartButton product={product} className="w-full" />
         </div>
       </div>
     </div>

@@ -149,7 +149,7 @@ export function CheckoutClient() {
               </button>
               <button type="button" onClick={() => setPaymentMethod("WHATSAPP")} className={`flex flex-col items-start gap-1 rounded-xl border-2 px-4 py-3 text-sm font-bold transition text-left ${paymentMethod === "WHATSAPP" ? "border-sabren-gold bg-sabren-gold/10" : "border-sabren-gray"}`}>
                 <span>WhatsApp</span>
-                <span className="text-[11px] font-normal text-sabren-black/50">Finaliser par message +227 89 14 84 54</span>
+                <span className="text-[11px] font-normal text-sabren-black/50">Finaliser par message WhatsApp</span>
               </button>
             </div>
           </div>

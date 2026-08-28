@@ -59,7 +59,7 @@ export function PanierClient() {
             {items.map((i) => (
               <div key={`${i.id}-${i.color}-${i.size}`} className="bg-white rounded-2xl border border-sabren-gray shadow-card p-3.5 flex gap-4">
                 <Link href={`/produit/${i.slug}`} className="shrink-0 w-24 h-24 rounded-xl overflow-hidden bg-sabren-cream border border-sabren-gray">
-                  {i.image ? <img src={i.image} alt={i.name} className="w-full h-full object-cover" /> : <span className="flex items-center justify-center h-full text-sabren-black/20"><ShoppingBag className="w-5 h-5" /></span>}
+                  {i.image ? <img src={i.image} alt={i.name} className="w-full h-full object-cover" loading="lazy" decoding="async" /> : <span className="flex items-center justify-center h-full text-sabren-black/20"><ShoppingBag className="w-5 h-5" /></span>}
                 </Link>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
@@ -112,7 +112,7 @@ export function PanierClient() {
               </div>
               <div className="flex justify-between text-xs text-sabren-black/45">
                 <span>Livraison partout au Niger</span>
-                <button className="text-sabren-gold hover:underline">Retrait boutique ?</button>
+                <button className="text-sabren-gold-ink hover:underline">Retrait boutique ?</button>
               </div>
               <div className="flex justify-between items-center border-t border-sabren-gray pt-3">
                 <span className="font-bold">Total</span>

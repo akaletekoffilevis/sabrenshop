@@ -8,22 +8,71 @@ import { formatPrice, discountPercent } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { ProductGallery } from "./ProductGallery";
 import { ProductActions } from "./ProductActions";
-import { ShieldCheck, Truck, MessageCircle, RotateCcw, Star, Flower2, Ruler, Layers, Package } from "lucide-react";
+import { ProductReviews } from "@/components/shop/ProductReviews";
+import { ShieldCheck, Truck, MessageCircle, RotateCcw, Star, Flower2, Ruler, Layers, Package, Sparkles } from "lucide-react";
+import type { Metadata } from "next";
+import { ProductSection } from "@/components/shop/ProductSection";
+
+async function getProduct(slug: string) {
+  return prisma.product.findUnique({ where: { slug }, include: { category: true } });
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getProduct(slug).catch((err) => {
+    console.error("[produit] métadonnées : chargement échoué", err);
+    return null;
+  });
+  if (!product) return { title: "Produit introuvable" };
+
+  const base = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const firstImg = Array.isArray(product.images) ? (product.images as string[])[0] : null;
+  const desc = (product.description || `Commandez ${product.name} sur SABREN'SHOP — livraison partout au Niger, paiement à la livraison.`).slice(0, 160);
+
+  return {
+    title: product.name,
+    description: desc,
+    openGraph: {
+      title: product.name,
+      description: desc,
+      type: "website",
+      locale: "fr_NE",
+      siteName: "SABREN'SHOP",
+      images: firstImg ? [{ url: new URL(firstImg, base).toString(), alt: product.name }] : undefined,
+    },
+  };
+}
 
 export default async function ProduitPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  let product: any = null;
-  try {
-    product = await prisma.product.findUnique({ where: { slug }, include: { category: true } });
-  } catch {}
+  const product = await getProduct(slug).catch((err) => {
+    console.error("[produit] chargement échoué", err);
+    return null;
+  });
+  if (!product) notFound();
 
-  if (!product) {
-    notFound();
-  }
+  const reviews = await prisma.review
+    .findMany({ where: { productId: product.id, isApproved: true }, orderBy: { createdAt: "desc" } })
+    .catch((err) => {
+      console.error("[produit] chargement des avis échoué", err);
+      return [];
+    });
 
-  if (product && typeof product.images === "string") product.images = [];
-  if (product && typeof product.colors === "string") product.colors = [];
-  if (product && typeof product.sizes === "string") product.sizes = [];
+  const similar = await (product.categoryId
+    ? prisma.product.findMany({
+        where: { isActive: true, categoryId: product.categoryId, NOT: { id: product.id } },
+        take: 4,
+        orderBy: { createdAt: "desc" },
+      })
+    : Promise.resolve([])
+  ).catch((err) => {
+    console.error("[produit] produits similaires indisponibles", err);
+    return [];
+  });
+
+  if (typeof product.images === "string") product.images = [];
+  if (typeof product.colors === "string") product.colors = [];
+  if (typeof product.sizes === "string") product.sizes = [];
 
   const disc = discountPercent(product.price, product.compareAtPrice);
   const inStock = product.stock > 0;
@@ -57,7 +106,7 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
           {/* Infos */}
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 bg-sabren-gold/15 text-sabren-gold text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full">
+              <span className="inline-flex items-center gap-1.5 bg-sabren-gold/15 text-sabren-gold-ink text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full">
                 <Layers className="w-3.5 h-3.5" /> {catLabel}
               </span>
               {product.isNew && <span className="bg-sabren-black text-sabren-gold text-[11px] font-bold px-3 py-1 rounded-full">NOUVEAU</span>}
@@ -152,6 +201,24 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
             </a>
           </div>
         </div>
+
+        {/* Avis clients */}
+        <ProductReviews
+          productId={product.id}
+          initial={reviews.map((r) => ({ id: r.id, name: r.name, rating: r.rating, comment: r.comment, createdAt: r.createdAt.toISOString() }))}
+        />
+
+        {/* Vous aimerez aussi */}
+        {similar.length > 0 && (
+          <ProductSection
+            id="similaires"
+            kicker="Dans la même catégorie"
+            kickerIcon={<Sparkles className="w-4 h-4" />}
+            title="Vous aimerez aussi"
+            products={similar}
+            linkHref={`/boutique?cat=${product.category?.slug ?? ""}`}
+          />
+        )}
       </main>
       <Footer />
       <WhatsappFloat />
