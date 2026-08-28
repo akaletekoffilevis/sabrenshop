@@ -26,7 +26,7 @@ npm run db:push      # pousse le schéma (SQLite)
 npm run db:seed      # catégories + produits de démo + compte admin
 ```
 
-Compte admin (seed) : **admin@sabrenshop.com** / `admin123`.
+Compte admin (seed) : **admin@sabrenshop.ne** / `admin123`.
 
 ## Arborescence clé
 
@@ -107,7 +107,7 @@ npm run db:push:prod  # Mettre à jour la base PostgreSQL (Neon)
 ## Rôle / compte admin
 
 Le rôle Admin s'obtient :
-- via le seed (`admin@sabrenshop.com` / `admin123`), ou
+- via le seed (`admin@sabrenshop.ne` / `admin123`), ou
 - en passant `role = ADMIN` sur votre compte dans la base (SQLIte local : `sqlite3 prisma/dev.db "update User set role='ADMIN' where email='…'"`).
 
 Le lien « Admin » n'apparaît dans le header que pour les comptes ADMIN.
