@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { LayoutDashboard, Package, Tags, Settings2, LogOut, ExternalLink, Menu, X, MessageSquareQuote, Tag, HelpCircle, Mail, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { LayoutDashboard, Package, Tags, Settings2, LogOut, ExternalLink, Menu, X, MessageSquareQuote, Tag, HelpCircle, Mail, ChevronsLeft, ChevronsRight, Users, UserRound } from "lucide-react";
 import { useState } from "react";
 
 export const adminLinks = [
@@ -13,6 +13,8 @@ export const adminLinks = [
   { label: "Newsletter", href: "/admin/newsletter", icon: Mail },
   { label: "FAQ", href: "/admin/faq", icon: HelpCircle },
   { label: "Avis", href: "/admin/avis", icon: MessageSquareQuote },
+  { label: "Comptes", href: "/admin/comptes", icon: Users },
+  { label: "Mon compte", href: "/admin/compte", icon: UserRound },
   { label: "Paramètres", href: "/admin/parametres", icon: Settings2 },
 ];
 
@@ -64,7 +66,7 @@ export function AdminSidebar({ collapsed, onToggle }: { collapsed: boolean; onTo
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 bg-sabren-black text-white flex flex-col w-14 transition-[width] duration-300 ease-in-out ${
+      className={`fixed inset-y-0 left-0 z-40 bg-sabren-black text-white flex-col hidden md:flex transition-[width] duration-300 ease-in-out ${
         collapsed ? "md:w-[68px]" : "md:w-64"
       }`}
     >
@@ -104,7 +106,7 @@ export function AdminMobileTop() {
 
   return (
     <>
-      <div className="md:hidden sticky top-0 z-30 bg-sabren-black text-white pl-[56px] pr-4 py-3 flex items-center justify-between">
+      <div className="md:hidden sticky top-0 z-30 bg-sabren-black text-white px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="font-display font-bold text-sabren-gold text-sm">ADMIN</span>
         </div>

@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Field, inputCls, Btn, Toggle } from "./ui";
 import { ImagePlus, X, Loader2, Plus } from "lucide-react";
+import { slugify } from "@/lib/utils";
+import { resizeImage } from "@/lib/image";
 
 type Cat = { id: string; name: string };
 type Product = {
@@ -46,8 +48,13 @@ export function ProductForm({ product, categories }: { product?: Product | null;
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [imageError, setImageError] = useState<Record<string, boolean>>({});
+  const [slugEdited, setSlugEdited] = useState(Boolean(product?.slug));
 
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm((f) => ({ ...f, [k]: v }));
+
+  const setName = (name: string) => {
+    setForm((f) => ({ ...f, name, slug: slugEdited ? f.slug : slugify(name) }));
+  };
 
   const addChip = (list: "colors" | "sizes") => {
     const v = (list === "colors" ? colorInput : sizeInput).trim();
@@ -64,7 +71,7 @@ export function ProductForm({ product, categories }: { product?: Product | null;
     try {
       for (const file of Array.from(files)) {
         const fd = new FormData();
-        fd.append("file", file);
+        fd.append("file", await resizeImage(file));
         fd.append("name", form.name.trim() || "produit");
         const res = await fetch("/api/upload", { method: "POST", body: fd });
         const data = await res.json();
@@ -113,10 +120,10 @@ export function ProductForm({ product, categories }: { product?: Product | null;
       <div className="grid md:grid-cols-2 gap-4">
         <div className="space-y-4 md:col-span-2">
           <Field label="Nom du produit">
-            <input className={inputCls} value={form.name} onChange={(e) => set("name", e.target.value)} required />
+            <input className={inputCls} value={form.name} onChange={(e) => setName(e.target.value)} required />
           </Field>
-          <Field label="Slug (URL)" hint="Généré automatiquement si vide. Ex : tshirt-sabreen-noir">
-            <input className={inputCls} value={form.slug} onChange={(e) => set("slug", e.target.value)} placeholder="tshirt-sabreen-noir" />
+          <Field label="Slug (URL)" hint="Généré automatiquement d’après le titre. Modifiez-le si besoin.">
+            <input className={inputCls} value={form.slug} onChange={(e) => { set("slug", slugify(e.target.value) || e.target.value); setSlugEdited(true); }} placeholder="tshirt-sabreen-noir" />
           </Field>
         </div>
 

@@ -39,11 +39,22 @@ function parse(data: unknown) {
   };
 }
 
+async function ensureUniqueSlug(base: string): Promise<string> {
+  let slug = base;
+  let i = 2;
+  for (;;) {
+    const existing = await prisma.product.findUnique({ where: { slug } });
+    if (!existing) return slug;
+    slug = `${base}-${i++}`;
+  }
+}
+
 export async function POST(req: Request) {
   if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });
   const input = parse(await req.json());
   if (!input) return Response.json({ error: "Données invalides" }, { status: 400 });
   try {
+    input.slug = await ensureUniqueSlug(input.slug);
     const product = await prisma.product.create({ data: input });
 
     if (product.isActive) {

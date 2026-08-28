@@ -177,10 +177,12 @@ export function ShopHeader({ categories, isAdmin = false, loggedIn = false }: { 
                 <span className="hidden sm:block text-[10px] font-semibold mt-0.5">Admin</span>
               </Link>
             )}
-            <Link href={loggedIn ? "/compte" : "/connexion"} className="hidden sm:flex flex-col items-center px-3 py-1 rounded-xl hover:bg-sabren-gray transition">
-              <UserRound className="w-5 h-5" />
-              <span className="text-[10px] font-semibold mt-0.5">{loggedIn ? "Compte" : "Connexion"}</span>
-            </Link>
+            {!isAdmin && (
+              <Link href={loggedIn ? "/compte" : "/connexion"} className="hidden sm:flex flex-col items-center px-3 py-1 rounded-xl hover:bg-sabren-gray transition">
+                <UserRound className="w-5 h-5" />
+                <span className="text-[10px] font-semibold mt-0.5">{loggedIn ? "Compte" : "Connexion"}</span>
+              </Link>
+            )}
             <Link href="/favoris" className="hidden sm:flex flex-col items-center px-3 py-1 rounded-xl hover:bg-sabren-gray transition">
               <span className="relative">
                 <Heart className="w-5 h-5" />
@@ -320,9 +322,11 @@ export function ShopHeader({ categories, isAdmin = false, loggedIn = false }: { 
             <Link href="/suivi" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
               <TruckMini className="w-4 h-4 text-sabren-gold" /> Suivre ma commande
             </Link>
-            <Link href={loggedIn ? "/compte" : "/connexion"} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
-              <UserRound className="w-4 h-4 text-sabren-gold" /> {loggedIn ? "Mon compte" : "Se connecter"}
-            </Link>
+            {!isAdmin && (
+              <Link href={loggedIn ? "/compte" : "/connexion"} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
+                <UserRound className="w-4 h-4 text-sabren-gold" /> {loggedIn ? "Mon compte" : "Se connecter"}
+              </Link>
+            )}
             {isAdmin && (
               <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
                 <LayoutDashboard className="w-4 h-4 text-sabren-gold" /> Administration

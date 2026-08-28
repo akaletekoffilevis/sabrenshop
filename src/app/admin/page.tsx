@@ -12,7 +12,7 @@ export default async function AdminDashboard() {
     products,
     categories,
     orders,
-    clients,
+    accounts,
     lowStock,
     recentOrders,
     activePromos,
@@ -23,7 +23,7 @@ export default async function AdminDashboard() {
     prisma.product.count(),
     prisma.category.count(),
     prisma.order.count(),
-    prisma.user.count({ where: { role: "CUSTOMER" } }),
+    prisma.user.count(),
     prisma.product.findMany({ where: { stock: { lt: 5 } }, select: { id: true, name: true, stock: true, slug: true }, orderBy: { stock: "asc" } }),
     prisma.order.findMany({ orderBy: { createdAt: "desc" }, take: 5 }),
     prisma.promoCode.count({ where: { isActive: true, OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] } }),
@@ -39,7 +39,7 @@ export default async function AdminDashboard() {
     { label: "Chiffre d’affaires", value: formatPrice(revenue), icon: ShoppingCart },
     { label: "Commandes", value: String(orders), icon: Package },
     { label: "Produits", value: String(products), icon: Tags, href: "/admin/produits" },
-    { label: "Clients", value: String(clients), icon: Users },
+    { label: "Comptes", value: String(accounts), icon: Users, href: "/admin/comptes" },
   ];
 
   const statusTone: Record<string, "gold" | "green" | "purple" | "blue" | "red" | "gray"> = {
@@ -52,6 +52,7 @@ export default async function AdminDashboard() {
     { label: "Créer un code promo", href: "/admin/promos", icon: Percent, tone: "gold" as const },
     { label: "Ajouter une FAQ", href: "/admin/faq", icon: HelpCircle, tone: "gold" as const },
     { label: "Voir les abonnés", href: "/admin/newsletter", icon: Mail, tone: "gold" as const },
+    { label: "Voir les comptes", href: "/admin/comptes", icon: Users, tone: "gold" as const },
   ];
 
   return (

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { inputCls } from "./ui";
 import { CloudUpload, ImagePlus, Loader2 } from "lucide-react";
+import { resizeImage } from "@/lib/image";
 
 export function ImageUploader({ value, onChange, name }: { value: string; onChange: (url: string) => void; name: string }) {
   const [uploading, setUploading] = useState(false);
@@ -14,7 +15,7 @@ export function ImageUploader({ value, onChange, name }: { value: string; onChan
     setBroken(false);
     try {
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("file", await resizeImage(file));
       fd.append("name", name);
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const data = await res.json();

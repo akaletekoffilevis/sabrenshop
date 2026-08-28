@@ -26,13 +26,28 @@ async function guard() {
 
 type Ctx = { params: Promise<{ id: string }> };
 
+async function ensureUniqueSlug(base: string, excludeId: string): Promise<string> {
+  let slug = base;
+  let i = 2;
+  for (;;) {
+    const existing = await prisma.product.findUnique({ where: { slug } });
+    if (!existing || existing.id === excludeId) return slug;
+    slug = `${base}-${i++}`;
+  }
+}
+
 export async function PUT(req: Request, { params }: Ctx) {
   if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });
   const { id } = await params;
   const parsed = productSchema.safeParse(await req.json());
   if (!parsed.success) return Response.json({ error: "Données invalides" }, { status: 400 });
   try {
-    const product = await prisma.product.update({ where: { id }, data: { ...parsed.data, description: parsed.data.description || null, categoryId: parsed.data.categoryId || null } });
+    const data = parsed.data;
+    const slug = data.slug?.trim() || "";
+    const product = await prisma.product.update({
+      where: { id },
+      data: { ...data, slug: await ensureUniqueSlug(slug, id), description: data.description || null, categoryId: data.categoryId || null },
+    });
     return Response.json({ ok: true, product });
   } catch (e: any) {
     if (String(e?.message).includes("Unique")) return Response.json({ error: "Un produit avec ce slug existe déjà." }, { status: 409 });

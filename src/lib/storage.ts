@@ -14,17 +14,27 @@ export async function saveFile(file: File, baseName: string = "produit"): Promis
   const ext = path.extname(file.name) || ".jpg";
   const filename = `${safe}-${Date.now()}${ext}`;
 
-  // Prod: Vercel Blob
+  // Prod : Vercel Blob
   const token = process.env.SABREN_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN;
   if (token) {
-    const blob = await put(filename, buffer, { access: "public", token });
-    return blob.url;
+    try {
+      const blob = await put(filename, buffer, { access: "public", token });
+      return blob.url;
+    } catch (e) {
+      console.error("[upload] Vercel Blob échoué:", e);
+    }
   }
 
-  // Dev: local filesystem
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
-  await mkdir(uploadDir, { recursive: true });
-  const filepath = path.join(uploadDir, filename);
-  await writeFile(filepath, buffer);
-  return `/uploads/${filename}`;
+  // Dev : système de fichiers local
+  try {
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
+    await mkdir(uploadDir, { recursive: true });
+    await writeFile(path.join(uploadDir, filename), buffer);
+    return `/uploads/${filename}`;
+  } catch (e) {
+    console.error("[upload] écriture locale échouée:", e);
+  }
+
+  // Fallback universel : data URL (s'affiche partout, aucun stockage requis)
+  return `data:${file.type || "image/jpeg"};base64,${buffer.toString("base64")}`;
 }
