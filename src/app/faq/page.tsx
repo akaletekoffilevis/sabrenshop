@@ -11,6 +11,8 @@ export const metadata = {
   description: "Réponses aux questions fréquentes chez SABREEN'SHOP : commande, livraison, paiement, suivi et retour.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function FaqPage() {
   const faqs = await prisma.faq.findMany({ where: { isActive: true }, orderBy: { position: "asc" } });
 
