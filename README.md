@@ -79,10 +79,12 @@ Toutes à définir (Production + Preview) :
 | --- | --- |
 | `DATABASE_URL` | Votre connection string Neon |
 | `AUTH_SECRET` | `openssl rand -base64 32` |
-| `AUTH_URL` | `https://<votre-projet>.vercel.app` |
-| `NEXT_PUBLIC_BASE_URL` | idem `AUTH_URL` |
-| `BLOB_READ_WRITE_TOKEN` | Vercel → **Storage** → **Create → Blob** → copier le token |
+| `NEXT_PUBLIC_BASE_URL` | `https://<votre-projet>.vercel.app` (SEO/partage) |
+| `SABREN_STORE_ID` | Vercel → **Storage → Blob** → copier |
+| `SABREN_READ_WRITE_TOKEN` | Vercel → **Storage → Blob** → copier |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | Votre numéro WhatsApp (ex. `22789148454`) |
+
+`AUTH_URL` n'est pas obligatoire : `trustHost` fait détecter l'URL automatiquement (valable en preview et en production).
 
 ### 3. Import du dépôt
 
@@ -92,7 +94,7 @@ commande de build (`vercel-build`) sont détectés automatiquement → **Deploy*
 ### 4. Après le déploiement
 
 - Connexion admin : email/mot de passe du seed (ou inscrivez-vous puis passez votre rôle en ADMIN dans la base).
-- Les images uploadées en admin partent sur **Vercel Blob** (grâce à `BLOB_READ_WRITE_TOKEN`).
+- Les images uploadées en admin partent sur **Vercel Blob** (grâce à `SABREN_READ_WRITE_TOKEN`).
 
 ## Commandes utiles
 

@@ -15,8 +15,9 @@ export async function saveFile(file: File, baseName: string = "produit"): Promis
   const filename = `${safe}-${Date.now()}${ext}`;
 
   // Prod: Vercel Blob
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
-    const blob = await put(filename, buffer, { access: "public" });
+  const token = process.env.SABREN_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN;
+  if (token) {
+    const blob = await put(filename, buffer, { access: "public", token });
     return blob.url;
   }
 
