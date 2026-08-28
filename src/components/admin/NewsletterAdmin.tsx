@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { Trash2, Mail, Loader2 } from "lucide-react";
 import { Badge, Card } from "./ui";
 
-type Sub = { id: string; email: string; active: boolean; createdAt: string };
+type Sub = { id: string; email: string; active: boolean; createdAt: string | Date };
 
 export function NewsletterAdmin({ initial }: { initial: Sub[] }) {
   const router = useRouter();

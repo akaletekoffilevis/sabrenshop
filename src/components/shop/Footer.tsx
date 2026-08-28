@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getSettings } from "@/lib/data";
-import { ShieldCheck, Truck, RotateCcw, MessageCircle, Phone, MapPin, Clock, Heart } from "lucide-react";
+import { ShieldCheck, Truck, RotateCcw, MessageCircle, Phone, MapPin, Clock, Heart, Mail } from "lucide-react";
 import { BrandSocialIcon } from "@/components/ui/social-icons";
 import { NewsletterForm } from "./NewsletterForm";
 
