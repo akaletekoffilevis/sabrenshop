@@ -1,6 +1,6 @@
 # SABREEN'SHOP — Boutique en ligne
 
-Boutique e-commerce au Niger : Stanley, gourdes, nounours, vêtements, accessoires. Commande via WhatsApp ou paiement à la livraison.
+Boutique e-commerce au Niger : Stanley, gourdes, nounours, vêtements, accessoires. Commande 100 % via WhatsApp.
 
 ## Stack
 
@@ -13,10 +13,11 @@ Boutique e-commerce au Niger : Stanley, gourdes, nounours, vêtements, accessoir
 
 ## Fonctionnalités
 
-- **Boutique** : accueil (héro, catégories, nouveautés, promotions), catalogue filtrable + recherche, fiches produit (galerie, avis, similaires, **bouton « Partager sur WhatsApp »**), panier & tunnel de commande.
-- **Espace client** : inscription / connexion, mot de passe oublié (email + lien de réinitialisation), changement de mot de passe, **modification de l’adresse email**, **suppression de son compte**, suivi de ses commandes.
-- **Admin** : tableau de bord (stats, alertes stock), produits, catégories, codes promo, FAQ, avis, **comptes utilisateurs** (page `/admin/comptes`, **suppression d’un compte client**), **mon compte admin** (changement d’email/mot de passe, `/admin/compte`), newsletter, paramètres (réseaux sociaux, livraison, héro…).
+- **Boutique** : accueil (héro, catégories, nouveautés, promotions), catalogue filtrable + recherche, fiches produit (galerie, avis, similaires, **bouton « Partager sur WhatsApp »**), panier & **commande directe via WhatsApp** (message détaillé : produits, remise promo, livraison, total). Le slug d’un produit est **généré automatiquement et n’est plus modifiable** après création.
+- **Espace client** : inscription / connexion, mot de passe oublié (email + lien de réinitialisation), changement de mot de passe, **modification de l’adresse email**, **suppression de son compte**.
+- **Admin** : **tableau de bord épuré** (KPIs cliquables Produits / Catégories / Comptes / Abonnés, alerte « Stock faible », **bloc d’accès rapides** grands et cliquables, derniers avis), produits (paginer 12/page, upload d’image limité à 3 Mo), catégories, codes promo, FAQ, avis, **comptes utilisateurs** (page `/admin/comptes` paginée, **suppression d’un compte client**), **mon compte admin** (changement d’email/mot de passe, `/admin/compte`), newsletter, paramètres (réseaux sociaux, livraison, héro…). **Aucune gestion de commandes / chiffre d’affaires** : tout passe par WhatsApp. Sidebar admin **repliable sur desktop/tablette**, tiroir hamburger sur mobile.
 - **Newsletter** : les abonnés reçoivent **un email de bienvenue** à l’inscription (compte) et **un email récapitulatif quotidien** (nouveaux produits + codes promo) — **une seule fois par jour** grâce à un cron Vercel planifié à 9h00 UTC.
+- **Sécurité** : rate-limiting sur les routes sensibles (connexion, inscription, upload, avis, newsletter, WhatsApp) — limite mondiale si `UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN` sont définis, sinon limite par instance ; validation serveur des téléversements (taille/type) ; codes promo et remises recalculés côté serveur.
 
 ## Démarrage local
 
@@ -58,7 +59,7 @@ src/
 │   ├── page.tsx            # Accueil (héro, catégories, nouveautés, promos)
 │   ├── boutique/           # Catalogue (filtres, nouveautés, promos, tri, recherche)
 │   ├── produit/[slug]/     # Fiche produit (galerie, avis, similaires)
-│   ├── panier/ commande/
+│   ├── panier/            # Panier + bouton « Commander via WhatsApp »
 │   ├── compte/             # Espace client, mot de passe, email, suppression
 │   ├── connexion/ inscription/ mot-de-passe-oublie/ reinitialisation/
 │   ├── favoris/
@@ -68,7 +69,7 @@ src/
 │   ├── shop/               # UI publique (header, cartes, newsletter, sections…)
 │   └── admin/              # UI dashboard (sidebar repliable desktop, drawer mobile)
 ├── hooks/                  # useCart, useWishlist (zustand + persist)
-└── lib/                    # prisma, auth, data, storage, whatsapp, utils, email, newsletter
+└── lib/                    # prisma, auth, data, storage, whatsapp, utils, email, newsletter, rate-limit
 prisma/
 ├── schema.prisma              # Schéma LOCAL (SQLite)
 ├── schema.postgresql.prisma   # Schéma PRODUCTION (PostgreSQL) — à garder synchronisé
@@ -109,6 +110,7 @@ Toutes à définir (Production + Preview) :
 
 | `RESEND_API_KEY` + `RESEND_FROM` | Emails (bienvenue, newsletter, mot de passe oublié) |
 | `NEWSLETTER_CRON_SECRET` | Facultatif — sécurise le cron du récap quotidien (ou `CRON_SECRET` Vercel) |
+| `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` | Facultatif — rate-limiting **mondial** (Upstash Redis) ; sinon repli en limite par instance |
 
 `AUTH_URL` n'est pas obligatoire : `trustHost` fait détecter l'URL automatiquement.
 
