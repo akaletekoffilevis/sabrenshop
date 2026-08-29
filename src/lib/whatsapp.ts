@@ -1,9 +1,9 @@
 export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "22789148454";
 export const WHATSAPP_DISPLAY = "+227 89 14 84 54";
 
-export function whatsappLink(message: string) {
+export function whatsappLink(message: string, number: string = WHATSAPP_NUMBER) {
   const encoded = encodeURIComponent(message);
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
+  return `https://wa.me/${number}?text=${encoded}`;
 }
 
 export function whatsappLinkTo(number: string, message: string) {
@@ -86,13 +86,4 @@ function orderTotals(o: OrderMessageInfo) {
 
 export function orderWhatsappMessage(o: OrderMessageInfo) {
   return [`Bonjour Sabreen Shop, je confirme ma commande :`, ...orderTotals(o), `Merci de la traiter.`].join("\n");
-}
-
-export function orderClientConfirmationMessage(o: OrderMessageInfo) {
-  return [
-    `Bonjour ${o.customerName}, merci pour votre commande ${o.orderNumber} chez Sabreen Shop !`,
-    ...orderTotals(o),
-    `Notre équipe vous recontacte pour la livraison. À très bientôt !`,
-    `Sabreen Shop`,
-  ].join("\n");
 }

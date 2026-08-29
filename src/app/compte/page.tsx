@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
 import { whatsappLink } from "@/lib/whatsapp";
+import { getSettings } from "@/lib/data";
 import { PromoBar } from "@/components/shop/PromoBar";
 import { Header } from "@/components/shop/Header";
 import { Footer } from "@/components/shop/Footer";
@@ -30,6 +31,8 @@ export default async function ComptePage() {
 
   const user = await prisma.user.findUnique({ where: { id: userId } });
   const orders = await prisma.order.findMany({ where: { userId }, include: { items: true }, orderBy: { createdAt: "desc" } });
+  const settings = await getSettings();
+  const waNumber = settings.whatsapp ?? undefined;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -105,7 +108,7 @@ export default async function ComptePage() {
                     <span className="font-black text-base">{formatPrice(o.total)}</span>
                     <div className="flex gap-2">
                       {!["CANCELLED", "DELIVERED"].includes(o.status) && (
-                        <a href={whatsappLink(`Bonjour Sabreen Shop, j'ai une question sur ma commande ${o.orderNumber}.`)} target="_blank" className="inline-flex items-center gap-1.5 text-xs font-bold bg-whatsapp text-white rounded-full px-3.5 py-2 hover:bg-whatsapp-dark transition">
+                        <a href={whatsappLink(`Bonjour Sabreen Shop, j'ai une question sur ma commande ${o.orderNumber}.`, waNumber)} target="_blank" className="inline-flex items-center gap-1.5 text-xs font-bold bg-whatsapp text-white rounded-full px-3.5 py-2 hover:bg-whatsapp-dark transition">
                           <MessageCircle className="w-3.5 h-3.5" /> Suivi WhatsApp
                         </a>
                       )}

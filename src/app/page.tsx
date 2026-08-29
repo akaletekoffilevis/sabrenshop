@@ -7,7 +7,7 @@ import { TrustStrip } from "@/components/shop/TrustStrip";
 import { CategoryGrid } from "@/components/shop/CategoryGrid";
 import { ProductSection } from "@/components/shop/ProductSection";
 import { ProductCard } from "@/components/shop/ProductCard";
-import { getHomeProducts, getNewProducts, getDealProducts } from "@/lib/data";
+import { getHomeProducts, getNewProducts, getDealProducts, getSettings } from "@/lib/data";
 import { whatsappLink } from "@/lib/whatsapp";
 import { ArrowRight, Flame, Gift, MessageCircle, PackageOpen, Sparkles, Tags } from "lucide-react";
 
@@ -20,7 +20,8 @@ const steps = [
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [best, fresh, deals] = await Promise.all([getHomeProducts(), getNewProducts(), getDealProducts()]);
+  const [best, fresh, deals, settings] = await Promise.all([getHomeProducts(), getNewProducts(), getDealProducts(), getSettings()]);
+  const waNumber = settings.whatsapp ?? undefined;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -126,7 +127,7 @@ export default async function HomePage() {
             ))}
           </div>
           <div className="mt-6 text-center">
-            <a href={whatsappLink("Bonjour Sabreen Shop, je souhaite passer ma commande.")} target="_blank" className="inline-flex items-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold rounded-full px-8 py-3.5 text-sm transition shadow-card">
+            <a href={whatsappLink("Bonjour Sabreen Shop, je souhaite passer ma commande.", waNumber)} target="_blank" className="inline-flex items-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold rounded-full px-8 py-3.5 text-sm transition shadow-card">
               <MessageCircle className="w-4 h-4" /> Passer ma commande sur WhatsApp
             </a>
             <p className="text-xs text-sabren-black/45 mt-2">Réponse rapide • Lun–Sam 8h–20h</p>

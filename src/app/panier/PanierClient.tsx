@@ -3,11 +3,13 @@ import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice, deliveryCost } from "@/lib/utils";
 import { whatsappLink, cartWhatsappMessage } from "@/lib/whatsapp";
+import { useShopConfig } from "@/lib/useShopConfig";
 import { ShoppingBag, Trash2, Minus, Plus, MessageCircle, Tag, X, Truck } from "lucide-react";
 import { useState } from "react";
 
 export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }: { deliveryFee?: number; freeDeliveryThreshold?: number | null }) {
   const { items, updateQuantity, removeItem, total, promo, setPromo } = useCart();
+  const { whatsapp } = useShopConfig();
   const [code, setCode] = useState("");
   const [promoMsg, setPromoMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [applying, setApplying] = useState(false);
@@ -28,7 +30,8 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
         promoCode: promo?.code ?? null,
         isPickup: false,
       }
-    )
+    ),
+    whatsapp
   );
 
   const applyPromo = async () => {

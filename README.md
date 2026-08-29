@@ -13,7 +13,7 @@ Boutique e-commerce au Niger : Stanley, gourdes, nounours, vêtements, accessoir
 
 ## Fonctionnalités
 
-- **Boutique** : accueil (héro, catégories, nouveautés, promotions), catalogue filtrable + recherche, fiches produit (galerie, avis, similaires), panier & tunnel de commande.
+- **Boutique** : accueil (héro, catégories, nouveautés, promotions), catalogue filtrable + recherche, fiches produit (galerie, avis, similaires, **bouton « Partager sur WhatsApp »**), panier & tunnel de commande.
 - **Espace client** : inscription / connexion, mot de passe oublié (email + lien de réinitialisation), changement de mot de passe, **modification de l’adresse email**, **suppression de son compte**, suivi de ses commandes.
 - **Admin** : tableau de bord (stats, alertes stock), produits, catégories, codes promo, FAQ, avis, **comptes utilisateurs** (page `/admin/comptes`, **suppression d’un compte client**), **mon compte admin** (changement d’email/mot de passe, `/admin/compte`), newsletter, paramètres (réseaux sociaux, livraison, héro…).
 - **Newsletter** : les abonnés reçoivent **un email de bienvenue** à l’inscription (compte) et **un email récapitulatif quotidien** (nouveaux produits + codes promo) — **une seule fois par jour** grâce à un cron Vercel planifié à 9h00 UTC.
@@ -105,7 +105,8 @@ Toutes à définir (Production + Preview) :
 | `NEXT_PUBLIC_BASE_URL` | `https://<votre-projet>.vercel.app` (SEO/partage) |
 | `SABREN_STORE_ID` | Vercel → **Storage → Blob** → copier |
 | `SABREN_READ_WRITE_TOKEN` | Vercel → **Storage → Blob** → copier |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Votre numéro WhatsApp (ex. `22789148454`) |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Fallback uniquement — le numéro principal s’édite dans **admin → Paramètres → WhatsApp** (`Settings.whatsapp`), servi partout via `/api/config` |
+
 | `RESEND_API_KEY` + `RESEND_FROM` | Emails (bienvenue, newsletter, mot de passe oublié) |
 | `NEWSLETTER_CRON_SECRET` | Facultatif — sécurise le cron du récap quotidien (ou `CRON_SECRET` Vercel) |
 

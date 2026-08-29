@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MessageCircle, Lock, Mail, Eye, EyeOff } from "lucide-react";
 import { whatsappLink } from "@/lib/whatsapp";
+import { useShopConfig } from "@/lib/useShopConfig";
 
 export function LoginForm() {
   const router = useRouter();
+  const { whatsapp } = useShopConfig();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
@@ -72,7 +74,7 @@ export function LoginForm() {
         <span className="relative bg-white px-3 text-xs text-sabren-black/40">ou</span>
       </div>
 
-      <a href={whatsappLink("Bonjour Sabreen'Shop, je souhaite commander sans compte.")} target="_blank" className="flex items-center justify-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold rounded-full py-3 text-sm transition">
+      <a href={whatsappLink("Bonjour Sabreen'Shop, je souhaite commander sans compte.", whatsapp)} target="_blank" className="flex items-center justify-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold rounded-full py-3 text-sm transition">
         <MessageCircle className="w-4 h-4" /> Commander via WhatsApp sans compte
       </a>
 

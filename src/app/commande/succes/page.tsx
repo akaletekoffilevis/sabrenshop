@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { whatsappLink, orderWhatsappMessage } from "@/lib/whatsapp";
+import { getSettings } from "@/lib/data";
 import { PromoBar } from "@/components/shop/PromoBar";
 import { Header } from "@/components/shop/Header";
 import { Footer } from "@/components/shop/Footer";
@@ -11,6 +12,9 @@ export const dynamic = "force-dynamic";
 
 export default async function CommandeSucces({ searchParams }: { searchParams: Promise<{ num?: string }> }) {
   const { num } = await searchParams;
+
+  const settings = await getSettings();
+  const waNumber = settings.whatsapp ?? undefined;
 
   let recap: string | null = null;
   if (num) {
@@ -61,7 +65,7 @@ export default async function CommandeSucces({ searchParams }: { searchParams: P
           <p className="text-sm text-sabren-black/55 mt-3">Nous vous contactons rapidement sur WhatsApp pour confirmer la livraison.</p>
           <div className="grid gap-2.5 mt-7">
             <a
-              href={whatsappLink(recap ?? `Bonjour Sabreen Shop, je viens de passer la commande ${num ?? ""} et je souhaite confirmer.`)}
+              href={whatsappLink(recap ?? `Bonjour Sabreen Shop, je viens de passer la commande ${num ?? ""} et je souhaite confirmer.`, waNumber)}
               target="_blank"
               className="inline-flex items-center justify-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold rounded-full py-3.5 text-sm transition"
             >

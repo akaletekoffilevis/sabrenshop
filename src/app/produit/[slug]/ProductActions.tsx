@@ -3,7 +3,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
 import { whatsappLink, productWhatsappMessage } from "@/lib/whatsapp";
-import { ShoppingBag, Zap, MessageCircle, Check, Minus, Plus } from "lucide-react";
+import { useShopConfig } from "@/lib/useShopConfig";
+import { ShoppingBag, Zap, MessageCircle, Check, Minus, Plus, Share2 } from "lucide-react";
 
 export function ProductActions({ product }: { product: any }) {
   const [qty, setQty] = useState(1);
@@ -11,6 +12,7 @@ export function ProductActions({ product }: { product: any }) {
   const [size, setSize] = useState(product.sizes?.[0] || "");
   const [added, setAdded] = useState(false);
   const addItem = useCart((s) => s.addItem);
+  const { whatsapp } = useShopConfig();
 
   const handleAdd = () => {
     addItem({ id: product.id || product.slug, slug: product.slug, name: product.name, price: product.price, compareAtPrice: product.compareAtPrice, image: product.images?.[0], quantity: qty, color, size });
@@ -19,7 +21,13 @@ export function ProductActions({ product }: { product: any }) {
   };
 
   const disabled = product.inStock === false;
-  const waLink = whatsappLink(productWhatsappMessage({ name: product.name, price: product.price, quantity: qty, color, size }));
+  const waLink = whatsappLink(productWhatsappMessage({ name: product.name, price: product.price, quantity: qty, color, size }), whatsapp);
+
+  const shareToWhatsapp = () => {
+    const url = `${window.location.origin}/produit/${product.slug}`;
+    const msg = `Bonjour, je partage avec vous ce produit :\n*${product.name}* — ${product.price.toLocaleString("fr-FR")} FCFA\n${url}\nDisponible chez Sabreen Shop !`;
+    window.open(whatsappLink(msg, whatsapp), "_blank");
+  };
 
   const inputCls = "flex items-center justify-center rounded-full border border-sabren-gray bg-white text-sm font-semibold hover:border-sabren-gold transition";
 
@@ -69,6 +77,12 @@ export function ProductActions({ product }: { product: any }) {
         >
           <MessageCircle className="w-4 h-4" /> COMMANDER SUR WHATSAPP
         </a>
+        <button
+          onClick={shareToWhatsapp}
+          className="inline-flex items-center justify-center gap-2 rounded-full py-3 font-bold text-sm border border-sabren-gray text-sabren-black/70 hover:border-whatsapp hover:text-whatsapp transition"
+        >
+          <Share2 className="w-4 h-4" /> Partager sur WhatsApp
+        </button>
       </div>
       <p className="text-center text-xs text-sabren-black/45">Paiement à la livraison possible, sans avance.</p>
     </div>

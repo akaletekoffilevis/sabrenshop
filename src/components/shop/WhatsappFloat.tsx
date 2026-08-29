@@ -1,10 +1,13 @@
 "use client";
 import { whatsappLink } from "@/lib/whatsapp";
+import { useShopConfig } from "@/lib/useShopConfig";
 import { MessageCircle, X } from "lucide-react";
 import { useState } from "react";
 
 export function WhatsappFloat() {
   const [open, setOpen] = useState(false);
+  const { whatsapp } = useShopConfig();
+  const link = whatsappLink("Bonjour Sabreen Shop ! Une question ? Besoin de commander ?", whatsapp);
 
   return (
     <>
@@ -29,7 +32,7 @@ export function WhatsappFloat() {
           </div>
           <div className="px-4 pb-4">
             <a
-              href={whatsappLink("Bonjour Sabreen Shop ! Une question ? Besoin de commander ?")}
+              href={link}
               target="_blank"
               className="flex items-center justify-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white text-sm font-bold rounded-full py-2.5 transition"
             >
@@ -40,7 +43,7 @@ export function WhatsappFloat() {
       )}
 
       <a
-        href={open ? undefined : whatsappLink("Bonjour Sabreen Shop ! Une question ? Besoin de commander ?")}
+        href={open ? undefined : link}
         target={open ? undefined : "_blank"}
         onClick={() => {
           if (open) setOpen(false);
