@@ -22,7 +22,7 @@ export function AdminSidebar({ collapsed, onToggle }: { collapsed: boolean; onTo
   const pathname = usePathname();
   const router = useRouter();
 
-  const labelCls = (hidden: boolean) => `hidden whitespace-nowrap transition-opacity ${hidden ? "" : "inline"}`;
+  const labelCls = (hidden: boolean) => `whitespace-nowrap transition-opacity ${hidden ? "hidden" : "inline"}`;
 
   const nav = (
     <nav className="flex-1 space-y-1 px-2 py-3 md:px-3 overflow-y-auto">

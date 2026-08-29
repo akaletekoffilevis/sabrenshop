@@ -133,9 +133,11 @@ export function ProductForm({ product, categories }: { product?: Product | null;
           <Field label="Nom du produit">
             <input className={inputCls} value={form.name} onChange={(e) => setName(e.target.value)} required />
           </Field>
-          <Field label="Slug (URL)" hint="Généré automatiquement d’après le titre. Modifiez-le si besoin.">
-            <input className={inputCls} value={form.slug} onChange={(e) => { set("slug", slugify(e.target.value) || e.target.value); setSlugEdited(true); }} placeholder="tshirt-sabreen-noir" />
-          </Field>
+          {isEdit && (
+            <Field label="Slug (URL)" hint="Généré automatiquement d’après le titre. Modifiez-le si besoin.">
+              <input className={inputCls} value={form.slug} onChange={(e) => { set("slug", slugify(e.target.value) || e.target.value); setSlugEdited(true); }} placeholder="tshirt-sabreen-noir" />
+            </Field>
+          )}
         </div>
 
         <Field label="Prix (FCFA)">
