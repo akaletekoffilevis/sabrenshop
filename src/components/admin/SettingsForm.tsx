@@ -17,7 +17,7 @@ type Settings = {
 
 const SOCIAL_PLATFORMS = ["Facebook", "Instagram", "TikTok", "YouTube", "Twitter / X", "WhatsApp", "Autre"];
 
-export function SettingsForm({ settings }: { settings: Settings & { socialLinksRaw?: string | null } }) {
+export function SettingsForm({ settings }: { settings: Settings }) {
   const router = useRouter();
   const [form, setForm] = useState<Settings>({
     shopName: settings.shopName ?? "SABREEN'SHOP",
@@ -47,13 +47,18 @@ export function SettingsForm({ settings }: { settings: Settings & { socialLinksR
   const save = async () => {
     setSaving(true);
     setMsg("");
-    const res = await fetch("/api/admin/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
-    const data = await res.json();
-    setSaving(false);
-    if (!res.ok) { setMsg(data.error || "Erreur d'enregistrement"); return; }
-    setMsg("Paramètres enregistrés."); 
-    router.refresh();
-    setTimeout(() => setMsg(""), 3000);
+    try {
+      const res = await fetch("/api/admin/settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) { setMsg(data?.error || "Erreur d'enregistrement"); return; }
+      setMsg("Paramètres enregistrés.");
+      router.refresh();
+      setTimeout(() => setMsg(""), 3000);
+    } catch {
+      setMsg("Erreur réseau. Réessayez.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const section = "flex items-center gap-2 font-bold text-sm mb-4";

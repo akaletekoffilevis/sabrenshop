@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { createHash } from "crypto";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { rateLimit } from "@/lib/rate-limit";
 
 const schema = z.object({
   token: z.string().min(20),
@@ -10,6 +11,8 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
+  const limited = await rateLimit(req, { key: "reset-password", limit: 10, seconds: 3600 });
+  if (limited) return limited;
   const parsed = schema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) {
     const message = parsed.error?.issues?.[0]?.message || "Données invalides.";

@@ -47,18 +47,11 @@ export async function Footer() {
             Les produits tendance qui correspondent à votre style. Stanley, nounours, vêtements, téléphones et accessoires de mode — livrés partout au Niger (frais de livraison à la charge du client).
           </p>
           <div className="flex gap-3 mt-5">
-            {socials.length === 0 ? (
-              <>
-                <a href="#" aria-label="Facebook" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><BrandSocialIcon label="Facebook" className="w-4 h-4" /></a>
-                <a href="#" aria-label="Instagram" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition"><BrandSocialIcon label="Instagram" className="w-4 h-4" /></a>
-              </>
-            ) : (
-              socials.map((s) => (
-                <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition">
-                  <BrandSocialIcon label={s.label} className="w-4 h-4" />
-                </a>
-              ))
-            )}
+            {socials.length > 0 && socials.map((s) => (
+              <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-sabren-gold hover:text-sabren-black transition">
+                <BrandSocialIcon label={s.label} className="w-4 h-4" />
+              </a>
+            ))}
           </div>
         </div>
 

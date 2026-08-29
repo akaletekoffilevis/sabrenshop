@@ -49,7 +49,7 @@ export function ProductCard({ product }: { product: any }) {
         <div className="flex items-center text-[10px] md:text-[11px]">
           <span className="flex text-sabren-gold">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Star key={i} className={`w-3 h-3 md:w-3.5 md:h-3.5 ${i < Math.round(product.rating || 5) ? "fill-sabren-gold text-sabren-gold" : "text-sabren-gray-dark"}`} />
+              <Star key={i} className={`w-3 h-3 md:w-3.5 md:h-3.5 ${i < Math.round(product.rating || 0) ? "fill-sabren-gold text-sabren-gold" : "text-sabren-gray-dark"}`} />
             ))}
           </span>
         </div>

@@ -3,10 +3,13 @@ import { createHash, randomBytes } from "crypto";
 import { z } from "zod";
 import { sendMail, passwordResetHtml, appUrl } from "@/lib/email";
 import { getSettings } from "@/lib/data";
+import { rateLimit } from "@/lib/rate-limit";
 
 const schema = z.object({ email: z.string().email().max(120) });
 
 export async function POST(req: Request) {
+  const limited = await rateLimit(req, { key: "forgot", limit: 5, seconds: 600 });
+  if (limited) return limited;
   const parsed = schema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return Response.json({ error: "Adresse email invalide." }, { status: 400 });
   const email = parsed.data.email.toLowerCase();
@@ -30,7 +33,7 @@ export async function POST(req: Request) {
     html: passwordResetHtml({ link, shopName: settings.shopName || "SABREEN’SHOP" }),
   });
 
-  if (!sent) {
+  if (!sent && process.env.NODE_ENV !== "production") {
     console.warn("[forgot] livraison impossible (RESEND_API_KEY ?) — lien:", link);
   }
 

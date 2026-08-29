@@ -1,12 +1,13 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { whatsappLink, productWhatsappMessage } from "@/lib/whatsapp";
 import { useShopConfig } from "@/lib/useShopConfig";
 import { ShoppingBag, Zap, MessageCircle, Check, Minus, Plus, Share2 } from "lucide-react";
 
 export function ProductActions({ product }: { product: any }) {
+  const router = useRouter();
   const [qty, setQty] = useState(1);
   const [color, setColor] = useState(product.colors?.[0] || "");
   const [size, setSize] = useState(product.sizes?.[0] || "");
@@ -18,6 +19,11 @@ export function ProductActions({ product }: { product: any }) {
     addItem({ id: product.id || product.slug, slug: product.slug, name: product.name, price: product.price, compareAtPrice: product.compareAtPrice, image: product.images?.[0], quantity: qty, color, size });
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
+  };
+
+  const handleBuyNow = () => {
+    handleAdd();
+    router.push("/panier");
   };
 
   const disabled = product.inStock === false;
@@ -67,9 +73,13 @@ export function ProductActions({ product }: { product: any }) {
         >
           {added ? <><Check className="w-4 h-4" /> Ajouté au panier</> : <><ShoppingBag className="w-4 h-4" /> AJOUTER AU PANIER</>}
         </button>
-        <Link href="/panier" className={`inline-flex items-center justify-center gap-2 rounded-full py-3.5 font-bold text-sm bg-sabren-gold text-sabren-black hover:bg-sabren-gold-hover transition shadow-gold ${disabled ? "pointer-events-none opacity-50" : ""}`}>
+        <button
+          onClick={handleBuyNow}
+          disabled={disabled}
+          className={`inline-flex items-center justify-center gap-2 rounded-full py-3.5 font-bold text-sm bg-sabren-gold text-sabren-black hover:bg-sabren-gold-hover transition shadow-gold ${disabled ? "pointer-events-none opacity-50" : ""}`}
+        >
           <Zap className="w-4 h-4" /> ACHETER MAINTENANT
-        </Link>
+        </button>
         <a
           href={waLink}
           target="_blank"

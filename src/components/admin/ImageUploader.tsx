@@ -7,21 +7,28 @@ import { resizeImage } from "@/lib/image";
 export function ImageUploader({ value, onChange, name }: { value: string; onChange: (url: string) => void; name: string }) {
   const [uploading, setUploading] = useState(false);
   const [broken, setBroken] = useState(false);
+  const [uploadError, setUploadError] = useState("");
 
   const upload = async (files: FileList | null) => {
     const file = files?.[0];
     if (!file) return;
     setUploading(true);
     setBroken(false);
+    setUploadError("");
     try {
       const fd = new FormData();
       fd.append("file", await resizeImage(file));
       fd.append("name", name);
       const res = await fetch("/api/upload", { method: "POST", body: fd });
-      const data = await res.json();
-      if (res.ok && data.url) { onChange(data.url); setBroken(false); }
+      const data = await res.json().catch(() => null);
+      if (res.ok && data?.url) {
+        onChange(data.url);
+        setBroken(false);
+      } else {
+        setUploadError(data?.error || "Upload impossible");
+      }
     } catch {
-      setBroken(true);
+      setUploadError("Erreur réseau. Réessayez.");
     } finally {
       setUploading(false);
     }
@@ -52,6 +59,7 @@ export function ImageUploader({ value, onChange, name }: { value: string; onChan
           {uploading ? "Upload..." : "Importer un fichier"}
           <input type="file" accept="image/*" className="hidden" onChange={(e) => upload(e.target.files)} />
         </label>
+        {uploadError && <p className="text-[11px] font-semibold text-red-500 mt-1">{uploadError}</p>}
       </div>
     </div>
   );

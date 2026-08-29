@@ -30,33 +30,42 @@ export function PromoManager({ initial }: { initial: Promo[] }) {
     if (!form.code.trim()) return;
     setBusy(true);
     const url = editing ? `/api/admin/promos/${editing.id}` : "/api/admin/promos";
-    const res = await fetch(url, {
-      method: editing ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...form,
-        code: form.code.toUpperCase().trim(),
-        value: Number(form.value),
-        minSubtotal: form.minSubtotal ? Number(form.minSubtotal) : null,
-        maxUses: form.maxUses ? Number(form.maxUses) : null,
-        expiresAt: form.expiresAt || null,
-      }),
-    });
-    const data = await res.json();
-    setBusy(false);
-    if (!res.ok) { alert(data.error || "Erreur d'enregistrement"); return; }
-    setForm(blank); setEditing(null); setCreating(false);
-    router.refresh();
+    try {
+      const res = await fetch(url, {
+        method: editing ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          code: form.code.toUpperCase().trim(),
+          value: Number(form.value),
+          minSubtotal: form.minSubtotal ? Number(form.minSubtotal) : null,
+          maxUses: form.maxUses ? Number(form.maxUses) : null,
+          expiresAt: form.expiresAt || null,
+        }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) { alert(data?.error || "Erreur d'enregistrement"); return; }
+      setForm(blank); setEditing(null); setCreating(false);
+      router.refresh();
+    } catch {
+      alert("Erreur réseau. Réessayez.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   const del = async (p: Promo) => {
     if (!confirm(`Supprimer le code « ${p.code} » ?`)) return;
-    const res = await fetch(`/api/admin/promos/${p.id}`, { method: "DELETE" });
-    if (!res.ok) { const d = await res.json(); alert(d.error || "Suppression impossible"); return; }
-    router.refresh();
+    try {
+      const res = await fetch(`/api/admin/promos/${p.id}`, { method: "DELETE" });
+      if (!res.ok) { const d = await res.json().catch(() => null); alert(d?.error || "Suppression impossible"); return; }
+      router.refresh();
+    } catch {
+      alert("Erreur réseau. Réessayez.");
+    }
   };
 
-  const expired = (p: Promo) => p.expiresAt && new Date(p.expiresAt + "T23:59") < new Date();
+  const expired = (p: Promo) => !!p.expiresAt && new Date(p.expiresAt) < new Date();
   const maxed = (p: Promo) => !!p.maxUses && p.usedCount >= p.maxUses;
 
   const formPanel = (

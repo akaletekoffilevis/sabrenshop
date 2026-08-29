@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Field, inputCls, Btn, Toggle } from "./ui";
-import { ImagePlus, X, Loader2, Plus } from "lucide-react";
+import { ImagePlus, X, Loader2 } from "lucide-react";
 import { slugify } from "@/lib/utils";
 import { resizeImage } from "@/lib/image";
 
@@ -69,16 +69,22 @@ export function ProductForm({ product, categories }: { product?: Product | null;
     setUploading(true);
     setError("");
     try {
+      const urls: string[] = [];
       for (const file of Array.from(files)) {
         const fd = new FormData();
         fd.append("file", await resizeImage(file));
         fd.append("name", form.name.trim() || "produit");
         const res = await fetch("/api/upload", { method: "POST", body: fd });
-        const data = await res.json();
-        if (res.ok && data.url) set("images", [...form.images, data.url]);
+        const data = await res.json().catch(() => null);
+        if (res.ok && data?.url) {
+          urls.push(data.url);
+        } else {
+          throw new Error(data?.error || "Upload impossible");
+        }
       }
-    } catch {
-      setError("Échec de l'upload d'une image.");
+      if (urls.length > 0) setForm((f) => ({ ...f, images: [...f.images, ...urls] }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Échec de l'upload d'une image.");
     } finally {
       setUploading(false);
     }
@@ -100,19 +106,24 @@ export function ProductForm({ product, categories }: { product?: Product | null;
       sizes: form.sizes,
     };
     const url = isEdit ? `/api/admin/products/${product!.id}` : "/api/admin/products";
-    const res = await fetch(url, {
-      method: isEdit ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    setSaving(false);
-    if (!res.ok) {
-      setError(data.error || "Erreur lors de l'enregistrement.");
-      return;
+    try {
+      const res = await fetch(url, {
+        method: isEdit ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        setError(data?.error || "Erreur lors de l'enregistrement.");
+        return;
+      }
+      router.push("/admin/produits");
+      router.refresh();
+    } catch {
+      setError("Erreur réseau. Réessayez.");
+    } finally {
+      setSaving(false);
     }
-    router.push("/admin/produits");
-    router.refresh();
   };
 
   return (

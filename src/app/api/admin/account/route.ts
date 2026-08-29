@@ -26,7 +26,8 @@ export async function POST(req: Request) {
   if (!body) return Response.json({ error: "Données invalides" }, { status: 400 });
 
   const session = await auth();
-  const user = await prisma.user.findUnique({ where: { email: session?.user?.email ?? "" } });
+  const userId = (session?.user as { id?: string } | undefined)?.id;
+  const user = await prisma.user.findUnique({ where: { id: userId ?? "" } });
   if (!user) return Response.json({ error: "Utilisateur introuvable" }, { status: 404 });
 
   if (body.type === "email") {

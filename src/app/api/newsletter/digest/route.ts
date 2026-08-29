@@ -8,8 +8,11 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const authHeader = req.headers.get("authorization");
   const isVercelCron = req.headers.get("x-vercel-cron") === "1";
-  const tokenOk = !secret || url.searchParams.get("token") === secret || authHeader === `Bearer ${secret}`;
+  const tokenOk = secret !== undefined && (url.searchParams.get("token") === secret || authHeader === `Bearer ${secret}`);
 
+  if (!secret) {
+    return Response.json({ error: "Envois non configurés (NEWSLETTER_CRON_SECRET manquant)." }, { status: 500 });
+  }
   if (!isVercelCron && !tokenOk) {
     return Response.json({ error: "Non autorisé" }, { status: 401 });
   }

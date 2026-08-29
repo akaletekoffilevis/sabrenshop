@@ -3,10 +3,21 @@ import { sendMail, digestEmailHtml } from "./email";
 import { formatPrice } from "./utils";
 
 const DIGEST_ID = "singleton";
+const SEND_CHUNK = 20;
 
 export type DigestResult = { sent: boolean; recipients: number; products: number; promos: number };
 
-export async function runNewsletterDigest(): Promise<DigestResult> {
+let inflight: Promise<DigestResult> | null = null;
+
+export function runNewsletterDigest(): Promise<DigestResult> {
+  if (inflight) return inflight;
+  inflight = runNewsletterDigestInner().finally(() => {
+    inflight = null;
+  });
+  return inflight;
+}
+
+async function runNewsletterDigestInner(): Promise<DigestResult> {
   const now = new Date();
   const meta = await prisma.newsletterDigest.findUnique({ where: { id: DIGEST_ID } });
 
@@ -51,9 +62,10 @@ export async function runNewsletterDigest(): Promise<DigestResult> {
         valueLabel: p.type === "FIXED" ? formatPrice(p.value) : `${p.value}%`,
       })),
     });
-    for (const s of subscribers) {
-      const ok = await sendMail({ to: s.email, subject: subjects, html });
-      if (ok) recipients += 1;
+    for (let i = 0; i < subscribers.length; i += SEND_CHUNK) {
+      const chunk = subscribers.slice(i, i + SEND_CHUNK);
+      const results = await Promise.allSettled(chunk.map((s) => sendMail({ to: s.email, subject: subjects, html })));
+      recipients += results.filter((r) => r.status === "fulfilled" && r.value === true).length;
     }
   }
 

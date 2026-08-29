@@ -8,7 +8,8 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminComptePage() {
   const session = await auth();
-  const user = await prisma.user.findUnique({ where: { email: session?.user?.email ?? "" } });
+  const userId = (session?.user as { id?: string } | undefined)?.id;
+  const user = await prisma.user.findUnique({ where: { id: userId ?? "" } });
   if (!user) redirect("/connexion");
 
   return (

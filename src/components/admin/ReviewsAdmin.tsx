@@ -15,11 +15,19 @@ export function ReviewsAdmin({ initial }: { initial: Rev[] }) {
   const act = async (id: string, action: "approve" | "delete") => {
     setBusy(id);
     const url = `/api/admin/reviews/${id}`;
-    const res = await fetch(url, { method: action === "approve" ? "PATCH" : "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ isApproved: true }) });
-    setBusy("");
-    if (res.ok) {
-      setReviews((r) => (action === "approve" ? r.map((x) => (x.id === id ? { ...x, isApproved: true } : x)) : r.filter((x) => x.id !== id)));
-      router.refresh();
+    try {
+      const res = await fetch(url, { method: action === "approve" ? "PATCH" : "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ isApproved: true }) });
+      if (res.ok) {
+        setReviews((r) => (action === "approve" ? r.map((x) => (x.id === id ? { ...x, isApproved: true } : x)) : r.filter((x) => x.id !== id)));
+        router.refresh();
+      } else {
+        const d = await res.json().catch(() => null);
+        alert(d?.error || "Action impossible");
+      }
+    } catch {
+      alert("Erreur réseau. Réessayez.");
+    } finally {
+      setBusy("");
     }
   };
 

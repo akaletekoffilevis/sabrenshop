@@ -32,8 +32,8 @@ export default async function AdminDashboard() {
     prisma.review.findMany({ orderBy: { createdAt: "desc" }, take: 4, include: { product: { select: { name: true, slug: true } } } }),
   ]);
 
-  const revenueParts = await prisma.order.findMany({ where: { status: { not: "CANCELLED" } }, select: { total: true } });
-  const revenue = revenueParts.reduce((a, o) => a + o.total, 0);
+  const revenueAgg = await prisma.order.aggregate({ where: { status: { not: "CANCELLED" } }, _sum: { total: true } });
+  const revenue = revenueAgg._sum.total || 0;
 
   const stats = [
     { label: "Chiffre d’affaires", value: formatPrice(revenue), icon: ShoppingCart },

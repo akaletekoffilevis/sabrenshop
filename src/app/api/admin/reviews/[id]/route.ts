@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { recomputeRating } from "@/lib/reviews";
 
 async function guard() {
   const session = await auth();
@@ -7,12 +8,6 @@ async function guard() {
 }
 
 type Ctx = { params: Promise<{ id: string }> };
-
-async function recomputeRating(productId: string) {
-  const reviews = await prisma.review.findMany({ where: { productId, isApproved: true }, select: { rating: true } });
-  const avg = reviews.length ? reviews.reduce((a, r) => a + r.rating, 0) / reviews.length : 0;
-  await prisma.product.update({ where: { id: productId }, data: { rating: Math.round(avg * 10) / 10 } });
-}
 
 export async function PATCH(req: Request, { params }: Ctx) {
   if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { sendMail, welcomeEmailHtml, appUrl } from "@/lib/email";
+import { rateLimit } from "@/lib/rate-limit";
 
 const schema = z.object({
   name: z.string().min(2, "Nom trop court"),
@@ -11,22 +12,25 @@ const schema = z.object({
 
 export async function POST(req: Request) {
   try {
+    const limited = await rateLimit(req, { key: "register", limit: 10, seconds: 900 });
+    if (limited) return limited;
     const json = await req.json();
     const parsed = schema.safeParse(json);
     if (!parsed.success) {
       return Response.json({ error: parsed.error.issues[0]?.message ?? "Données invalides" }, { status: 400 });
     }
-    const existing = await prisma.user.findUnique({ where: { email: parsed.data.email } });
+    const email = parsed.data.email.trim().toLowerCase();
+    const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) return Response.json({ error: "Un compte existe déjà avec cet email." }, { status: 409 });
 
     const hashed = await bcrypt.hash(parsed.data.password, 10);
     const user = await prisma.user.create({
-      data: { name: parsed.data.name, email: parsed.data.email, password: hashed, role: "CUSTOMER" },
+      data: { name: parsed.data.name, email, password: hashed, role: "CUSTOMER" },
     });
 
-    void sendWelcome(user.email, user.name);
+    void sendWelcome(email, user.name);
 
-    return Response.json({ ok: true, user: { id: user.id, email: user.email, name: user.name } });
+    return Response.json({ ok: true, user: { id: user.id, email, name: user.name } });
   } catch (e) {
     return Response.json({ error: "Erreur serveur, réessayez." }, { status: 500 });
   }

@@ -1,4 +1,5 @@
 import { validatePromo } from "@/lib/promo";
+import { rateLimit } from "@/lib/rate-limit";
 import { z } from "zod";
 
 const schema = z.object({
@@ -7,6 +8,8 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
+  const limited = await rateLimit(req, { key: "promo-validate", limit: 60, seconds: 600 });
+  if (limited) return limited;
   const parsed = schema.safeParse(await req.json());
   if (!parsed.success) return Response.json({ error: parsed.error.issues[0]?.message ?? "Données invalides" }, { status: 400 });
 

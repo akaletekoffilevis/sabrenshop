@@ -31,7 +31,9 @@ export const DEFAULT_SETTINGS: SiteSettings = {
 
 export async function getSettings(): Promise<SiteSettings> {
   try {
-    const s = await prisma.settings.findFirst();
+    const s =
+      (await prisma.settings.findUnique({ where: { id: "default" } })) ||
+      (await prisma.settings.findFirst());
     if (!s) return DEFAULT_SETTINGS;
     let socialLinks: Array<{ label: string; url: string }> = [];
     try {

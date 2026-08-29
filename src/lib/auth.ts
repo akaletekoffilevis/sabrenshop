@@ -18,7 +18,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         const parsed = z.object({ email: z.string().email(), password: z.string().min(1) }).safeParse(credentials);
         if (!parsed.success) return null;
-        const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
+        const email = parsed.data.email.trim().toLowerCase();
+        const user = await prisma.user.findUnique({ where: { email } });
         if (!user || !user.password) return null;
         const ok = await bcrypt.compare(parsed.data.password, user.password);
         if (!ok) return null;
@@ -32,8 +33,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      if (token.sub) (session.user as any).id = token.sub;
-      (session.user as any).role = (token as any).role;
+      if (token.sub) {
+        (session.user as any).id = token.sub;
+        const dbUser = await prisma.user.findUnique({ where: { id: token.sub }, select: { role: true } });
+        (session.user as any).role = dbUser?.role ?? undefined;
+      }
       return session;
     },
   },

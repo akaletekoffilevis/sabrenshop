@@ -54,8 +54,8 @@ export function NewsletterForm() {
             {status === "done" ? "Inscrit !" : "S’inscrire"}
           </button>
         </form>
-        {status === "done" && <p className="w-full text-xs text-green-400 md:hidden">Merci, vous êtes bien inscrit à la newsletter.</p>}
-        {status === "error" && <p className="w-full text-xs text-red-400 md:hidden">Erreur, réessayez s’il vous plaît.</p>}
+        {status === "done" && <p className="w-full text-xs text-green-400">Merci, vous êtes bien inscrit à la newsletter.</p>}
+        {status === "error" && <p className="w-full text-xs text-red-400">Erreur, réessayez s’il vous plaît.</p>}
       </div>
     </div>
   );

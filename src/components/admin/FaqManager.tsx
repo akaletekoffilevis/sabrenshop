@@ -20,23 +20,32 @@ export function FaqManager({ initial }: { initial: Faq[] }) {
     if (!form.question.trim() || !form.answer.trim()) return;
     setBusy(true);
     const url = editing ? `/api/admin/faqs/${editing.id}` : "/api/admin/faqs";
-    const res = await fetch(url, {
-      method: editing ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, position: Number(form.position) }),
-    });
-    const data = await res.json();
-    setBusy(false);
-    if (!res.ok) { alert(data.error || "Erreur d'enregistrement"); return; }
-    setForm(blank); setEditing(null); setCreating(false);
-    router.refresh();
+    try {
+      const res = await fetch(url, {
+        method: editing ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, position: Number(form.position) }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) { alert(data?.error || "Erreur d'enregistrement"); return; }
+      setForm(blank); setEditing(null); setCreating(false);
+      router.refresh();
+    } catch {
+      alert("Erreur réseau. Réessayez.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   const del = async (f: Faq) => {
     if (!confirm(`Supprimer cette question ?`)) return;
-    const res = await fetch(`/api/admin/faqs/${f.id}`, { method: "DELETE" });
-    if (!res.ok) { const d = await res.json(); alert(d.error || "Suppression impossible"); return; }
-    router.refresh();
+    try {
+      const res = await fetch(`/api/admin/faqs/${f.id}`, { method: "DELETE" });
+      if (!res.ok) { const d = await res.json().catch(() => null); alert(d?.error || "Suppression impossible"); return; }
+      router.refresh();
+    } catch {
+      alert("Erreur réseau. Réessayez.");
+    }
   };
 
   const formPanel = (

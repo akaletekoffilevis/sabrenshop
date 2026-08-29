@@ -16,14 +16,19 @@ export function NewsletterAdmin({ initial, lastDigestAt }: { initial: Sub[]; las
   const remove = async (s: Sub) => {
     if (!confirm(`Retirer ${s.email} de la newsletter ?`)) return;
     setBusyId(s.id);
-    const res = await fetch(`/api/newsletter/${s.id}`, { method: "DELETE" });
-    setBusyId(null);
-    if (!res.ok) {
-      const d = await res.json().catch(() => ({}));
-      alert(d.error || "Suppression impossible");
-      return;
+    try {
+      const res = await fetch(`/api/newsletter/${s.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        alert(d.error || "Suppression impossible");
+        return;
+      }
+      router.refresh();
+    } catch {
+      alert("Erreur réseau. Réessayez.");
+    } finally {
+      setBusyId(null);
     }
-    router.refresh();
   };
 
   const sendDigest = async () => {
@@ -36,7 +41,7 @@ export function NewsletterAdmin({ initial, lastDigestAt }: { initial: Sub[]; las
       setBusyDigest(false);
       if (!res.ok) { setDigestMsg({ ok: false, text: d.error || "Erreur lors de l’envoi." }); return; }
       if (!d.sent) {
-        setDigestMsg({ ok: true, text: "Rien de nouveau depuis le dernier récap (aucune envoi nécessaire)." });
+        setDigestMsg({ ok: true, text: "Aucun email envoyé (rien de nouveau, ou RESEND_API_KEY non configuré)." });
       } else {
         setDigestMsg({ ok: true, text: `Récap envoyé à ${d.recipients} abonné(s) — ${d.products} produit(s), ${d.promos} code(s) promo.` });
       }

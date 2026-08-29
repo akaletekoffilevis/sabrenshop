@@ -4,6 +4,7 @@ import { Header } from "@/components/shop/Header";
 import { Footer } from "@/components/shop/Footer";
 import { WhatsappFloat } from "@/components/shop/WhatsappFloat";
 import { formatPrice, discountPercent, isNewProduct } from "@/lib/utils";
+import { getSettings } from "@/lib/data";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ProductGallery } from "./ProductGallery";
@@ -59,6 +60,10 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
       console.error("[produit] chargement des avis échoué", err);
       return [];
     });
+
+  const [{ whatsapp: waNumber }] = await Promise.all([
+    getSettings().then((s) => ({ whatsapp: s.whatsapp || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "22789148454" })),
+  ]);
 
   type SimilarProduct = NonNullable<Awaited<ReturnType<typeof getProduct>>>;
 
@@ -135,10 +140,10 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
             <div className="flex items-center gap-2 mt-3">
               <span className="flex text-sabren-gold">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className={`w-4 h-4 ${i < Math.round(product.rating || 5) ? "fill-sabren-gold text-sabren-gold" : "text-sabren-gray-dark"}`} />
+                  <Star key={i} className={`w-4 h-4 ${i < Math.round(product.rating || 0) ? "fill-sabren-gold text-sabren-gold" : "text-sabren-gray-dark"}`} />
                 ))}
               </span>
-              <span className="text-sm text-sabren-black/50">({product.rating || 5} / 5)</span>
+              <span className="text-sm text-sabren-black/50">({product.rating || 0} / 5)</span>
             </div>
 
             {/* Prix */}
@@ -213,7 +218,7 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
                 <li className="flex justify-between"><span>Paiement</span><b className="text-sabren-black">À la livraison</b></li>
               </ul>
             </div>
-            <a href={`https://wa.me/22789148454?text=${encodeURIComponent(`Bonjour Sabreen Shop, des questions sur : ${product.name}`)}`} target="_blank" className="flex items-center justify-center gap-2 bg-sabren-cream border-2 border-dashed border-whatsapp/40 text-whatsapp-dark font-bold rounded-2xl py-4 text-sm hover:bg-whatsapp/5 transition">
+            <a href={`https://wa.me/${waNumber}?text=${encodeURIComponent(`Bonjour Sabreen Shop, des questions sur : ${product.name}`)}`} target="_blank" className="flex items-center justify-center gap-2 bg-sabren-cream border-2 border-dashed border-whatsapp/40 text-whatsapp-dark font-bold rounded-2xl py-4 text-sm hover:bg-whatsapp/5 transition">
               <MessageCircle className="w-4 h-4" /> Une question ? Écrivez-nous
             </a>
           </div>

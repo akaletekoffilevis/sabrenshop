@@ -16,7 +16,7 @@ const schema = z.object({
   minSubtotal: z.number().int().min(0).optional().nullable(),
   maxUses: z.number().int().min(0).optional().nullable(),
   isActive: z.boolean().default(true),
-  expiresAt: z.string().optional().nullable().transform((s) => (s ? new Date(s) : null)),
+  expiresAt: z.string().optional().nullable().transform((s) => (s ? new Date(`${s}T23:59:59.999Z`) : null)),
 });
 
 export async function GET() {
@@ -30,6 +30,7 @@ export async function POST(req: Request) {
   const parsed = schema.safeParse(await req.json());
   if (!parsed.success) return Response.json({ error: parsed.error.issues[0]?.message ?? "Données invalides" }, { status: 400 });
   if (parsed.data.type === "PERCENT" && parsed.data.value > 100) return Response.json({ error: "Une remise % ne peut pas dépasser 100." }, { status: 400 });
+  if (parsed.data.expiresAt && parsed.data.expiresAt < new Date()) return Response.json({ error: "La date d'expiration doit être dans le futur." }, { status: 400 });
 
   const existing = await prisma.promoCode.findUnique({ where: { code: parsed.data.code } });
   if (existing) return Response.json({ error: "Ce code existe déjà." }, { status: 409 });

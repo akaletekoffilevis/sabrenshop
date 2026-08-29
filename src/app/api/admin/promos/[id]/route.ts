@@ -16,7 +16,7 @@ const schema = z.object({
   minSubtotal: z.number().int().min(0).optional().nullable(),
   maxUses: z.number().int().min(0).optional().nullable(),
   isActive: z.boolean().default(true),
-  expiresAt: z.string().optional().nullable().transform((s) => (s ? new Date(s) : null)),
+  expiresAt: z.string().optional().nullable().transform((s) => (s ? new Date(`${s}T23:59:59.999Z`) : null)),
 });
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {

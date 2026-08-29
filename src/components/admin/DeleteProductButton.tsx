@@ -10,12 +10,18 @@ export function DeleteProductButton({ id, name }: { id: string; name: string }) 
   const del = async () => {
     if (!confirm(`Supprimer « ${name} » ? Cette action est irréversible.`)) return;
     setBusy(true);
-    const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
-    setBusy(false);
-    if (res.ok) {
-      router.refresh();
-    } else {
-      alert("Impossible de supprimer ce produit.");
+    try {
+      const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        router.refresh();
+      } else {
+        const d = await res.json().catch(() => null);
+        alert(d?.error || "Impossible de supprimer ce produit.");
+      }
+    } catch {
+      alert("Erreur réseau. Réessayez.");
+    } finally {
+      setBusy(false);
     }
   };
 
