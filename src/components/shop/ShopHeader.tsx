@@ -319,9 +319,6 @@ export function ShopHeader({ categories, isAdmin = false, loggedIn = false }: { 
             <Link href="/favoris" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
               <Heart className="w-4 h-4 text-sabren-gold" /> Mes favoris{wishCount > 0 ? ` (${wishCount})` : ""}
             </Link>
-            <Link href="/suivi" onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
-              <TruckMini className="w-4 h-4 text-sabren-gold" /> Suivre ma commande
-            </Link>
             {!isAdmin && (
               <Link href={loggedIn ? "/compte" : "/connexion"} onClick={() => setOpen(false)} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-sabren-cream text-sm font-semibold">
                 <UserRound className="w-4 h-4 text-sabren-gold" /> {loggedIn ? "Mon compte" : "Se connecter"}

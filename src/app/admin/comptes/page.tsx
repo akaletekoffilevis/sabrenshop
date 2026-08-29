@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Badge, PageHeader } from "@/components/admin/ui";
 import { Users, ShieldCheck, UserRound } from "lucide-react";
+import { DeleteUserButton } from "./DeleteUserButton";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +62,7 @@ export default async function AdminComptesPage() {
                 <th className="px-4 py-3 font-bold">Inscrit le</th>
                 <th className="px-4 py-3 font-bold">Commandes</th>
                 <th className="px-4 py-3 font-bold">Avis</th>
+                <th className="px-4 py-3 font-bold">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -81,11 +83,18 @@ export default async function AdminComptesPage() {
                   <td className="px-4 py-3 text-sabren-black/70">{dateFmt.format(u.createdAt)}</td>
                   <td className="px-4 py-3 font-semibold">{u._count.orders}</td>
                   <td className="px-4 py-3 font-semibold">{u._count.reviews}</td>
+                  <td className="px-4 py-3">
+                    {u.role === "ADMIN" ? (
+                      <span className="text-xs text-sabren-black/35">Protégé</span>
+                    ) : (
+                      <DeleteUserButton id={u.id} name={u.name} email={u.email} />
+                    )}
+                  </td>
                 </tr>
               ))}
               {users.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-sabren-black/40 text-sm">Aucun compte pour l’instant.</td>
+                  <td colSpan={7} className="px-4 py-10 text-center text-sabren-black/40 text-sm">Aucun compte pour l’instant.</td>
                 </tr>
               )}
             </tbody>

@@ -77,7 +77,6 @@ export async function Footer() {
           <h4 className="text-sabren-gold font-bold text-sm uppercase tracking-wide mb-4">Aide & Services</h4>
           <ul className="space-y-2.5 text-sm text-white/75">
             <li><Link href="/#comment-commander" className="hover:text-sabren-gold transition">Comment commander ?</Link></li>
-            <li><Link href="/suivi" className="hover:text-sabren-gold transition">Suivre ma commande</Link></li>
             <li><Link href="/faq" className="hover:text-sabren-gold transition">Questions fréquentes (FAQ)</Link></li>
             <li className="hover:text-sabren-gold transition cursor-pointer">Livraison & retrait (frais à la charge du client)</li>
             <li className="hover:text-sabren-gold transition cursor-pointer">Politique de retour</li>

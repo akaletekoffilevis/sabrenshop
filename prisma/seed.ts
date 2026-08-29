@@ -128,7 +128,7 @@ async function main() {
       { question: "Comment passer commande ?", answer: "Ajoutez vos articles au panier puis validez la commande. Vous pouvez aussi commander directement via WhatsApp : nous confirmons et livrons rapidement.", position: 1 },
       { question: "Quels sont les moyens de paiement ?", answer: "Paiement à la livraison en espèces ou paiement par avance via WhatsApp (Mobile Money). Le retrait en boutique reste possible.", position: 2 },
       { question: "Quels sont les frais de livraison ?", answer: "Les frais de livraison sont à la charge du client, partout au Niger. Le retrait en boutique est gratuit.", position: 3 },
-      { question: "Comment suivre ma commande ?", answer: "Rendez-vous sur la page « Suivre ma commande » avec votre numéro (ex : SAB-2026-0001) et le numéro de téléphone utilisé à la commande.", position: 4 },
+      { question: "Comment suivre ma commande ?", answer: "Créez un compte et retrouvez vos commandes avec leur état dans « Mon compte ». En cas de besoin, contactez-nous directement sur WhatsApp.", position: 4 },
       { question: "Puis-je échanger ou retourner un article ?", answer: "Oui, vous pouvez échanger ou retourner un article sous 7 jours s'il est en bon état et dans son emballage d'origine.", position: 5 },
       { question: "Comment utiliser un code promo ?", answer: "Ajoutez vos articles au panier, collez le code dans le champ « Code promo » et cliquez sur Appliquer : la réduction s'applique immédiatement.", position: 6 },
     ];

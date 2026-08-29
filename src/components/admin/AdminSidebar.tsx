@@ -22,8 +22,7 @@ export function AdminSidebar({ collapsed, onToggle }: { collapsed: boolean; onTo
   const pathname = usePathname();
   const router = useRouter();
 
-  const labelCls = (hidden: boolean) =>
-    `hidden ${hidden ? "md:hidden" : "md:inline"} whitespace-nowrap transition-opacity`;
+  const labelCls = (hidden: boolean) => `hidden whitespace-nowrap transition-opacity ${hidden ? "" : "inline"}`;
 
   const nav = (
     <nav className="flex-1 space-y-1 px-2 py-3 md:px-3 overflow-y-auto">
@@ -35,7 +34,9 @@ export function AdminSidebar({ collapsed, onToggle }: { collapsed: boolean; onTo
             key={l.href}
             href={l.href}
             title={l.label}
-            className={`flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-sm font-medium transition justify-center md:justify-start ${
+            className={`flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-sm font-medium transition ${
+              collapsed ? "justify-center" : "justify-start"
+            } ${
               active ? "bg-sabren-gold text-sabren-black font-bold" : "text-white/70 hover:bg-white/10 hover:text-white"
             }`}
           >
@@ -49,14 +50,14 @@ export function AdminSidebar({ collapsed, onToggle }: { collapsed: boolean; onTo
 
   const bottom = (
     <div className="space-y-1 px-2 py-3 md:px-3 border-t border-white/10">
-      <Link href="/" title="Voir la boutique" className="flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-sm text-white/70 hover:bg-white/10 transition justify-center md:justify-start">
+      <Link href="/" title="Voir la boutique" className={`flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-sm text-white/70 hover:bg-white/10 transition ${collapsed ? "justify-center" : "justify-start"}`}>
         <ExternalLink className="w-5 h-5 shrink-0" />
         <span className={labelCls(collapsed)}>Voir la boutique</span>
       </Link>
       <button
         onClick={async () => { await signOut({ redirect: false }); router.push("/connexion"); router.refresh(); }}
         title="Se déconnecter"
-        className="flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-sm text-white/70 hover:bg-red-500/20 hover:text-red-300 transition w-full justify-center md:justify-start"
+        className={`flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-sm text-white/70 hover:bg-red-500/20 hover:text-red-300 transition w-full ${collapsed ? "justify-center" : "justify-start"}`}
       >
         <LogOut className="w-5 h-5 shrink-0" />
         <span className={labelCls(collapsed)}>Se déconnecter</span>
@@ -66,21 +67,21 @@ export function AdminSidebar({ collapsed, onToggle }: { collapsed: boolean; onTo
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 bg-sabren-black text-white flex-col hidden md:flex transition-[width] duration-300 ease-in-out ${
-        collapsed ? "md:w-[68px]" : "md:w-64"
+      className={`fixed inset-y-0 left-0 z-40 bg-sabren-black text-white flex-col hidden md:flex overflow-hidden transition-[width] duration-300 ease-in-out ${
+        collapsed ? "w-[68px]" : "w-64"
       }`}
     >
-      <div className={`flex items-center border-b border-white/10 ${collapsed ? "md:justify-center" : "md:justify-between"} justify-center px-2 py-4`}>
+      <div className={`flex items-center border-b border-white/10 px-2 py-4 ${collapsed ? "justify-center" : "justify-between"}`}>
         <div className="flex items-center gap-2 min-w-0">
           <span className="w-9 h-9 rounded-xl bg-sabren-gold text-sabren-black font-display font-black flex items-center justify-center shrink-0">S</span>
-          <div className={`leading-tight md:block hidden ${collapsed ? "md:hidden" : ""}`}>
+          <div className={`leading-tight whitespace-nowrap transition-opacity ${collapsed ? "hidden" : "block"}`}>
             <p className="font-display font-bold text-sabren-gold">SABREEN’SHOP</p>
             <p className="text-[10px] text-white/50 uppercase tracking-wide">Administration</p>
           </div>
         </div>
         <button
           onClick={onToggle}
-          className="hidden md:inline-flex p-2 rounded-lg hover:bg-white/10 transition text-white/60 hover:text-white"
+          className="inline-flex p-2 rounded-lg hover:bg-white/10 transition text-white/60 hover:text-white"
           aria-label={collapsed ? "Déplier la barre latérale" : "Replier la barre latérale"}
         >
           {collapsed ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}

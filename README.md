@@ -13,9 +13,9 @@ Boutique e-commerce au Niger : Stanley, gourdes, nounours, vêtements, accessoir
 
 ## Fonctionnalités
 
-- **Boutique** : accueil (héro, catégories, nouveautés, promotions), catalogue filtrable + recherche, fiches produit (galerie, avis, similaires), panier & tunnel de commande, suivi de commande.
+- **Boutique** : accueil (héro, catégories, nouveautés, promotions), catalogue filtrable + recherche, fiches produit (galerie, avis, similaires), panier & tunnel de commande.
 - **Espace client** : inscription / connexion, mot de passe oublié (email + lien de réinitialisation), changement de mot de passe, **modification de l’adresse email**, **suppression de son compte**, suivi de ses commandes.
-- **Admin** : tableau de bord (stats, alertes stock), produits, catégories, codes promo, FAQ, avis, **comptes utilisateurs** (page `/admin/comptes`), **mon compte admin** (changement d’email/mot de passe, `/admin/compte`), newsletter, paramètres (réseaux sociaux, livraison, héro…).
+- **Admin** : tableau de bord (stats, alertes stock), produits, catégories, codes promo, FAQ, avis, **comptes utilisateurs** (page `/admin/comptes`, **suppression d’un compte client**), **mon compte admin** (changement d’email/mot de passe, `/admin/compte`), newsletter, paramètres (réseaux sociaux, livraison, héro…).
 - **Newsletter** : les abonnés reçoivent **un email de bienvenue** à l’inscription (compte) et **un email récapitulatif quotidien** (nouveaux produits + codes promo) — **une seule fois par jour** grâce à un cron Vercel planifié à 9h00 UTC.
 
 ## Démarrage local
@@ -58,7 +58,7 @@ src/
 │   ├── page.tsx            # Accueil (héro, catégories, nouveautés, promos)
 │   ├── boutique/           # Catalogue (filtres, nouveautés, promos, tri, recherche)
 │   ├── produit/[slug]/     # Fiche produit (galerie, avis, similaires)
-│   ├── panier/ commande/ suivi/
+│   ├── panier/ commande/
 │   ├── compte/             # Espace client, mot de passe, email, suppression
 │   ├── connexion/ inscription/ mot-de-passe-oublie/ reinitialisation/
 │   ├── favoris/
