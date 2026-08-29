@@ -15,12 +15,6 @@ const schema = z.object({
   isActive: z.boolean().default(true),
 });
 
-export async function GET() {
-  if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });
-  const faqs = await prisma.faq.findMany({ orderBy: [{ position: "asc" }, { createdAt: "desc" }] });
-  return Response.json({ faqs });
-}
-
 export async function POST(req: Request) {
   if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });
   const parsed = schema.safeParse(await req.json());

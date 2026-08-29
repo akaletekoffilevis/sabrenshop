@@ -1,27 +1,36 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Badge, PageHeader } from "@/components/admin/ui";
-import { Users, ShieldCheck, UserRound } from "lucide-react";
+import { Users, ShieldCheck, UserRound, ChevronLeft, ChevronRight } from "lucide-react";
 import { DeleteUserButton } from "./DeleteUserButton";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminComptesPage() {
+const PER_PAGE = 15;
+
+export default async function AdminComptesPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const session = await auth();
   if ((session?.user as { role?: string } | undefined)?.role !== "ADMIN") redirect("/connexion");
 
-  const [users, totalOrders] = await Promise.all([
+  const sp = await searchParams;
+  const page = Math.max(1, Number(sp.page) || 1);
+
+  const [users, total, admins, totalOrders] = await Promise.all([
     prisma.user.findMany({
       include: { _count: { select: { orders: true, reviews: true } } },
       orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PER_PAGE,
+      take: PER_PAGE,
     }),
+    prisma.user.count(),
+    prisma.user.count({ where: { role: "ADMIN" } }),
     prisma.order.count(),
   ]);
 
-  const total = users.length;
-  const admins = users.filter((u) => u.role === "ADMIN").length;
   const customers = total - admins;
+  const pages = Math.max(1, Math.ceil(total / PER_PAGE));
   const dateFmt = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
 
   const stats = [
@@ -103,6 +112,24 @@ export default async function AdminComptesPage() {
       </div>
 
       {totalOrders > 0 && <p className="text-xs text-sabren-black/40 mt-3">Les commandes sont gérées via WhatsApp, sans compte client obligatoire.</p>}
+
+      {pages > 1 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 mt-5">
+          <p className="text-xs text-sabren-black/45 font-semibold">Page {page} sur {pages} — {total} compte{total > 1 ? "s" : ""}</p>
+          <div className="flex items-center gap-1.5">
+            {page > 1 && (
+              <Link href={`/admin/comptes?page=${page - 1}`} className="inline-flex items-center gap-1 rounded-full border border-sabren-gray bg-white px-4 py-2 text-sm font-bold hover:border-sabren-gold transition">
+                <ChevronLeft className="w-4 h-4" /> Précédent
+              </Link>
+            )}
+            {page < pages && (
+              <Link href={`/admin/comptes?page=${page + 1}`} className="inline-flex items-center gap-1 rounded-full bg-sabren-black text-white px-4 py-2 text-sm font-bold hover:bg-sabren-gold hover:text-sabren-black transition">
+                Suivant <ChevronRight className="w-4 h-4" />
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

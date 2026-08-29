@@ -61,9 +61,3 @@ export async function POST(req: Request) {
     return Response.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
-
-export async function GET() {
-  if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });
-  const products = await prisma.product.findMany({ include: { category: true }, orderBy: { createdAt: "desc" } });
-  return Response.json({ products });
-}

@@ -35,12 +35,6 @@ async function guard() {
   return session?.user && (session.user as { role?: string }).role === "ADMIN";
 }
 
-export async function GET() {
-  if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });
-  const settings = await prisma.settings.findUnique({ where: { id: "default" } });
-  return Response.json({ settings });
-}
-
 export async function PUT(req: Request) {
   if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });
   const parsed = sSchema.safeParse(await req.json());

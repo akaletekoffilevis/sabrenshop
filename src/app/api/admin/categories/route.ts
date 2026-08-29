@@ -25,12 +25,6 @@ function parse(data: unknown) {
   return { ...p.data, slug: p.data.slug?.trim() || slugify(p.data.name), description: p.data.description || null, image: p.data.image || null };
 }
 
-export async function GET() {
-  if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });
-  const categories = await prisma.category.findMany({ include: { _count: { select: { products: true } } }, orderBy: { position: "asc" } });
-  return Response.json({ categories });
-}
-
 export async function POST(req: Request) {
   if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });
   const input = parse(await req.json());

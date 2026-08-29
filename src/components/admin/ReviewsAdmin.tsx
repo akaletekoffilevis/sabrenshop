@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "./ui";
+import { Pagination } from "./Pagination";
 import { Star, Check, Trash2, Loader2 } from "lucide-react";
 
 type Rev = { id: string; name: string | null; rating: number; comment: string | null; isApproved: boolean; productName: string; createdAt: string };
@@ -11,7 +12,9 @@ export function ReviewsAdmin({ initial }: { initial: Rev[] }) {
   const [reviews, setReviews] = useState(initial);
   const [busy, setBusy] = useState("");
   const [filter, setFilter] = useState<"all" | "pending" | "approved">("all");
+  const [page, setPage] = useState(1);
 
+  const PER_PAGE = 8;
   const act = async (id: string, action: "approve" | "delete") => {
     setBusy(id);
     const url = `/api/admin/reviews/${id}`;
@@ -32,12 +35,15 @@ export function ReviewsAdmin({ initial }: { initial: Rev[] }) {
   };
 
   const filtered = reviews.filter((r) => (filter === "pending" ? !r.isApproved : filter === "approved" ? r.isApproved : true));
+  const pages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  const eff = Math.min(page, pages);
+  const paged = filtered.slice((eff - 1) * PER_PAGE, eff * PER_PAGE);
 
   return (
     <div>
       <div className="flex gap-2 mb-5">
         {(["all", "pending", "approved"] as const).map((f) => (
-          <button key={f} onClick={() => setFilter(f)} className={`rounded-full px-4 py-1.5 text-xs font-bold transition ${filter === f ? "bg-sabren-black text-white" : "bg-white border border-sabren-gray hover:border-sabren-gold"}`}>
+          <button key={f} onClick={() => { setFilter(f); setPage(1); }} className={`rounded-full px-4 py-1.5 text-xs font-bold transition ${filter === f ? "bg-sabren-black text-white" : "bg-white border border-sabren-gray hover:border-sabren-gold"}`}>
             {f === "all" ? "Tous" : f === "pending" ? "Masqués" : "Publiés"}
           </button>
         ))}
@@ -47,7 +53,7 @@ export function ReviewsAdmin({ initial }: { initial: Rev[] }) {
         <div className="bg-white rounded-2xl border border-sabren-gray p-10 text-center text-sm text-sabren-black/45">Aucun avis.</div>
       ) : (
         <div className="space-y-3">
-          {filtered.map((r) => (
+          {paged.map((r) => (
             <div key={r.id} className="bg-white rounded-2xl border border-sabren-gray shadow-card p-5 flex flex-wrap items-start gap-3">
               <div className="flex-1 min-w-52">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -76,6 +82,8 @@ export function ReviewsAdmin({ initial }: { initial: Rev[] }) {
           ))}
         </div>
       )}
+
+      <Pagination page={eff} pages={pages} total={filtered.length} onChange={setPage} />
     </div>
   );
 }

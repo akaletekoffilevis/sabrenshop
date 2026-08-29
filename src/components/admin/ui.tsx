@@ -29,12 +29,11 @@ export function Field({ label, hint, children }: { label: string; hint?: string;
 export const inputCls =
   "w-full bg-sabren-gray rounded-xl px-3.5 py-2.5 text-sm outline-none border border-transparent focus:border-sabren-gold focus:bg-white transition";
 
-export function Btn({ variant = "primary", className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "gold" | "ghost" | "danger" }) {
+export function Btn({ variant = "primary", className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "gold" | "ghost" }) {
   const styles = {
     primary: "bg-sabren-black text-white hover:bg-black",
     gold: "bg-sabren-gold text-sabren-black hover:bg-sabren-gold-hover",
     ghost: "border border-sabren-gray hover:border-sabren-gold",
-    danger: "bg-red-500 text-white hover:bg-red-600",
   }[variant];
   return <button {...props} className={cn("inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition disabled:opacity-50", styles, className)} />;
 }

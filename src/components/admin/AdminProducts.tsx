@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Pencil, Image as ImageIcon, LayoutGrid, List, Plus } from "lucide-react";
 import { Card, Badge } from "./ui";
+import { Pagination } from "./Pagination";
 import { DeleteProductButton } from "./DeleteProductButton";
 import { formatPrice } from "@/lib/utils";
 
@@ -21,6 +22,12 @@ export type AdminProductRow = {
 
 export function AdminProducts({ products }: { products: AdminProductRow[] }) {
   const [view, setView] = useState<"cards" | "list">("cards");
+  const [page, setPage] = useState(1);
+
+  const PER_PAGE = 12;
+  const pages = Math.max(1, Math.ceil(products.length / PER_PAGE));
+  const eff = Math.min(page, pages);
+  const paged = products.slice((eff - 1) * PER_PAGE, eff * PER_PAGE);
 
   const stockTone = (stock: number): "red" | "gold" | "green" => (stock === 0 ? "red" : stock < 5 ? "gold" : "green");
   const stockLabel = (stock: number) => (stock === 0 ? "Rupture" : `${stock} en stock`);
@@ -79,7 +86,7 @@ export function AdminProducts({ products }: { products: AdminProductRow[] }) {
                 </tr>
               </thead>
               <tbody>
-                {products.map((p) => (
+                {paged.map((p) => (
                   <tr key={p.id} className="border-t border-sabren-gray hover:bg-sabren-cream/50 transition">
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
@@ -115,7 +122,7 @@ export function AdminProducts({ products }: { products: AdminProductRow[] }) {
 
           {/* Cartes mobile (grille 2 colonnes pleine largeur) */}
           <div className={`md:hidden grid gap-3 ${view === "cards" ? "grid-cols-2" : "grid-cols-1"}`}>
-            {products.map((p) =>
+            {paged.map((p) =>
               view === "cards" ? (
                 <Card key={p.id} className="overflow-hidden">
                   <div className="aspect-square bg-sabren-cream overflow-hidden">
@@ -160,6 +167,8 @@ export function AdminProducts({ products }: { products: AdminProductRow[] }) {
               )
             )}
           </div>
+
+          <Pagination page={eff} pages={pages} total={products.length} onChange={setPage} />
         </>
       )}
     </div>

@@ -235,12 +235,3 @@ model Settings {
   socialLinks           String?  @default("[]") // JSON: [{label, url}]
   updatedAt             DateTime @updatedAt
 }
-
-model Media {
-  id        String   @id @default(cuid())
-  url       String
-  filename  String
-  size      Int?
-  type      String?
-  createdAt DateTime @default(now())
-}

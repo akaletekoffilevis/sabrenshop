@@ -19,12 +19,6 @@ const schema = z.object({
   expiresAt: z.string().optional().nullable().transform((s) => (s ? new Date(`${s}T23:59:59.999Z`) : null)),
 });
 
-export async function GET() {
-  if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });
-  const promos = await prisma.promoCode.findMany({ orderBy: { createdAt: "desc" } });
-  return Response.json({ promos });
-}
-
 export async function POST(req: Request) {
   if (!(await guard())) return Response.json({ error: "Non autorisé" }, { status: 401 });
   const parsed = schema.safeParse(await req.json());
