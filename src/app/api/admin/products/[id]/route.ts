@@ -43,10 +43,16 @@ export async function PUT(req: Request, { params }: Ctx) {
   if (!parsed.success) return Response.json({ error: "Données invalides" }, { status: 400 });
   try {
     const data = parsed.data;
-    const slug = data.slug?.trim() || "";
+    const slug = data.slug?.trim();
+    const { slug: _ignore, ...rest } = data;
     const product = await prisma.product.update({
       where: { id },
-      data: { ...data, slug: await ensureUniqueSlug(slug, id), description: data.description || null, categoryId: data.categoryId || null },
+      data: {
+        ...rest,
+        ...(slug ? { slug: await ensureUniqueSlug(slug, id) } : {}),
+        description: data.description || null,
+        categoryId: data.categoryId || null,
+      },
     });
     return Response.json({ ok: true, product });
   } catch (e: any) {

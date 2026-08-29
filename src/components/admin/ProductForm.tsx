@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Field, inputCls, Btn, Toggle } from "./ui";
 import { ImagePlus, X, Loader2 } from "lucide-react";
-import { slugify } from "@/lib/utils";
 import { resizeImage } from "@/lib/image";
 
 type Cat = { id: string; name: string };
@@ -27,9 +26,8 @@ type Product = {
 export function ProductForm({ product, categories }: { product?: Product | null; categories: Cat[] }) {
   const router = useRouter();
   const isEdit = Boolean(product);
-  const [form, setForm] = useState<Omit<Product, "id">>({
+  const [form, setForm] = useState<Omit<Product, "id" | "slug">>({
     name: product?.name ?? "",
-    slug: product?.slug ?? "",
     description: product?.description ?? "",
     price: product?.price ?? 0,
     compareAtPrice: product?.compareAtPrice ?? null,
@@ -48,13 +46,10 @@ export function ProductForm({ product, categories }: { product?: Product | null;
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [imageError, setImageError] = useState<Record<string, boolean>>({});
-  const [slugEdited, setSlugEdited] = useState(Boolean(product?.slug));
 
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm((f) => ({ ...f, [k]: v }));
 
-  const setName = (name: string) => {
-    setForm((f) => ({ ...f, name, slug: slugEdited ? f.slug : slugify(name) }));
-  };
+  const setName = (name: string) => set("name", name);
 
   const addChip = (list: "colors" | "sizes") => {
     const v = (list === "colors" ? colorInput : sizeInput).trim();
@@ -96,7 +91,6 @@ export function ProductForm({ product, categories }: { product?: Product | null;
     setError("");
     const payload = {
       ...form,
-      slug: form.slug.trim() || undefined,
       price: Number(form.price) || 0,
       compareAtPrice: form.compareAtPrice ? Number(form.compareAtPrice) : null,
       stock: Number(form.stock) || 0,
@@ -133,11 +127,6 @@ export function ProductForm({ product, categories }: { product?: Product | null;
           <Field label="Nom du produit">
             <input className={inputCls} value={form.name} onChange={(e) => setName(e.target.value)} required />
           </Field>
-          {isEdit && (
-            <Field label="Slug (URL)" hint="Généré automatiquement d’après le titre. Modifiez-le si besoin.">
-              <input className={inputCls} value={form.slug} onChange={(e) => { set("slug", slugify(e.target.value) || e.target.value); setSlugEdited(true); }} placeholder="tshirt-sabreen-noir" />
-            </Field>
-          )}
         </div>
 
         <Field label="Prix (FCFA)">
