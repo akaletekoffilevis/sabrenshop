@@ -15,7 +15,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     staticPage("", 1),
     staticPage("/boutique", 0.9),
     staticPage("/panier", 0.4),
-    staticPage("/commande", 0.5),
     staticPage("/connexion", 0.3),
     staticPage("/inscription", 0.3),
   ];

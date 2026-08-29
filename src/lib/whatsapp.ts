@@ -6,15 +6,6 @@ export function whatsappLink(message: string, number: string = WHATSAPP_NUMBER) 
   return `https://wa.me/${number}?text=${encoded}`;
 }
 
-export function whatsappLinkTo(number: string, message: string) {
-  let digits = (number || "").replace(/\D/g, "");
-  if (digits.startsWith("0")) digits = digits.slice(1);
-  if (digits.length === 8) digits = `227${digits}`;
-  if (digits.length === 9) digits = `227${digits}`;
-  const encoded = encodeURIComponent(message);
-  return `https://wa.me/${digits}?text=${encoded}`;
-}
-
 export function productWhatsappMessage(opts: {
   name: string;
   price: number;
@@ -45,45 +36,4 @@ export function cartWhatsappMessage(
   parts.push(`Total : ${opts.total.toLocaleString("fr-FR")} FCFA`);
   parts.push(``, `Merci de me confirmer la disponibilité et la livraison.`);
   return parts.join("\n");
-}
-
-type OrderItem = { name: string; price: number; quantity: number; color?: string | null; size?: string | null };
-export type OrderMessageInfo = {
-  orderNumber: string;
-  customerName: string;
-  items: OrderItem[];
-  subtotal: number;
-  discount: number;
-  deliveryFee: number;
-  total: number;
-  isPickup: boolean;
-  paymentMethod?: string | null;
-  promoCode?: string | null;
-  ville?: string | null;
-  quartier?: string | null;
-};
-
-function orderLines(items: OrderItem[]) {
-  return items.map((i, idx) => {
-    const variant = [i.color, i.size].filter(Boolean).join(" / ");
-    return `${idx + 1}. ${i.name}${variant ? ` (${variant})` : ""} x${i.quantity} — ${(i.price * i.quantity).toLocaleString("fr-FR")} FCFA`;
-  });
-}
-
-function orderTotals(o: OrderMessageInfo) {
-  const parts: string[] = [];
-  parts.push(`N° commande : ${o.orderNumber}`);
-  if (o.items.length) parts.push(``, ...orderLines(o.items), ``);
-  parts.push(`Sous-total : ${o.subtotal.toLocaleString("fr-FR")} FCFA`);
-  if (o.discount > 0) parts.push(`Remise (${o.promoCode || "code"}) : -${o.discount.toLocaleString("fr-FR")} FCFA`);
-  const where = [o.quartier, o.ville].filter(Boolean).join(", ");
-  if (o.isPickup) parts.push(`Mode : Retrait boutique`);
-  else parts.push(o.deliveryFee > 0 ? `Livraison : ${o.deliveryFee.toLocaleString("fr-FR")} FCFA${where ? ` (${where})` : ""}` : `Livraison : Offerte${where ? ` (${where})` : ""}`);
-  parts.push(`Total : ${o.total.toLocaleString("fr-FR")} FCFA`);
-  parts.push(`Paiement : ${o.paymentMethod === "COD" ? "à la livraison (espèces)" : "via WhatsApp"}`);
-  return parts;
-}
-
-export function orderWhatsappMessage(o: OrderMessageInfo) {
-  return [`Bonjour Sabreen Shop, je confirme ma commande :`, ...orderTotals(o), `Merci de la traiter.`].join("\n");
 }

@@ -17,16 +17,15 @@ export default async function AdminComptesPage({ searchParams }: { searchParams:
   const sp = await searchParams;
   const page = Math.max(1, Number(sp.page) || 1);
 
-  const [users, total, admins, totalOrders] = await Promise.all([
+  const [users, total, admins] = await Promise.all([
     prisma.user.findMany({
-      include: { _count: { select: { orders: true, reviews: true } } },
+      include: { _count: { select: { reviews: true } } },
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * PER_PAGE,
       take: PER_PAGE,
     }),
     prisma.user.count(),
     prisma.user.count({ where: { role: "ADMIN" } }),
-    prisma.order.count(),
   ]);
 
   const customers = total - admins;
@@ -69,7 +68,6 @@ export default async function AdminComptesPage({ searchParams }: { searchParams:
                 <th className="px-4 py-3 font-bold">Email</th>
                 <th className="px-4 py-3 font-bold">Rôle</th>
                 <th className="px-4 py-3 font-bold">Inscrit le</th>
-                <th className="px-4 py-3 font-bold">Commandes</th>
                 <th className="px-4 py-3 font-bold">Avis</th>
                 <th className="px-4 py-3 font-bold">Actions</th>
               </tr>
@@ -90,7 +88,6 @@ export default async function AdminComptesPage({ searchParams }: { searchParams:
                     {u.role === "ADMIN" ? <Badge tone="gold">Admin</Badge> : <Badge tone="gray">Client</Badge>}
                   </td>
                   <td className="px-4 py-3 text-sabren-black/70">{dateFmt.format(u.createdAt)}</td>
-                  <td className="px-4 py-3 font-semibold">{u._count.orders}</td>
                   <td className="px-4 py-3 font-semibold">{u._count.reviews}</td>
                   <td className="px-4 py-3">
                     {u.role === "ADMIN" ? (
@@ -103,15 +100,13 @@ export default async function AdminComptesPage({ searchParams }: { searchParams:
               ))}
               {users.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-10 text-center text-sabren-black/40 text-sm">Aucun compte pour l’instant.</td>
+                  <td colSpan={6} className="px-4 py-10 text-center text-sabren-black/40 text-sm">Aucun compte pour l’instant.</td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
       </div>
-
-      {totalOrders > 0 && <p className="text-xs text-sabren-black/40 mt-3">Les commandes sont gérées via WhatsApp, sans compte client obligatoire.</p>}
 
       {pages > 1 && (
         <div className="flex flex-wrap items-center justify-between gap-3 mt-5">

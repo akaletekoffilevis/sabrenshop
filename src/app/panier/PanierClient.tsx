@@ -195,7 +195,7 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
                 Continuer mes achats
               </Link>
             </div>
-            <p className="text-[11px] text-center text-sabren-black/45">Paiement à la livraison disponible — WhatsApp reste disponible.</p>
+            <p className="text-[11px] text-center text-sabren-black/45">Votre commande part sur WhatsApp — nous confirmons la livraison et le paiement.</p>
           </div>
         </div>
       )}

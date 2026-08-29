@@ -21,20 +21,6 @@ enum Role {
   CUSTOMER
 }
 
-enum OrderStatus {
-  NEW
-  CONFIRMED
-  PREPARING
-  SHIPPED
-  DELIVERED
-  CANCELLED
-}
-
-enum PaymentMethod {
-  WHATSAPP
-  COD
-}
-
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -43,7 +29,6 @@ model User {
   password      String?
   image         String?
   role          Role      @default(CUSTOMER)
-  orders        Order[]
   reviews       Review[]
   accounts      Account[]
   sessions      Session[]
@@ -117,48 +102,8 @@ model Product {
   isActive       Boolean    @default(true)
   rating         Float      @default(0)
   reviews        Review[]
-  orderItems     OrderItem[]
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
-}
-
-model Order {
-  id            String        @id @default(cuid())
-  orderNumber   String        @unique // ex: SAB-2026-0001
-  customerName  String
-  phone         String
-  whatsapp      String?
-  email         String?
-  address       String?
-  quartier      String?
-  ville         String?
-  notes         String?
-  total         Int // total FCFA
-  deliveryFee   Int           @default(0)
-  discount      Int           @default(0)
-  promoCode     String?
-  status        OrderStatus   @default(NEW)
-  paymentMethod PaymentMethod @default(WHATSAPP)
-  isPickup      Boolean       @default(false)
-  userId        String?
-  user          User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
-  items         OrderItem[]
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-}
-
-model OrderItem {
-  id        String  @id @default(cuid())
-  orderId   String
-  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId String
-  product   Product @relation(fields: [productId], references: [id])
-  quantity  Int
-  price     Int // prix au moment de la commande
-  color     String?
-  size      String?
-  name      String // snapshot nom
-  image     String?
 }
 
 model Review {

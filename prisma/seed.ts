@@ -125,7 +125,7 @@ async function main() {
 
   if ((await prisma.faq.count()) === 0) {
     const faqs = [
-      { question: "Comment passer commande ?", answer: "Ajoutez vos articles au panier puis validez la commande. Vous pouvez aussi commander directement via WhatsApp : nous confirmons et livrons rapidement.", position: 1 },
+      { question: "Comment passer commande ?", answer: "Ajoutez vos articles au panier puis commandez directement via WhatsApp : nous confirmons et livrons rapidement.", position: 1 },
       { question: "Quels sont les moyens de paiement ?", answer: "Paiement à la livraison en espèces ou paiement par avance via WhatsApp (Mobile Money). Le retrait en boutique reste possible.", position: 2 },
       { question: "Quels sont les frais de livraison ?", answer: "Les frais de livraison sont à la charge du client, partout au Niger. Le retrait en boutique est gratuit.", position: 3 },
       { question: "Puis-je échanger ou retourner un article ?", answer: "Oui, vous pouvez échanger ou retourner un article sous 7 jours s'il est en bon état et dans son emballage d'origine.", position: 4 },
