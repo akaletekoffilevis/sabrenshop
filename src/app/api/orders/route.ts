@@ -5,8 +5,8 @@ import { z } from "zod";
 import { Prisma } from "@prisma/client";
 
 const itemSchema = z.object({
-  id: z.string().min(1),
-  quantity: z.number().int().min(1).max(99),
+  id: z.string().min(1, "Article invalide"),
+  quantity: z.number().int().min(1, "Quantité invalide").max(99, "Quantité trop grande"),
   color: z.string().optional().nullable(),
   size: z.string().optional().nullable(),
   image: z.string().optional().nullable(),
