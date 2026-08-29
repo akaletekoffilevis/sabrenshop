@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Field, inputCls, Btn, Badge, Card } from "./ui";
 import { ImageUploader } from "./ImageUploader";
+import { ViewToggle } from "./ViewToggle";
 import { CategoryIcon, CATEGORY_ICON_KEYS } from "@/components/ui/category-icon";
 import { Pencil, Trash2, Plus, X, Loader2 } from "lucide-react";
 
@@ -12,6 +13,7 @@ const iconKeys = CATEGORY_ICON_KEYS;
 
 export function CategoryManager({ initial }: { initial: Cat[] }) {
   const router = useRouter();
+  const [view, setView] = useState<"cards" | "list">("cards");
   const [editing, setEditing] = useState<Cat | null>(null);
   const [creating, setCreating] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -90,7 +92,8 @@ export function CategoryManager({ initial }: { initial: Cat[] }) {
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-end gap-3 mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <ViewToggle view={view} onChange={setView} />
         {!creating && (
           <Btn type="button" variant="gold" onClick={() => { setCreating(true); setForm(blank); }}>
             <Plus className="w-4 h-4" /> Ajouter une catégorie
@@ -98,38 +101,106 @@ export function CategoryManager({ initial }: { initial: Cat[] }) {
         )}
       </div>
 
-      {creating && formPanel}
+      {(creating || editing) && formPanel}
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {initial.map((c) => (
-          <div key={c.id} className={editing?.id === c.id ? "sm:col-span-2 lg:col-span-3" : ""}>
-            <Card className="p-4 flex items-center gap-3">
-              <span className="w-11 h-11 rounded-xl bg-sabren-cream border border-sabren-gold/30 flex items-center justify-center shrink-0 overflow-hidden">
-                {c.image ? <img src={c.image} alt={c.name} className="w-full h-full object-cover" loading="lazy" decoding="async" /> : <CategoryIcon icon={c.icon} className="w-5 h-5 text-sabren-gold" />}
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="font-bold text-sm truncate">{c.name}</p>
-                <p className="text-[11px] text-sabren-black/40">
-                  {c._count?.products ?? 0} produit{(c._count?.products ?? 0) > 1 ? "s" : ""} · /{c.slug}
-                </p>
-                <div className="mt-1">
-                  <Badge tone={c.isActive ? "green" : "gray"}>{c.isActive ? "Active" : "Masquée"}</Badge>
+      {view === "cards" ? (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {initial.map((c) => (
+            <div key={c.id}>
+              <Card className="p-4 flex items-center gap-3">
+                <span className="w-11 h-11 rounded-xl bg-sabren-cream border border-sabren-gold/30 flex items-center justify-center shrink-0 overflow-hidden">
+                  {c.image ? <img src={c.image} alt={c.name} className="w-full h-full object-cover" loading="lazy" decoding="async" /> : <CategoryIcon icon={c.icon} className="w-5 h-5 text-sabren-gold" />}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-sm truncate">{c.name}</p>
+                  <p className="text-[11px] text-sabren-black/40">
+                    {c._count?.products ?? 0} produit{(c._count?.products ?? 0) > 1 ? "s" : ""} · /{c.slug}
+                  </p>
+                  <div className="mt-1">
+                    <Badge tone={c.isActive ? "green" : "gray"}>{c.isActive ? "Active" : "Masquée"}</Badge>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-0.5 shrink-0">
-                <button onClick={() => { setEditing(c); setCreating(false); setForm({ name: c.name, description: c.description ?? "", icon: c.icon, image: c.image ?? "", isActive: c.isActive, position: c.position }); }} className="p-2 rounded-lg text-sabren-black/40 hover:text-sabren-gold hover:bg-sabren-cream transition" aria-label="Modifier">
-                  <Pencil className="w-4 h-4" />
-                </button>
-                <button onClick={() => del(c)} className="p-2 rounded-lg text-sabren-black/40 hover:text-red-500 hover:bg-red-50 transition" aria-label="Supprimer">
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </Card>
+                <div className="flex items-center gap-0.5 shrink-0">
+                  <button onClick={() => { setEditing(c); setCreating(false); setForm({ name: c.name, description: c.description ?? "", icon: c.icon, image: c.image ?? "", isActive: c.isActive, position: c.position }); }} className="p-2 rounded-lg text-sabren-black/40 hover:text-sabren-gold hover:bg-sabren-cream transition" aria-label="Modifier">
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => del(c)} className="p-2 rounded-lg text-sabren-black/40 hover:text-red-500 hover:bg-red-50 transition" aria-label="Supprimer">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </Card>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <>
+          <Card className="overflow-x-auto hidden md:block">
+            <table className="w-full text-sm">
+              <thead className="bg-sabren-gray/60 text-left text-xs uppercase text-sabren-black/45">
+                <tr>
+                  <th className="px-5 py-3">Catégorie</th>
+                  <th className="py-3">Slug</th>
+                  <th className="py-3 text-center">Produits</th>
+                  <th className="py-3 text-center">Statut</th>
+                  <th className="py-3 text-right pr-5">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {initial.map((c) => (
+                  <tr key={c.id} className="border-t border-sabren-gray hover:bg-sabren-cream/50 transition">
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-3">
+                        <span className="w-9 h-9 rounded-lg bg-sabren-cream border border-sabren-gold/30 flex items-center justify-center shrink-0 overflow-hidden">
+                          {c.image ? <img src={c.image} alt={c.name} className="w-full h-full object-cover" loading="lazy" decoding="async" /> : <CategoryIcon icon={c.icon} className="w-4 h-4 text-sabren-gold" />}
+                        </span>
+                        <span className="font-semibold">{c.name}</span>
+                      </div>
+                    </td>
+                    <td className="py-3 text-sabren-black/50">/{c.slug}</td>
+                    <td className="py-3 text-center font-semibold">{c._count?.products ?? 0}</td>
+                    <td className="py-3 text-center">
+                      <Badge tone={c.isActive ? "green" : "gray"}>{c.isActive ? "Active" : "Masquée"}</Badge>
+                    </td>
+                    <td className="py-3 text-right pr-5">
+                      <div className="flex items-center justify-end gap-0.5">
+                        <button onClick={() => { setEditing(c); setCreating(false); setForm({ name: c.name, description: c.description ?? "", icon: c.icon, image: c.image ?? "", isActive: c.isActive, position: c.position }); }} className="p-2 rounded-lg text-sabren-black/40 hover:text-sabren-gold hover:bg-sabren-cream transition" aria-label="Modifier">
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => del(c)} className="p-2 rounded-lg text-sabren-black/40 hover:text-red-500 hover:bg-red-50 transition" aria-label="Supprimer">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Card>
 
-            {editing?.id === c.id && formPanel}
+          <div className="md:hidden grid gap-2">
+            {initial.map((c) => (
+              <Card key={c.id} className="p-3 flex items-center gap-3">
+                <span className="w-10 h-10 rounded-xl bg-sabren-cream border border-sabren-gold/30 flex items-center justify-center shrink-0 overflow-hidden">
+                  {c.image ? <img src={c.image} alt={c.name} className="w-full h-full object-cover" loading="lazy" decoding="async" /> : <CategoryIcon icon={c.icon} className="w-4 h-4 text-sabren-gold" />}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-sm truncate">{c.name}</p>
+                  <p className="text-[11px] text-sabren-black/40">/{c.slug} · {c._count?.products ?? 0} produit{(c._count?.products ?? 0) > 1 ? "s" : ""}</p>
+                </div>
+                <Badge tone={c.isActive ? "green" : "gray"}>{c.isActive ? "Active" : "Masquée"}</Badge>
+                <div className="flex items-center gap-0.5 shrink-0">
+                  <button onClick={() => { setEditing(c); setCreating(false); setForm({ name: c.name, description: c.description ?? "", icon: c.icon, image: c.image ?? "", isActive: c.isActive, position: c.position }); }} className="p-2 rounded-lg text-sabren-black/40 hover:text-sabren-gold hover:bg-sabren-cream transition" aria-label="Modifier">
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => del(c)} className="p-2 rounded-lg text-sabren-black/40 hover:text-red-500 hover:bg-red-50 transition" aria-label="Supprimer">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </Card>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
     </div>
   );
 }

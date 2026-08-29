@@ -25,7 +25,7 @@ export default async function AdminProduits() {
     <div>
       <PageHeader
         title="Produits"
-        subtitle={`${products.length} produit${products.length > 1 ? "s" : ""} au catalogue — vue cartes/liste sur mobile, tableau sur ordinateur.`}
+        subtitle={`${products.length} produit${products.length > 1 ? "s" : ""} au catalogue — basculez entre vue cartes et liste sur tous les écrans.`}
         actions={
           <Link href="/admin/produits/nouveau" className="inline-flex items-center gap-2 bg-sabren-gold text-sabren-black font-bold rounded-full px-5 py-2.5 text-sm hover:bg-sabren-gold-hover transition shadow-gold">
             <Plus className="w-4 h-4" /> Ajouter un produit

@@ -95,10 +95,7 @@ export default async function BoutiquePage({
           <div>
             <h1 className="font-display font-black text-2xl md:text-3xl">La Boutique</h1>
             <p className="text-sm text-sabren-black/55 mt-1 flex items-center gap-1.5">
-              {products.length} produit{products.length > 1 ? "s" : ""} disponible{products.length > 1 ? "s" : ""}
-              <span className="inline-flex items-center gap-1 text-sabren-black/55">
-                <Truck className="w-3.5 h-3.5" /> Livraison partout au Niger · frais à la charge du client
-              </span>
+              <Truck className="w-3.5 h-3.5" /> Livraison partout au Niger · frais à la charge du client
             </p>
           </div>
           <details className="group relative">

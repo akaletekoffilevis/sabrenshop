@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 import { Badge } from "@/components/admin/ui";
-import { LayoutGrid, Rows3, Mail, CalendarDays, Star, ShieldCheck, UserRound } from "lucide-react";
+import { ViewToggle } from "@/components/admin/ViewToggle";
+import { Mail, CalendarDays, Star, ShieldCheck, UserRound } from "lucide-react";
 import { DeleteUserButton } from "./DeleteUserButton";
 
 export type AccountRow = {
@@ -16,7 +17,7 @@ export type AccountRow = {
 const dateFmt = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
 
 export function AccountsView({ users }: { users: AccountRow[] }) {
-  const [view, setView] = useState<"table" | "cards">("table");
+  const [view, setView] = useState<"cards" | "list">("list");
 
   if (users.length === 0) {
     return (
@@ -32,29 +33,10 @@ export function AccountsView({ users }: { users: AccountRow[] }) {
         <p className="text-xs font-bold uppercase tracking-wide text-sabren-black/50">
           {users.length} compte{users.length > 1 ? "s" : ""} affiché{users.length > 1 ? "s" : ""} sur cette page
         </p>
-        <div className="flex items-center gap-1 rounded-full bg-sabren-gray/70 p-1">
-          <button
-            type="button"
-            onClick={() => setView("table")}
-            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition ${
-              view === "table" ? "bg-white shadow-sm text-sabren-black" : "text-sabren-black/50 hover:text-sabren-black"
-            }`}
-          >
-            <Rows3 className="w-3.5 h-3.5" /> Liste
-          </button>
-          <button
-            type="button"
-            onClick={() => setView("cards")}
-            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition ${
-              view === "cards" ? "bg-white shadow-sm text-sabren-black" : "text-sabren-black/50 hover:text-sabren-black"
-            }`}
-          >
-            <LayoutGrid className="w-3.5 h-3.5" /> Cartes
-          </button>
-        </div>
+        <ViewToggle view={view} onChange={setView} />
       </div>
 
-      {view === "table" ? (
+      {view === "list" ? (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
