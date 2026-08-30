@@ -75,7 +75,6 @@ export function RegisterForm() {
 
       <div className="mt-6 space-y-2 text-xs text-sabren-black/55">
         <p className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-green-600" /> Commande en 1 clic avec vos informations</p>
-        <p className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-green-600" /> Suivi simple de vos commandes</p>
         <p className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-green-600" /> Accès rapide à vos favoris</p>
       </div>
 
