@@ -19,8 +19,9 @@ export async function POST(req: Request) {
   try {
     url = await saveFile(file, name);
   } catch (e) {
+    const detail = e instanceof Error ? e.message : String(e);
     console.error("[upload] échec:", e);
-    return Response.json({ error: "Échec de l'upload. Vérifiez que Vercel Blob est configuré (BLOB_READ_WRITE_TOKEN)." }, { status: 500 });
+    return Response.json({ error: `Échec de l'upload (Vercel Blob) : ${detail.slice(0, 200)}` }, { status: 500 });
   }
   return Response.json({ url });
 }
