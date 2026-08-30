@@ -1,13 +1,16 @@
 "use client";
 import { whatsappLink } from "@/lib/whatsapp";
 import { useShopConfig } from "@/lib/useShopConfig";
-import { MessageCircle, X } from "lucide-react";
+import { MessageCircle, Send, X } from "lucide-react";
 import { useState } from "react";
+
+const DEFAULT_MSG = "Bonjour ! J’aurais une question à vous poser.";
 
 export function WhatsappFloat() {
   const [open, setOpen] = useState(false);
+  const [msg, setMsg] = useState("");
   const { whatsapp } = useShopConfig();
-  const link = whatsappLink("Bonjour SABREEN’SHOP ! Une question ? Besoin de commander ?", whatsapp);
+  const link = whatsappLink(msg.trim() || DEFAULT_MSG, whatsapp);
 
   return (
     <>
@@ -27,16 +30,24 @@ export function WhatsappFloat() {
           </div>
           <div className="px-4 py-3">
             <p className="text-xs text-sabren-black/70 bg-sabren-gray rounded-xl rounded-tl-none px-3 py-2.5 inline-block">
-              Bonjour ! Une question ? Besoin de commander ?<br />Écrivez-nous, on vous répond vite !
+              Bonjour ! Comment pouvons-nous vous aider ?
             </p>
+            <textarea
+              value={msg}
+              onChange={(e) => setMsg(e.target.value)}
+              placeholder="Écrivez votre question ou votre commande ici…"
+              rows={3}
+              className="mt-3 w-full bg-sabren-cream rounded-xl border border-sabren-gray focus:border-whatsapp focus:bg-white outline-none px-3 py-2.5 text-sm resize-none transition"
+            />
           </div>
           <div className="px-4 pb-4">
             <a
               href={link}
               target="_blank"
+              onClick={() => setOpen(false)}
               className="flex items-center justify-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white text-sm font-bold rounded-full py-2.5 transition"
             >
-              <MessageCircle className="w-4 h-4" /> Démarrer la conversation
+              <Send className="w-4 h-4" /> Envoyer sur WhatsApp
             </a>
           </div>
         </div>
