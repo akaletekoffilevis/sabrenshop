@@ -109,7 +109,11 @@ export function AdminMobileTop() {
     <>
       <div className="md:hidden sticky top-0 z-30 bg-sabren-black text-white px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="font-display font-bold text-sabren-gold text-sm">ADMIN</span>
+          <span className="w-9 h-9 rounded-xl bg-sabren-gold text-sabren-black font-display font-black flex items-center justify-center shrink-0">S</span>
+          <div className="leading-tight">
+            <p className="font-display font-bold text-sabren-gold text-sm">SABREEN’SHOP</p>
+            <p className="text-[10px] text-white/50 uppercase tracking-wide">Administration</p>
+          </div>
         </div>
         <button onClick={() => setOpen(!open)} className="p-2 rounded-lg hover:bg-white/10" aria-label="Menu">
           {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
