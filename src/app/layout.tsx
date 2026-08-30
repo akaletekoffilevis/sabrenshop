@@ -16,7 +16,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://sabrenshop-test-app.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://sabreenshop.vercel.app"),
   title: {
     default: "SABREEN’SHOP — Votre boutique, votre style, votre choix",
     template: "%s | SABREEN’SHOP",

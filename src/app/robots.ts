@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const BASE = (process.env.NEXT_PUBLIC_BASE_URL || "https://sabrenshop-test-app.vercel.app").replace(/\/$/, "");
+const BASE = (process.env.NEXT_PUBLIC_BASE_URL || "https://sabreenshop.vercel.app").replace(/\/$/, "");
 
 export default function robots(): MetadataRoute.Robots {
   return {

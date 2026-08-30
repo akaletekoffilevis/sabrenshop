@@ -29,9 +29,31 @@ export function ProductActions({ product }: { product: any }) {
   const disabled = product.inStock === false;
   const waLink = whatsappLink(productWhatsappMessage({ name: product.name, price: product.price, quantity: qty, color, size }), whatsapp);
 
-  const shareToWhatsapp = () => {
+  const shareToWhatsapp = async () => {
     const url = `${window.location.origin}/produit/${product.slug}`;
     const msg = `Bonjour, je partage avec vous ce produit :\n*${product.name}* — ${product.price.toLocaleString("fr-FR")} FCFA\n${url}\nDisponible chez SABREEN’SHOP !`;
+    const image = (product.images?.[0] as string | undefined) || null;
+
+    if (image && typeof navigator.share === "function" && typeof navigator.canShare === "function") {
+      try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 8000);
+        const res = await fetch(image);
+        clearTimeout(timer);
+        if (res.ok) {
+          const blob = await res.blob();
+          const ext = (image.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+          const file = new File([blob], `sabrenshop-${product.slug}.${ext}`, { type: blob.type || "image/jpeg" });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], text: msg, url });
+            return;
+          }
+        }
+      } catch (err) {
+        if (err instanceof DOMException && (err.name === "AbortError" || err.name === "SecurityError")) return;
+      }
+    }
+
     window.open(whatsappShareLink(msg), "_blank");
   };
 
@@ -87,7 +109,7 @@ export function ProductActions({ product }: { product: any }) {
         </a>
         <button
           onClick={shareToWhatsapp}
-          className="inline-flex items-center justify-center gap-2 rounded-full py-3 font-bold text-sm border border-sabren-gray text-sabren-black/70 hover:border-whatsapp hover:text-whatsapp transition"
+          className="inline-flex items-center justify-center gap-2 rounded-full py-3 font-bold text-sm bg-white border-2 border-sabren-black/15 text-sabren-black hover:bg-sabren-black hover:text-white hover:border-sabren-black transition shadow-card"
         >
           <Share2 className="w-4 h-4" /> Partager sur WhatsApp
         </button>
