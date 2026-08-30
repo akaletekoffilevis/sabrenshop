@@ -29,11 +29,18 @@ export async function saveFile(file: File, baseName: string = "produit"): Promis
   const ext = extOf(file.name) || ".jpg";
   const filename = `${safe}-${Date.now()}${ext}`;
 
-  // Prod : Vercel Blob
+  // Prod : Vercel Blob (store v2 — token et/ou storeId)
   const token = process.env.SABREN_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN;
-  if (token) {
+  const storeId = process.env.SABREN_STORE_ID || process.env.BLOB_STORE_ID;
+  if (token || storeId) {
     try {
-      const blob = await put(filename, buffer, { access: "public", token });
+      const blob = await put(filename, buffer, {
+        access: "public",
+        token: token || undefined,
+        storeId: storeId || undefined,
+        addRandomSuffix: true,
+        contentType: file.type || undefined,
+      });
       return blob.url;
     } catch (e) {
       console.error("[upload] Vercel Blob échoué:", e);
