@@ -19,9 +19,39 @@ export function productWhatsappMessage(opts: {
 
 type CartItem = { name: string; price: number; quantity: number; color?: string; size?: string };
 
+export type CartCustomer = {
+  name?: string | null;
+  phone?: string | null;
+  city?: string | null;
+  quartier?: string | null;
+  address?: string | null;
+  deliveryPreference?: string | null;
+};
+
+const PREF_LABEL: Record<string, string> = {
+  delivery: "Livraison à domicile",
+  pickup: "Retrait en boutique",
+  transport: "Envoi via transporteur",
+};
+
+function customerLines(customer?: CartCustomer | null): string[] {
+  if (!customer) return [];
+  const pref = customer.deliveryPreference || "delivery";
+  const parts: string[] = [``, `— Informations client —`];
+  if (customer.name?.trim()) parts.push(`Client : ${customer.name.trim()}`);
+  if (customer.phone?.trim()) parts.push(`Téléphone : ${customer.phone.trim()}`);
+  if (pref !== "pickup") {
+    const where = [customer.quartier, customer.city].filter(Boolean).map((s) => s?.trim()).join(", ");
+    if (where) parts.push(`Localisation : ${where}`);
+    if (customer.address?.trim()) parts.push(`Point de repère : ${customer.address.trim()}`);
+  }
+  parts.push(`Mode : ${PREF_LABEL[pref] || pref}`);
+  return parts;
+}
+
 export function cartWhatsappMessage(
   items: CartItem[],
-  opts: { subtotal?: number; discount?: number; deliveryFee?: number; total: number; promoCode?: string | null; isPickup?: boolean }
+  opts: { subtotal?: number; discount?: number; deliveryFee?: number; total: number; promoCode?: string | null; isPickup?: boolean; customer?: CartCustomer | null }
 ) {
   const lines = items.map((i, idx) => {
     const variant = [i.color, i.size].filter(Boolean).join(" / ");
@@ -34,6 +64,7 @@ export function cartWhatsappMessage(
   if (opts.isPickup) parts.push(`Mode : Retrait boutique (0 FCFA)`);
   else parts.push(opts.deliveryFee && opts.deliveryFee > 0 ? `Livraison : ${opts.deliveryFee.toLocaleString("fr-FR")} FCFA` : `Livraison : Offerte`);
   parts.push(`Total : ${opts.total.toLocaleString("fr-FR")} FCFA`);
+  if (opts.customer) parts.push(...customerLines(opts.customer));
   parts.push(``, `Merci de me confirmer la disponibilité et la livraison.`);
   return parts.join("\n");
 }

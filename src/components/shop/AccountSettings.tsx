@@ -81,7 +81,7 @@ export function AccountSettings({ email }: { email: string }) {
 
       <div className="bg-white rounded-2xl border border-red-200 shadow-card p-5 mt-4">
         <h2 className="flex items-center gap-2 font-bold text-sm text-red-600 mb-1"><AlertTriangle className="w-4 h-4" /> Supprimer mon compte</h2>
-        <p className="text-xs text-sabren-black/50 mb-4">La suppression est définitive : vos commandes passées resteront enregistrées mais votre compte sera fermé.</p>
+        <p className="text-xs text-sabren-black/50 mb-4">La suppression est définitive et ne peut pas être annulée : votre compte et vos données seront fermés.</p>
         <form onSubmit={submitDelete} className="grid sm:grid-cols-3 gap-3">
           <input className={inputCls} type="password" value={delPw} onChange={(e) => setDelPw(e.target.value)} required placeholder="Mot de passe *" />
           <input className={inputCls} value={confirmText} onChange={(e) => setConfirmText(e.target.value)} required placeholder="Tapez « SUPPRIMER »" />

@@ -29,6 +29,11 @@ model User {
   password      String?
   image         String?
   role          Role      @default(CUSTOMER)
+  phone         String?
+  city          String?
+  quartier      String?
+  address       String?
+  deliveryPreference String? @default("delivery")
   reviews       Review[]
   accounts      Account[]
   sessions      Session[]

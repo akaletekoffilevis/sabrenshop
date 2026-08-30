@@ -8,6 +8,7 @@ import { WhatsappFloat } from "@/components/shop/WhatsappFloat";
 import { AccountLogout } from "./AccountLogout";
 import { PasswordChange } from "./PasswordChange";
 import { AccountSettings } from "@/components/shop/AccountSettings";
+import { DeliveryInfoForm } from "@/components/shop/DeliveryInfoForm";
 
 export default async function ComptePage() {
   const session = await auth();
@@ -35,6 +36,16 @@ export default async function ComptePage() {
           <AccountLogout />
         </div>
 
+        <DeliveryInfoForm
+          initial={{
+            name: user?.name ?? null,
+            phone: user?.phone ?? null,
+            city: user?.city ?? null,
+            quartier: user?.quartier ?? null,
+            address: user?.address ?? null,
+            deliveryPreference: user?.deliveryPreference ?? null,
+          }}
+        />
         <PasswordChange />
         <AccountSettings email={user?.email || ""} />
       </main>

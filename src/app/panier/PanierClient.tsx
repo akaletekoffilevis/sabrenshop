@@ -2,10 +2,10 @@
 import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice, deliveryCost } from "@/lib/utils";
-import { whatsappLink, cartWhatsappMessage } from "@/lib/whatsapp";
+import { whatsappLink, cartWhatsappMessage, type CartCustomer } from "@/lib/whatsapp";
 import { useShopConfig } from "@/lib/useShopConfig";
-import { ShoppingBag, Trash2, Minus, Plus, MessageCircle, Tag, X, Truck } from "lucide-react";
-import { useState } from "react";
+import { ShoppingBag, Trash2, Minus, Plus, MessageCircle, Tag, X, Truck, MapPin } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }: { deliveryFee?: number; freeDeliveryThreshold?: number | null }) {
   const { items, updateQuantity, removeItem, total, promo, setPromo } = useCart();
@@ -13,10 +13,20 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
   const [code, setCode] = useState("");
   const [promoMsg, setPromoMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [applying, setApplying] = useState(false);
+  const [customer, setCustomer] = useState<CartCustomer | null>(null);
+
+  useEffect(() => {
+    fetch("/api/account/delivery-info")
+      .then((r) => r.json())
+      .then((d) => setCustomer(d?.loggedIn ? (d.customer ?? null) : null))
+      .catch(() => setCustomer(null));
+  }, []);
+
   const subTotal = total();
   const discount = promo ? Math.min(promo.type === "FIXED" ? promo.value : Math.round((subTotal * promo.value) / 100), subTotal) : 0;
-  const ship = items.length ? deliveryCost(subTotal, deliveryFee, freeDeliveryThreshold, false) : 0;
-  const freeDelivery = items.length > 0 && ship === 0;
+  const isPickup = customer?.deliveryPreference === "pickup";
+  const ship = items.length ? deliveryCost(subTotal, deliveryFee, freeDeliveryThreshold, isPickup) : 0;
+  const freeDelivery = items.length > 0 && !isPickup && ship === 0;
   const grandTotal = subTotal - discount + ship;
 
   const waLink = whatsappLink(
@@ -28,7 +38,8 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
         deliveryFee: ship,
         total: grandTotal,
         promoCode: promo?.code ?? null,
-        isPickup: false,
+        isPickup,
+        customer,
       }
     ),
     whatsapp
@@ -178,9 +189,23 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
                 )
               ) : null}
               <div className="flex justify-between text-xs text-sabren-black/60">
-                <span>Partout au Niger — frais à la charge du client</span>
-                <span className="text-sabren-gold-ink">Retrait boutique : 0 FCFA</span>
+                {isPickup ? (
+                  <span className="text-sabren-gold-ink">Retrait boutique — 0 FCFA</span>
+                ) : (
+                  <>
+                    <span>Partout au Niger — frais à la charge du client</span>
+                    <span className="text-sabren-gold-ink">Retrait boutique : 0 FCFA</span>
+                  </>
+                )}
               </div>
+              {customer && (
+                <div className="flex items-center gap-1.5 text-xs text-sabren-gold-ink bg-sabren-cream rounded-full px-3 py-2">
+                  <MapPin className="w-3.5 h-3.5 shrink-0" />
+                  {isPickup
+                    ? "Retrait en boutique sélectionné dans votre profil."
+                    : [customer.quartier, customer.city].filter(Boolean).join(", ") || "Ville/quartier renseignés dans votre profil."}
+                </div>
+              )}
               <div className="flex justify-between items-center border-t border-sabren-gray pt-3">
                 <span className="font-bold">Total</span>
                 <span className="font-black text-lg text-sabren-black">{formatPrice(grandTotal)}</span>
@@ -196,6 +221,11 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
               </Link>
             </div>
             <p className="text-[11px] text-center text-sabren-black/45">Votre commande part sur WhatsApp — nous confirmons la livraison et le paiement.</p>
+            {!customer && (
+              <p className="text-[11px] text-center">
+                <Link href="/compte" className="text-sabren-gold-ink font-bold underline underline-offset-2">Connectez-vous et renseignez votre adresse → livraison plus rapide.</Link>
+              </p>
+            )}
           </div>
         </div>
       )}
