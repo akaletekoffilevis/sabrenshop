@@ -93,11 +93,14 @@ export async function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="max-w-7xl mx-auto container-px py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/55">
-          <span>© {new Date().getFullYear()} {shopName} — Votre boutique, votre style, votre choix.</span>
-          <span className="flex items-center gap-1.5">
-            Fait avec <Heart className="w-3 h-3 text-sabren-pink fill-sabren-pink" /> au Niger
-          </span>
+        <div className="max-w-7xl mx-auto container-px py-5 text-xs text-white/55">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+            <span>© {new Date().getFullYear()} {shopName} — Votre boutique, votre style, votre choix.</span>
+            <span className="flex items-center gap-1.5">
+              Fait avec <Heart className="w-3 h-3 text-sabren-pink fill-sabren-pink" /> au Niger
+            </span>
+          </div>
+          <p className="text-center mt-4 text-white/35 tracking-wide">Fait par OptiGrowth</p>
         </div>
       </div>
     </footer>

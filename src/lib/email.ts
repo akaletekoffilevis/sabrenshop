@@ -41,20 +41,45 @@ export async function sendMail({ to, subject, html }: { to: string | string[]; s
 }
 
 const baseStyles = `
-  body { margin:0; padding:0; background:#f5f0e6; font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
-  .wrap { max-width:560px; margin:0 auto; background:#ffffff; border-radius:16px; overflow:hidden; }
-  .head { background:#111111; color:#fbbf24; padding:24px; text-align:center; font-size:20px; font-weight:800; letter-spacing:0.06em; }
-  .body { padding:28px; color:#2b2b2b; font-size:15px; line-height:1.6; }
-  .btn { display:inline-block; background:#fbbf24; color:#111111; font-weight:800; text-decoration:none; padding:12px 22px; border-radius:999px; margin:12px 0; }
-  .muted { color:#7a7a7a; font-size:13px; }
-  img.thumb { width:100%; max-height:280px; object-fit:cover; border-radius:12px; }
+  body { margin:0; padding:0; background:#f5f0e6; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif; }
+  .wrap { max-width:600px; margin:0 auto; background:#ffffff; border-radius:18px; overflow:hidden; border:1px solid #e9e1cf; }
+  .hero-strip { height:6px; background:linear-gradient(90deg,#D4AF37,#f2d489,#D4AF37); }
+  .hero { background:#111111; padding:28px 24px 20px; text-align:center; border-radius:0 0 18px 18px; }
+  .brand { color:#D4AF37; font-size:23px; font-weight:900; letter-spacing:0.09em; line-height:1.1; }
+  .brand-sub { color:#e9e2d0; font-size:11px; font-weight:700; letter-spacing:0.24em; text-transform:uppercase; margin-top:6px; }
+  .body { padding:26px 28px; color:#2b2b2b; font-size:15px; line-height:1.65; }
+  h1.t { color:#111111; font-size:20px; font-weight:800; margin:0 0 12px; }
+  h3.h { color:#111111; font-weight:800; margin:20px 0 10px; font-size:15px; }
+  .btn { display:inline-block; background:#D4AF37; color:#111111; font-weight:800; text-decoration:none; padding:12px 26px; border-radius:999px; margin:14px 0 4px; box-shadow:0 2px 8px rgba(0,0,0,0.14); }
+  .btn.dark { background:#111111; color:#ffffff; }
+  .card { border:1px solid #efe6d0; border-radius:16px; padding:14px; margin-bottom:14px; }
+  .muted { color:#8a8578; font-size:12.5px; }
+  img.thumb { width:100%; max-height:320px; object-fit:cover; border-radius:14px; display:block; }
+  ul { margin:8px 0; padding-left:20px; } li { margin:4px 0; }
+  .foot { background:#111111; color:#9c968a; padding:22px 24px; text-align:center; font-size:12px; line-height:1.9; }
+  .foot .fb { color:#D4AF37; font-weight:800; letter-spacing:0.08em; font-size:14px; }
+  .foot a { color:#c9c4b8; text-decoration:none; }
+  .madeby { border-top:1px solid #2a2a2a; margin-top:14px; padding-top:12px; color:#c9c4b8; font-size:11px; font-weight:700; letter-spacing:0.06em; }
 `;
 
 export function wrapMail(title: string, bodyHtml: string): string {
-  return `<!doctype html><html><body>
+  const url = appUrl();
+  return `<!doctype html><html lang="fr"><body>
     <div class="wrap">
-      <div class="head">${title}</div>
-      <div class="body">${bodyHtml}</div>
+      <div class="hero-strip"></div>
+      <div class="hero">
+        <div class="brand">SABREEN’SHOP</div>
+        <div class="brand-sub">Style &amp; tendances au Niger</div>
+      </div>
+      <div class="body">
+        <h1 class="t">${title}</h1>
+        ${bodyHtml}
+      </div>
+      <div class="foot">
+        <div class="fb">SABREEN’SHOP</div>
+        <div>Livraison partout au Niger · Commande 100 % via WhatsApp<br /><a href="${url}">${url.replace(/^https?:\/\//, "")}</a></div>
+        <div class="madeby">Fait par OptiGrowth</div>
+      </div>
     </div>
     <style>${baseStyles}</style>
   </body></html>`;
@@ -63,12 +88,12 @@ export function wrapMail(title: string, bodyHtml: string): string {
 export function productNewsletterHtml({ name, price, image, slug }: { name: string; price: string; image?: string | null; slug: string }): string {
   const url = `${appUrl()}/produit/${slug}`;
   return wrapMail(
-    "Nouveauté chez SABREEN’SHOP",
+    "Nouveauté",
     `
     <p>Bonjour,</p>
     <p><strong>${name}</strong> vient d'arriver dans la boutique !</p>
     ${image ? `<p><img class="thumb" src="${image}" alt="${name}" /></p>` : ""}
-    <p>Prix : <strong style="font-size:18px">${price}</strong></p>
+    <p>Prix : <strong style="font-size:18px;color:#a87f1f;">${price}</strong></p>
     <p><a class="btn" href="${url}">Voir le produit</a></p>
     <p class="muted">Livraison partout au Niger · Commande 100 % via WhatsApp.</p>
     `
@@ -77,7 +102,7 @@ export function productNewsletterHtml({ name, price, image, slug }: { name: stri
 
 export function welcomeEmailHtml({ name, shopName }: { name?: string | null; shopName: string }): string {
   return wrapMail(
-    "Bienvenue chez SABREEN’SHOP 👋",
+    "Bienvenue 👋",
     `
     <p>Bonjour ${name || "et bienvenue"},</p>
     <p>Votre compte <strong>${shopName}</strong> a bien été créé. Vous pouvez dès maintenant :</p>
@@ -95,11 +120,11 @@ export function digestEmailHtml({ products, promos, shopName }: { products: Dige
   const productCards = products
     .map(
       (p) => `
-      <div style="border:1px solid #eee;border-radius:14px;padding:14px;margin-bottom:14px;display:flex;gap:14px;align-items:center;">
-        ${p.image ? `<img src="${p.image}" alt="${p.name}" style="width:84px;height:84px;object-fit:cover;border-radius:12px;" />` : `<div style="width:84px;height:84px;background:#f5f0e6;border-radius:12px;flex-shrink:0;"></div>`}
+      <div class="card" style="display:flex;gap:14px;align-items:center;">
+        ${p.image ? `<img src="${p.image}" alt="${p.name}" style="width:84px;height:84px;object-fit:cover;border-radius:12px;flex-shrink:0;" />` : `<div style="width:84px;height:84px;background:#f5f0e6;border-radius:12px;flex-shrink:0;"></div>`}
         <div style="flex:1;min-width:0;">
           <p style="margin:0;font-weight:800;color:#111;">${p.name}</p>
-          <p style="margin:6px 0 0;font-size:17px;font-weight:800;color:#111;">${p.price}</p>
+          <p style="margin:6px 0 0;font-size:17px;font-weight:800;color:#a87f1f;">${p.price}</p>
           <a class="btn" style="margin:10px 0 0;font-size:13px;padding:9px 16px;" href="${appUrl()}/produit/${p.slug}">Voir le produit</a>
         </div>
       </div>`
@@ -107,19 +132,19 @@ export function digestEmailHtml({ products, promos, shopName }: { products: Dige
     .join("");
 
   const promoChips = promos
-    .map((p) => `<span style="display:inline-block;background:#111;color:#fbbf24;font-weight:800;padding:8px 14px;border-radius:999px;margin:4px 4px 0 0;">${p.code} — ${p.valueLabel}</span>`)
+    .map((p) => `<span style="display:inline-block;background:#111;color:#f2d489;font-weight:800;padding:8px 14px;border-radius:999px;margin:4px 4px 0 0;">${p.code} — ${p.valueLabel}</span>`)
     .join("");
 
   const hasProducts = products.length > 0;
   const hasPromos = promos.length > 0;
 
   return wrapMail(
-    "Vos nouveautés du jour — SABREEN’SHOP",
+    "Vos nouveautés du jour",
     `
     <p>Bonjour,</p>
     <p>Voici ce qui est arrivé chez ${shopName} :</p>
-    ${hasProducts ? `<h3 style="margin:18px 0 8px;">🛍️ Nouveaux produits</h3>${productCards}` : ""}
-    ${hasPromos ? `<h3 style="margin:${hasProducts ? "10px" : "18px"} 0 8px;">🎁 Codes promo actifs</h3><p>${promoChips}</p>` : ""}
+    ${hasProducts ? `<h3 class="h">🛍️ Nouveaux produits</h3>${productCards}` : ""}
+    ${hasPromos ? `<h3 class="h" style="margin-top:${hasProducts ? "10px" : "20px"};">🎁 Codes promo actifs</h3><p>${promoChips}</p>` : ""}
     <p style="margin-top:20px;"><a class="btn" href="${appUrl()}/boutique">Voir tout dans la boutique</a></p>
     <p class="muted">Recevez cet email une seule fois par jour. Vous pouvez vous désabonner à tout moment.</p>
     `
