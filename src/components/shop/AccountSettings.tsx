@@ -12,7 +12,6 @@ export function AccountSettings({ email }: { email: string }) {
   const [busyEmail, setBusyEmail] = useState(false);
   const [emailMsg, setEmailMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
-  const [delPw, setDelPw] = useState("");
   const [confirmText, setConfirmText] = useState("");
   const [busyDel, setBusyDel] = useState(false);
   const [delMsg, setDelMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -47,11 +46,7 @@ export function AccountSettings({ email }: { email: string }) {
     setDelMsg(null);
     setBusyDel(true);
     try {
-      const res = await fetch("/api/account/delete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: delPw }),
-      });
+      const res = await fetch("/api/account/delete", { method: "POST" });
       const data = await res.json();
       if (!res.ok) { setBusyDel(false); setDelMsg({ ok: false, text: data.error || "Suppression impossible." }); return; }
       await signOut({ redirect: false });
@@ -82,13 +77,13 @@ export function AccountSettings({ email }: { email: string }) {
       <div className="bg-white rounded-2xl border border-red-200 shadow-card p-5 mt-4">
         <h2 className="flex items-center gap-2 font-bold text-sm text-red-600 mb-1"><AlertTriangle className="w-4 h-4" /> Supprimer mon compte</h2>
         <p className="text-xs text-sabren-black/50 mb-4">La suppression est définitive et ne peut pas être annulée : votre compte et vos données seront fermés.</p>
-        <form onSubmit={submitDelete} className="grid sm:grid-cols-3 gap-3">
-          <input className={inputCls} type="password" value={delPw} onChange={(e) => setDelPw(e.target.value)} required placeholder="Mot de passe *" />
+        <form onSubmit={submitDelete} className="grid sm:grid-cols-2 gap-3">
+          <span className="flex sm:col-span-2 items-center gap-2 text-xs text-sabren-black/50"><CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-green-600" /> Confirmation suffisante, aucun mot de passe requis. Tapez « SUPPRIMER » pour valider.</span>
           <input className={inputCls} value={confirmText} onChange={(e) => setConfirmText(e.target.value)} required placeholder="Tapez « SUPPRIMER »" />
           <button type="submit" disabled={busyDel} className="inline-flex items-center justify-center gap-2 bg-red-600 text-white font-bold rounded-full px-5 py-2.5 text-sm hover:bg-red-700 transition disabled:opacity-60">
             {busyDel ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />} Supprimer mon compte
           </button>
-          {delMsg && <p className={`sm:col-span-3 text-xs font-semibold flex items-center gap-1.5 ${delMsg.ok ? "text-green-600" : "text-red-500"}`}>{delMsg.text}</p>}
+          {delMsg && <p className={`sm:col-span-2 text-xs font-semibold flex items-center gap-1.5 ${delMsg.ok ? "text-green-600" : "text-red-500"}`}>{delMsg.text}</p>}
         </form>
       </div>
     </div>
