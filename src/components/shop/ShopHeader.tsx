@@ -18,12 +18,13 @@ function HeaderSearch({ placeholder, className = "" }: { placeholder: string; cl
   const boxRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    const onDown = (e: MouseEvent) => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
       if (boxRef.current && !boxRef.current.contains(e.target as Node)) setOpen(false);
     };
-    document.addEventListener("mousedown", onDown);
-    return () => document.removeEventListener("mousedown", onDown);
-  }, []);
+    document.addEventListener("pointerdown", onDown);
+    return () => document.removeEventListener("pointerdown", onDown);
+  }, [open]);
 
   useEffect(() => {
     const term = q.trim();

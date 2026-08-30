@@ -20,7 +20,7 @@ export async function Footer() {
         <div className="max-w-7xl mx-auto container-px py-5 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div className="flex items-center gap-2.5">
             <Truck className="w-5 h-5 text-sabren-gold shrink-0" />
-            <span className="text-white/80 text-xs">Livraison 1-3 jours<br /><b className="text-white">partout au Niger</b></span>
+            <span className="text-white/80 text-xs"><b className="text-white">Livraison</b></span>
           </div>
           <div className="flex items-center gap-2.5">
             <ShieldCheck className="w-5 h-5 text-sabren-gold shrink-0" />
