@@ -50,7 +50,7 @@ export async function saveFile(file: File, baseName: string = "produit"): Promis
     console.error("[upload] écriture locale échouée:", e);
   }
 
-  // Fallback universel : data URL (s'affiche partout, aucun stockage requis)
-  const mime = ALLOWED_MIME.includes(file.type) ? file.type : "image/jpeg";
-  return `data:${mime};base64,${buffer.toString("base64")}`;
+  // Fallback : on REFUSE d'écrire en base64 (images non crawlables, base alourdie).
+  // En production Vercel Blob EST requis : sans token, l'upload échoue clairement.
+  throw new Error("[upload] Stockage impossible : configurez la variable BLOB_READ_WRITE_TOKEN (Vercel Blob) — les images ne sont jamais stockées en base64.");
 }

@@ -34,7 +34,7 @@ export function ProductActions({ product }: { product: any }) {
     const msg = `Bonjour, je partage avec vous ce produit :\n*${product.name}* — ${product.price.toLocaleString("fr-FR")} FCFA\n${url}\nDisponible chez SABREEN’SHOP !`;
     const image = (product.images?.[0] as string | undefined) || null;
 
-    if (image && typeof navigator.share === "function" && typeof navigator.canShare === "function") {
+    if (image && /^https?:\/\//i.test(image) && typeof navigator.share === "function" && typeof navigator.canShare === "function") {
       try {
         const ctrl = new AbortController();
         const timer = setTimeout(() => ctrl.abort(), 8000);

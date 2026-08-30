@@ -28,6 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const base = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
   const firstImg = Array.isArray(product.images) ? (product.images as string[])[0] : null;
+  const ogImage = firstImg && /^https?:\/\//i.test(firstImg) ? new URL(firstImg, base).toString() : null;
   const desc = (product.description || `Commandez ${product.name} sur SABREEN'SHOP — livraison partout au Niger, paiement à la livraison.`).slice(0, 160);
 
   return {
@@ -39,7 +40,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       type: "website",
       locale: "fr_NE",
       siteName: "SABREEN'SHOP",
-      images: firstImg ? [{ url: new URL(firstImg, base).toString(), alt: product.name }] : undefined,
+      images: ogImage ? [{ url: ogImage, alt: product.name }] : undefined,
     },
   };
 }

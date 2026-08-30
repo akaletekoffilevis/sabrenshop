@@ -15,6 +15,12 @@ export async function POST(req: Request) {
   if (file.size > MAX_UPLOAD_BYTES) return Response.json({ error: "Image trop lourde (maximum 3 Mo)." }, { status: 400 });
   if (!isUploadAllowed(file)) return Response.json({ error: "Format d'image non accepté (JPG, PNG, WebP, GIF ou AVIF)." }, { status: 400 });
   const name = (form.get("name") as string | null) || "produit";
-  const url = await saveFile(file, name);
+  let url: string;
+  try {
+    url = await saveFile(file, name);
+  } catch (e) {
+    console.error("[upload] échec:", e);
+    return Response.json({ error: "Échec de l'upload. Vérifiez que Vercel Blob est configuré (BLOB_READ_WRITE_TOKEN)." }, { status: 500 });
+  }
   return Response.json({ url });
 }
