@@ -44,8 +44,10 @@ const baseStyles = `
   body { margin:0; padding:0; background:#f5f0e6; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif; }
   .wrap { max-width:600px; margin:0 auto; background:#ffffff; border-radius:18px; overflow:hidden; border:1px solid #e9e1cf; }
   .hero-strip { height:6px; background:linear-gradient(90deg,#D4AF37,#f2d489,#D4AF37); }
-  .hero { background:#111111; padding:28px 24px 20px; text-align:center; border-radius:0 0 18px 18px; }
-  .brand { color:#D4AF37; font-size:23px; font-weight:900; letter-spacing:0.09em; line-height:1.1; }
+  .hero { background:#111111; padding:26px 24px 22px; text-align:center; }
+  .logochip { width:62px; height:62px; margin:0 auto 10px; background:#ffffff; border-radius:16px; padding:5px; }
+  img.logo { width:100%; height:100%; object-fit:cover; border-radius:12px; display:block; }
+  .brand { color:#D4AF37; font-size:24px; font-weight:900; letter-spacing:0.09em; line-height:1.1; }
   .brand-sub { color:#e9e2d0; font-size:11px; font-weight:700; letter-spacing:0.24em; text-transform:uppercase; margin-top:6px; }
   .body { padding:26px 28px; color:#2b2b2b; font-size:15px; line-height:1.65; }
   h1.t { color:#111111; font-size:20px; font-weight:800; margin:0 0 12px; }
@@ -56,8 +58,10 @@ const baseStyles = `
   .muted { color:#8a8578; font-size:12.5px; }
   img.thumb { width:100%; max-height:320px; object-fit:cover; border-radius:14px; display:block; }
   ul { margin:8px 0; padding-left:20px; } li { margin:4px 0; }
+  .usp { margin:16px 0 0; text-align:center; font-size:12px; color:#7a7468; line-height:1.8; }
+  .usp .dot { color:#D4AF37; font-weight:900; }
   .foot { background:#111111; color:#9c968a; padding:22px 24px; text-align:center; font-size:12px; line-height:1.9; }
-  .foot .fb { color:#D4AF37; font-weight:800; letter-spacing:0.08em; font-size:14px; }
+  .foot .fb { color:#D4AF37; font-weight:800; letter-spacing:0.08em; font-size:15px; }
   .foot a { color:#c9c4b8; text-decoration:none; }
   .madeby { border-top:1px solid #2a2a2a; margin-top:14px; padding-top:12px; color:#c9c4b8; font-size:11px; font-weight:700; letter-spacing:0.06em; }
 `;
@@ -68,16 +72,20 @@ export function wrapMail(title: string, bodyHtml: string): string {
     <div class="wrap">
       <div class="hero-strip"></div>
       <div class="hero">
+        <div class="logochip"><img class="logo" src="${url}/logosabrenshop.jpeg" alt="Logo SABREEN’SHOP" width="62" height="62" /></div>
         <div class="brand">SABREEN’SHOP</div>
         <div class="brand-sub">Style &amp; tendances au Niger</div>
       </div>
       <div class="body">
         <h1 class="t">${title}</h1>
         ${bodyHtml}
+        <div class="usp">
+          <span>Livraison partout au Niger <span class="dot">·</span> Paiement à la livraison <span class="dot">·</span> Commande 100 % via WhatsApp</span>
+        </div>
       </div>
       <div class="foot">
         <div class="fb">SABREEN’SHOP</div>
-        <div>Livraison partout au Niger · Commande 100 % via WhatsApp<br /><a href="${url}">${url.replace(/^https?:\/\//, "")}</a></div>
+        <div>Commande rapide sur WhatsApp : +227 89 14 84 54<br /><a href="${url}">${url.replace(/^https?:\/\//, "")}</a></div>
         <div class="madeby">Fait par OptiGrowth</div>
       </div>
     </div>
