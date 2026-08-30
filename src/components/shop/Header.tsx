@@ -11,7 +11,10 @@ export async function Header() {
     loggedIn = !!session?.user;
     isAdmin = (session?.user as { role?: string } | undefined)?.role === "ADMIN";
   } catch (err) {
-    console.error("[header] session load failed:", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    if (!/dynamic server usage|using `headers`|DYNAMIC_SERVER_USAGE/i.test(msg)) {
+      console.error("[header] session load failed:", err);
+    }
   }
   return <ShopHeader categories={categoryNav} isAdmin={isAdmin} loggedIn={loggedIn} />;
 }
