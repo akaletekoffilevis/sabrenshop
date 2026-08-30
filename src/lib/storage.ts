@@ -29,10 +29,10 @@ export async function saveFile(file: File, baseName: string = "produit"): Promis
   const ext = extOf(file.name) || ".jpg";
   const filename = `${safe}-${Date.now()}${ext}`;
 
-  // Prod : Vercel Blob (store v2 — token et/ou storeId)
-  const token = process.env.SABREN_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN;
-  const storeId = process.env.SABREN_STORE_ID || process.env.BLOB_STORE_ID;
-  if (token || storeId) {
+  // Prod : Vercel Blob (store public v2 — token et/ou storeId ; OIDC par défaut sur Vercel)
+  const token = process.env.SABREEN_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN;
+  const storeId = process.env.SABREEN_STORE_ID || process.env.BLOB_STORE_ID;
+  if (process.env.NODE_ENV === "production" && (token || storeId)) {
     try {
       const blob = await put(filename, buffer, {
         access: "public",
