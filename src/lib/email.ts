@@ -1,25 +1,41 @@
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const RESEND_FROM = process.env.RESEND_FROM || "Sabreen’Shop <onboarding@resend.dev>";
+import nodemailer from "nodemailer";
+
+const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
+const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
+const SMTP_USER = process.env.SMTP_USER || "";
+const SMTP_PASS = process.env.SMTP_PASS || "";
+const SMTP_FROM = process.env.SMTP_FROM || SMTP_USER;
+
+export function mailConfigured() {
+  return Boolean(SMTP_USER && SMTP_PASS);
+}
 
 export function appUrl() {
   return (process.env.NEXT_PUBLIC_BASE_URL || "https://sabrenshop-test-app.vercel.app").replace(/\/$/, "");
 }
 
 export async function sendMail({ to, subject, html }: { to: string | string[]; subject: string; html: string }): Promise<boolean> {
-  if (!RESEND_API_KEY) {
-    console.warn("[email] RESEND_API_KEY absent — email non envoyé:", subject, to);
+  if (!mailConfigured()) {
+    console.warn("[email] SMTP_USER/SMTP_PASS absents — email non envoyé:", subject, to);
     return false;
   }
   try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: RESEND_FROM, to: Array.isArray(to) ? to : [to], subject, html }),
+    const transport = nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      secure: SMTP_PORT === 465,
+      auth: { user: SMTP_USER, pass: SMTP_PASS },
     });
-    if (!res.ok) console.error("[email] envoi échoué:", res.status, await res.text());
-    return res.ok;
+    const recipients = Array.isArray(to) ? to : [to];
+    await transport.sendMail({
+      from: SMTP_FROM || SMTP_USER,
+      to: recipients,
+      subject,
+      html,
+    });
+    return true;
   } catch (e) {
-    console.error("[email] erreur réseau:", e);
+    console.error("[email] envoi échoué:", e);
     return false;
   }
 }
@@ -54,7 +70,7 @@ export function productNewsletterHtml({ name, price, image, slug }: { name: stri
     ${image ? `<p><img class="thumb" src="${image}" alt="${name}" /></p>` : ""}
     <p>Prix : <strong style="font-size:18px">${price}</strong></p>
     <p><a class="btn" href="${url}">Voir le produit</a></p>
-    <p class="muted">Livraison partout au Niger · Paiement à la livraison sur WhatsApp.</p>
+    <p class="muted">Livraison partout au Niger · Commande 100 % via WhatsApp.</p>
     `
   );
 }
@@ -66,11 +82,11 @@ export function welcomeEmailHtml({ name, shopName }: { name?: string | null; sho
     <p>Bonjour ${name || "et bienvenue"},</p>
     <p>Votre compte <strong>${shopName}</strong> a bien été créé. Vous pouvez dès maintenant :</p>
     <ul>
-      <li>suivre vos commandes depuis votre <a href="${appUrl()}/compte">espace client</a>,</li>
-      <li>retrouver vos favoris et commander en quelques clics.</li>
+      <li>retrouver vos favoris et <a href="${appUrl()}/compte">gérer votre espace client</a>,</li>
+      <li>être alerté(e) des nouveautés et des promos grâce à la newsletter.</li>
     </ul>
     <p><a class="btn" href="${appUrl()}/boutique">Découvrir la boutique</a></p>
-    <p class="muted">Livraison partout au Niger · Paiement à la livraison sur WhatsApp.</p>
+    <p class="muted">Livraison partout au Niger · Commande 100 % via WhatsApp.</p>
     `
   );
 }

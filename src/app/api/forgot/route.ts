@@ -34,7 +34,7 @@ export async function POST(req: Request) {
   });
 
   if (!sent && process.env.NODE_ENV !== "production") {
-    console.warn("[forgot] livraison impossible (RESEND_API_KEY ?) — lien:", link);
+    console.warn("[forgot] livraison impossible (SMTP non configuré ?) — lien:", link);
   }
 
   return Response.json({ ok: true });

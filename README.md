@@ -36,20 +36,24 @@ npm run db:seed      # catégories + produits de démo + compte admin
 
 Compte admin (seed) : **admin@sabrenshop.ne** / `admin123`.
 
-## Emails (gratuits, sans carte bancaire)
+## Emails (via votre compte Gmail, SMTP)
 
-Aucune API ne permet d’envoyer des emails sans clé, mais **Resend** propose 100 emails/jour gratuits (plans gratuits de 3 000 emails/mois) — c’est déjà intégré :
+Les emails (bienvenue, récap newsletter quotidien, mot de passe oublié) partent depuis **votre propre compte Google** via SMTP (`nodemailer`). Google exige un **mot de passe d’application** :
 
-1. Créez un compte gratuit sur [resend.com](https://resend.com) → **API Keys** → copiez la clé.
-2. Définissez dans Vercel (ou `.env`) :
+1. Activez la **validation en 2 étapes** sur [myaccount.google.com/security](https://myaccount.google.com/security).
+2. Créez un mot de passe d’application : <https://myaccount.google.com/apppasswords> → « E-mail » → « Autre » → générez (16 caractères).
+3. Définissez dans Vercel (ou `.env`) :
    ```
-   RESEND_API_KEY=re_...
-   RESEND_FROM=Sabreen’Shop <onboarding@resend.dev>   # ou votre domaine vérifié
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=465
+   SMTP_USER=votre@gmail.com
+   SMTP_PASS=<mot de passe d'application, sans espaces>
+   SMTP_FROM="Sabreen'Shop <votre@gmail.com>"   # facultatif, défaut = SMTP_USER
    NEWSLETTER_CRON_SECRET=<clé secrète pour protéger le cron, ex. openssl rand -base64 24>
    ```
-3. Emails envoyés : bienvenue à l’inscription, récap newsletter quotidien, mot de passe oublié.
+4. Emails envoyés : bienvenue à l’inscription, récap newsletter quotidien, mot de passe oublié.
 
-Alternative gratuite compatible : **Brevo** (ex-Sendinblue, 300 emails/jour gratuits) ou **Mailtrap Sending** — à configurer en branchant leur API dans `src/lib/email.ts`.
+> Sans `SMTP_USER`/`SMTP_PASS`, les emails sont journalisés en console (déverrouillage désactivé en prod). Gmail limite l’envoi (~500 emails/jour pour un compte standard) et classe parfois les envois en spam : vérifiez votre boîte spam au premier test.
 
 ## Arborescence clé
 
@@ -108,7 +112,11 @@ Toutes à définir (Production + Preview) :
 | `SABREN_READ_WRITE_TOKEN` | Vercel → **Storage → Blob** → copier |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | Fallback uniquement — le numéro principal s’édite dans **admin → Paramètres → WhatsApp** (`Settings.whatsapp`), servi partout via `/api/config` |
 
-| `RESEND_API_KEY` + `RESEND_FROM` | Emails (bienvenue, newsletter, mot de passe oublié) |
+| `SMTP_HOST` | `smtp.gmail.com` |
+| `SMTP_PORT` | `465` |
+| `SMTP_USER` | Votre compte Gmail émetteur (`votre@gmail.com`) |
+| `SMTP_PASS` | Mot de passe d’application Google (16 caractères, sans espaces) |
+| `SMTP_FROM` | Facultatif — expéditeur affiché (défaut : `SMTP_USER`) |
 | `NEWSLETTER_CRON_SECRET` | Facultatif — sécurise le cron du récap quotidien (ou `CRON_SECRET` Vercel) |
 | `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` | Facultatif — rate-limiting **mondial** (Upstash Redis) ; sinon repli en limite par instance |
 

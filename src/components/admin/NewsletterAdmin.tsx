@@ -41,7 +41,7 @@ export function NewsletterAdmin({ initial, lastDigestAt }: { initial: Sub[]; las
       setBusyDigest(false);
       if (!res.ok) { setDigestMsg({ ok: false, text: d.error || "Erreur lors de l’envoi." }); return; }
       if (!d.sent) {
-        setDigestMsg({ ok: true, text: "Aucun email envoyé (rien de nouveau, ou RESEND_API_KEY non configuré)." });
+        setDigestMsg({ ok: true, text: "Aucun email envoyé (rien de nouveau, ou SMTP non configuré)." });
       } else {
         setDigestMsg({ ok: true, text: `Récap envoyé à ${d.recipients} abonné(s) — ${d.products} produit(s), ${d.promos} code(s) promo.` });
       }
