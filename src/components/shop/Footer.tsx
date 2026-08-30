@@ -97,10 +97,9 @@ export async function Footer() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-3">
             <span>© {new Date().getFullYear()} {shopName} — Votre boutique, votre style, votre choix.</span>
             <span className="flex items-center gap-1.5">
-              Fait avec <Heart className="w-3 h-3 text-sabren-pink fill-sabren-pink" /> au Niger
+              Fait avec <Heart className="w-3 h-3 text-sabren-pink fill-sabren-pink" /> par OptiGrowth au Niger
             </span>
           </div>
-          <p className="text-center mt-4 text-white/35 tracking-wide">Fait par OptiGrowth</p>
         </div>
       </div>
     </footer>
