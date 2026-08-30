@@ -159,7 +159,7 @@ export function ShopHeader({ categories, isAdmin = false, loggedIn = false }: { 
           </button>
 
           <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-            <img src="/logosabrenshop.jpeg" alt="Sabreen'Shop" className="w-11 h-11 rounded-xl object-cover group-hover:scale-105 transition shadow-card" loading="lazy" decoding="async" />
+            <img src="/logosabrenshop.jpeg" alt="SABREEN'SHOP" className="w-11 h-11 rounded-xl object-cover group-hover:scale-105 transition shadow-card" loading="lazy" decoding="async" />
             <div className="leading-none">
               <span className="font-display font-black tracking-tight text-lg md:text-xl">SABREEN<span className="text-sabren-gold">’</span>SHOP</span>
               <span className="hidden sm:block text-[10px] uppercase tracking-[0.2em] text-sabren-gold-ink font-semibold">Votre style · Votre choix</span>
@@ -286,7 +286,7 @@ export function ShopHeader({ categories, isAdmin = false, loggedIn = false }: { 
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-sabren-gray">
             <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2.5">
-              <img src="/logosabrenshop.jpeg" alt="Sabreen'Shop" className="w-9 h-9 rounded-xl object-cover" loading="lazy" decoding="async" />
+              <img src="/logosabrenshop.jpeg" alt="SABREEN'SHOP" className="w-9 h-9 rounded-xl object-cover" loading="lazy" decoding="async" />
               <span className="font-display font-black tracking-tight text-lg">SABREEN<span className="text-sabren-gold">’</span>SHOP</span>
             </Link>
             <button onClick={() => setOpen(false)} className="p-2 hover:bg-sabren-gray rounded-xl" aria-label="Fermer le menu">

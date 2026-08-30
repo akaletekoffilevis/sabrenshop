@@ -14,7 +14,7 @@ export function productWhatsappMessage(opts: {
   size?: string;
 }) {
   const variant = [opts.color, opts.size].filter(Boolean).join(" / ") || "Standard";
-  return `Bonjour Sabreen Shop\nJe souhaite commander :\nProduit : ${opts.name}\nPrix : ${opts.price.toLocaleString("fr-FR")} FCFA\nQuantité : ${opts.quantity}\nCouleur/Taille : ${variant}\nMerci de me confirmer la disponibilité et les modalités de livraison.`;
+  return `Bonjour SABREEN’SHOP\nJe souhaite commander :\nProduit : ${opts.name}\nPrix : ${opts.price.toLocaleString("fr-FR")} FCFA\nQuantité : ${opts.quantity}\nCouleur/Taille : ${variant}\nMerci de me confirmer la disponibilité et les modalités de livraison.`;
 }
 
 type CartItem = { name: string; price: number; quantity: number; color?: string; size?: string };
@@ -57,7 +57,7 @@ export function cartWhatsappMessage(
     const variant = [i.color, i.size].filter(Boolean).join(" / ");
     return `${idx + 1}. ${i.name}${variant ? ` (${variant})` : ""} x${i.quantity} — ${(i.price * i.quantity).toLocaleString("fr-FR")} FCFA`;
   });
-  const parts = [`Bonjour Sabreen Shop`, `Je souhaite passer commande :`, ``];
+  const parts = [`Bonjour SABREEN’SHOP`, `Je souhaite passer commande :`, ``];
   parts.push(...lines, ``);
   if (typeof opts.subtotal === "number") parts.push(`Sous-total : ${opts.subtotal.toLocaleString("fr-FR")} FCFA`);
   if (opts.discount && opts.discount > 0) parts.push(`Remise (${opts.promoCode || "code"}) : -${opts.discount.toLocaleString("fr-FR")} FCFA`);

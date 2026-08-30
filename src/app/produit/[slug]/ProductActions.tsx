@@ -31,7 +31,7 @@ export function ProductActions({ product }: { product: any }) {
 
   const shareToWhatsapp = () => {
     const url = `${window.location.origin}/produit/${product.slug}`;
-    const msg = `Bonjour, je partage avec vous ce produit :\n*${product.name}* — ${product.price.toLocaleString("fr-FR")} FCFA\n${url}\nDisponible chez Sabreen Shop !`;
+    const msg = `Bonjour, je partage avec vous ce produit :\n*${product.name}* — ${product.price.toLocaleString("fr-FR")} FCFA\n${url}\nDisponible chez SABREEN’SHOP !`;
     window.open(whatsappLink(msg, whatsapp), "_blank");
   };
 

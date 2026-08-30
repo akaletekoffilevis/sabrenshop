@@ -8,7 +8,7 @@ import { WishlistClient } from "@/components/shop/WishlistClient";
 
 export const metadata: Metadata = {
   title: "Mes favoris",
-  description: "Retrouvez tous vos produits préférés de Sabreen'Shop.",
+  description: "Retrouvez tous vos produits préférés de SABREEN'SHOP.",
 };
 
 export default function FavorisPage() {

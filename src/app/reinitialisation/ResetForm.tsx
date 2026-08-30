@@ -71,7 +71,7 @@ export function ResetForm({ initialToken, initialEmail }: { initialToken: string
       ) : (
         <>
           <div className="text-center mb-7">
-            <img src="/logosabrenshop.jpeg" alt="Sabreen'Shop" className="w-14 h-14 mx-auto rounded-2xl object-cover mb-4" loading="lazy" decoding="async" />
+            <img src="/logosabrenshop.jpeg" alt="SABREEN'SHOP" className="w-14 h-14 mx-auto rounded-2xl object-cover mb-4" loading="lazy" decoding="async" />
             <h1 className="font-display font-black text-2xl">Nouveau mot de passe</h1>
             <p className="text-sm text-sabren-black/55 mt-1">Pour le compte <strong>{initialEmail}</strong></p>
           </div>

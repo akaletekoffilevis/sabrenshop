@@ -218,7 +218,7 @@ export default async function ProduitPage({ params }: { params: Promise<{ slug: 
                 <li className="flex justify-between"><span>Paiement</span><b className="text-sabren-black">À la livraison</b></li>
               </ul>
             </div>
-            <a href={`https://wa.me/${waNumber}?text=${encodeURIComponent(`Bonjour Sabreen Shop, des questions sur : ${product.name}`)}`} target="_blank" className="flex items-center justify-center gap-2 bg-sabren-cream border-2 border-dashed border-whatsapp/40 text-whatsapp-dark font-bold rounded-2xl py-4 text-sm hover:bg-whatsapp/5 transition">
+            <a href={`https://wa.me/${waNumber}?text=${encodeURIComponent(`Bonjour SABREEN’SHOP, des questions sur : ${product.name}`)}`} target="_blank" className="flex items-center justify-center gap-2 bg-sabren-cream border-2 border-dashed border-whatsapp/40 text-whatsapp-dark font-bold rounded-2xl py-4 text-sm hover:bg-whatsapp/5 transition">
               <MessageCircle className="w-4 h-4" /> Une question ? Écrivez-nous
             </a>
           </div>

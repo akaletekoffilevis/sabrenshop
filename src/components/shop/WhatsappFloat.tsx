@@ -7,7 +7,7 @@ import { useState } from "react";
 export function WhatsappFloat() {
   const [open, setOpen] = useState(false);
   const { whatsapp } = useShopConfig();
-  const link = whatsappLink("Bonjour Sabreen Shop ! Une question ? Besoin de commander ?", whatsapp);
+  const link = whatsappLink("Bonjour SABREEN’SHOP ! Une question ? Besoin de commander ?", whatsapp);
 
   return (
     <>
@@ -19,7 +19,7 @@ export function WhatsappFloat() {
                 <MessageCircle className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-sm font-bold">Sabreen’Shop</p>
+                <p className="text-sm font-bold">SABREEN’SHOP</p>
                 <p className="text-[11px] text-green-100">En ligne — répond en quelques min</p>
               </div>
             </div>
