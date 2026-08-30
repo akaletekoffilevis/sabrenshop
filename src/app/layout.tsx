@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
+import { InstallPrompt } from "@/components/InstallPrompt";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -41,7 +42,14 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: "/favicon-v2.ico",
-    apple: "/logosabrenshop.jpeg",
+    apple: "/icons/apple-touch-icon.png",
+  },
+  manifest: "/manifest.webmanifest",
+  themeColor: "#111111",
+  appleWebApp: {
+    capable: true,
+    title: "SABREEN'SHOP",
+    statusBarStyle: "black-translucent",
   },
 };
 
@@ -50,6 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="fr" className={`${playfair.variable} ${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-sabren-cream text-sabren-black">
         {children}
+        <InstallPrompt />
       </body>
     </html>
   );
