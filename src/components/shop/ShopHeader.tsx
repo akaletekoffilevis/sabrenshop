@@ -65,7 +65,7 @@ function HeaderSearch({ placeholder, className = "" }: { placeholder: string; cl
           onChange={(e) => setQ(e.target.value)}
           onFocus={() => q.trim().length >= 2 && setOpen(true)}
           placeholder={placeholder}
-          className="flex-1 bg-transparent outline-none text-sm py-2.5"
+          className="flex-1 min-w-0 bg-transparent outline-none text-sm py-2.5"
           aria-label="Rechercher"
         />
         {loading && <Loader2 className="w-4 h-4 text-sabren-black/40 animate-spin mr-2 shrink-0" />}

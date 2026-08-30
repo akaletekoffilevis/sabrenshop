@@ -133,7 +133,7 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
             ))}
           </div>
 
-          <div className="bg-white rounded-2xl border border-sabren-gray shadow-card p-5 lg:sticky lg:top-28 space-y-4">
+          <div className="bg-white rounded-2xl border border-sabren-gray shadow-card p-4 sm:p-5 lg:sticky lg:top-28 space-y-4">
             <h2 className="font-display font-bold text-lg">Résumé de commande</h2>
 
             <div>
@@ -151,9 +151,9 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 bg-sabren-cream rounded-full pl-4 border border-transparent focus-within:border-sabren-gold focus-within:bg-white transition">
+                <div className="flex items-center gap-2 bg-sabren-cream rounded-full pl-4 border border-transparent focus-within:border-sabren-gold focus-within:bg-white transition min-w-0">
                   <Tag className="w-4 h-4 text-sabren-gold shrink-0" />
-                  <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Code promo" className="flex-1 bg-transparent outline-none text-sm py-2.5" />
+                  <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Code promo" className="flex-1 min-w-0 bg-transparent outline-none text-sm py-2.5" />
                   <button onClick={applyPromo} disabled={applying} className="bg-sabren-black text-white text-xs font-bold rounded-full px-4 py-2.5 hover:bg-black transition shrink-0 disabled:opacity-50">
                     {applying ? "…" : "Appliquer"}
                   </button>
