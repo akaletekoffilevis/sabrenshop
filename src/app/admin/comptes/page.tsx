@@ -38,6 +38,11 @@ export default async function AdminComptesPage({ searchParams }: { searchParams:
     role: u.role,
     createdAt: u.createdAt.toISOString(),
     reviews: u._count.reviews,
+    phone: u.phone,
+    city: u.city,
+    quartier: u.quartier,
+    address: u.address,
+    deliveryPreference: u.deliveryPreference,
   }));
 
   const stats = [

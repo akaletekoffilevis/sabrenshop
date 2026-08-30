@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Badge } from "@/components/admin/ui";
 import { ViewToggle } from "@/components/admin/ViewToggle";
-import { Mail, CalendarDays, Star, ShieldCheck, UserRound } from "lucide-react";
+import { Mail, CalendarDays, Star, ShieldCheck, UserRound, Phone, MapPin } from "lucide-react";
 import { DeleteUserButton } from "./DeleteUserButton";
 
 export type AccountRow = {
@@ -12,9 +12,20 @@ export type AccountRow = {
   role: string;
   createdAt: string;
   reviews: number;
+  phone: string | null;
+  city: string | null;
+  quartier: string | null;
+  address: string | null;
+  deliveryPreference: string | null;
 };
 
 const dateFmt = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
+
+const PREF_LABEL: Record<string, string> = {
+  delivery: "Livraison à domicile",
+  pickup: "Retrait boutique",
+  transport: "Transport",
+};
 
 export function AccountsView({ users }: { users: AccountRow[] }) {
   const [view, setView] = useState<"cards" | "list">("list");
@@ -43,6 +54,8 @@ export function AccountsView({ users }: { users: AccountRow[] }) {
               <tr className="bg-sabren-gray/60 text-left text-xs uppercase tracking-wide text-sabren-black/50">
                 <th className="px-4 py-3 font-bold">Utilisateur</th>
                 <th className="px-4 py-3 font-bold">Email</th>
+                <th className="px-4 py-3 font-bold">Téléphone</th>
+                <th className="px-4 py-3 font-bold">Livraison</th>
                 <th className="px-4 py-3 font-bold">Rôle</th>
                 <th className="px-4 py-3 font-bold">Inscrit le</th>
                 <th className="px-4 py-3 font-bold">Avis</th>
@@ -61,6 +74,18 @@ export function AccountsView({ users }: { users: AccountRow[] }) {
                     </div>
                   </td>
                   <td className="px-4 py-3 text-sabren-black/70">{u.email}</td>
+                  <td className="px-4 py-3 text-sabren-black/70">{u.phone || "—"}</td>
+                  <td className="px-4 py-3 text-sabren-black/70">
+                    {u.city ? (
+                      <span title={u.address || undefined}>
+                        {u.city}
+                        {u.quartier ? ` · ${u.quartier}` : ""}
+                        {u.deliveryPreference && <span className="text-sabren-gold font-bold"> · {PREF_LABEL[u.deliveryPreference]}</span>}
+                      </span>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     {u.role === "ADMIN" ? <Badge tone="gold">Admin</Badge> : <Badge tone="gray">Client</Badge>}
                   </td>
@@ -89,9 +114,16 @@ export function AccountsView({ users }: { users: AccountRow[] }) {
               </div>
               <div className="space-y-1.5 text-xs text-sabren-black/60">
                 <p className="flex items-center gap-2 truncate"><Mail className="w-3.5 h-3.5 shrink-0" /> {u.email}</p>
+                {u.phone && <p className="flex items-center gap-2"><Phone className="w-3.5 h-3.5 shrink-0" /> {u.phone}</p>}
+                {(u.city || u.quartier) && (
+                  <p className="flex items-center gap-2 truncate"><MapPin className="w-3.5 h-3.5 shrink-0" /> {u.city || ""}{u.city && u.quartier ? " · " : ""}{u.quartier || ""}{u.address ? ` — ${u.address}` : ""}</p>
+                )}
                 <p className="flex items-center gap-2"><CalendarDays className="w-3.5 h-3.5 shrink-0" /> Inscrit le {dateFmt.format(new Date(u.createdAt))}</p>
                 <p className="flex items-center gap-2"><Star className="w-3.5 h-3.5 shrink-0" /> {u.reviews} avis</p>
               </div>
+              {u.deliveryPreference && (
+                <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-sabren-gold/15 text-sabren-gold text-[11px] font-bold px-3 py-1">{PREF_LABEL[u.deliveryPreference]}</span>
+              )}
               <div className="mt-auto flex items-center justify-between gap-2 border-t border-sabren-gray pt-3">
                 {u.role === "ADMIN" ? (
                   <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-sabren-black/35"><ShieldCheck className="w-3.5 h-3.5" /> Compte protégé</span>
