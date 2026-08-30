@@ -98,8 +98,8 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
           </Link>
         </div>
       ) : (
-        <div className="grid lg:grid-cols-3 gap-6 items-start">
-          <div className="lg:col-span-2 space-y-3">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          <div className="lg:col-span-2 space-y-3 min-w-0">
             {items.map((i) => (
               <div key={`${i.id}-${i.color}-${i.size}`} className="bg-white rounded-2xl border border-sabren-gray shadow-card p-3 flex gap-3 sm:gap-4">
                 <Link href={`/produit/${i.slug}`} className="shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-sabren-cream border border-sabren-gray">
@@ -107,7 +107,7 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
                 </Link>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
-                    <Link href={`/produit/${i.slug}`} className="font-semibold text-sm leading-snug line-clamp-2 hover:text-sabren-gold transition min-w-0">{i.name}</Link>
+                    <Link href={`/produit/${i.slug}`} className="font-semibold text-sm leading-snug line-clamp-2 break-words hover:text-sabren-gold transition min-w-0">{i.name}</Link>
                     <button onClick={() => removeItem(i.id, i.color, i.size)} className="p-1.5 text-sabren-black/35 hover:text-red-500 transition shrink-0" aria-label="Supprimer">
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -133,7 +133,7 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
             ))}
           </div>
 
-          <div className="bg-white rounded-2xl border border-sabren-gray shadow-card p-4 sm:p-5 lg:sticky lg:top-28 space-y-4">
+          <div className="bg-white rounded-2xl border border-sabren-gray shadow-card p-4 sm:p-5 lg:sticky lg:top-28 space-y-4 min-w-0">
             <h2 className="font-display font-bold text-lg">Résumé de commande</h2>
 
             <div>
