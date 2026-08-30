@@ -101,13 +101,13 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
         <div className="grid lg:grid-cols-3 gap-6 items-start">
           <div className="lg:col-span-2 space-y-3">
             {items.map((i) => (
-              <div key={`${i.id}-${i.color}-${i.size}`} className="bg-white rounded-2xl border border-sabren-gray shadow-card p-3.5 flex gap-4">
-                <Link href={`/produit/${i.slug}`} className="shrink-0 w-24 h-24 rounded-xl overflow-hidden bg-sabren-cream border border-sabren-gray">
+              <div key={`${i.id}-${i.color}-${i.size}`} className="bg-white rounded-2xl border border-sabren-gray shadow-card p-3 flex gap-3 sm:gap-4">
+                <Link href={`/produit/${i.slug}`} className="shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-sabren-cream border border-sabren-gray">
                   {i.image ? <img src={i.image} alt={i.name} className="w-full h-full object-cover" loading="lazy" decoding="async" /> : <span className="flex items-center justify-center h-full text-sabren-black/20"><ShoppingBag className="w-5 h-5" /></span>}
                 </Link>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
-                    <Link href={`/produit/${i.slug}`} className="font-semibold text-sm leading-snug line-clamp-2 hover:text-sabren-gold transition">{i.name}</Link>
+                    <Link href={`/produit/${i.slug}`} className="font-semibold text-sm leading-snug line-clamp-2 hover:text-sabren-gold transition min-w-0">{i.name}</Link>
                     <button onClick={() => removeItem(i.id, i.color, i.size)} className="p-1.5 text-sabren-black/35 hover:text-red-500 transition shrink-0" aria-label="Supprimer">
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -115,16 +115,16 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
                   {[i.color, i.size].filter(Boolean).length > 0 && (
                     <p className="text-xs text-sabren-black/45 mt-0.5 capitalize">{[i.color, i.size].filter(Boolean).join(" · ")}</p>
                   )}
-                  <div className="flex items-center justify-between mt-2.5">
+                  <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-2 mt-2.5">
                     <div className="flex items-center border border-sabren-gray rounded-full overflow-hidden bg-white">
                       <button onClick={() => updateQuantity(i.id, i.quantity - 1, i.color, i.size)} className="p-2 hover:bg-sabren-gray transition" aria-label="Diminuer"><Minus className="w-3.5 h-3.5" /></button>
                       <span className="px-3 text-sm font-bold">{i.quantity}</span>
                       <button onClick={() => updateQuantity(i.id, i.quantity + 1, i.color, i.size)} className="p-2 hover:bg-sabren-gray transition" aria-label="Augmenter"><Plus className="w-3.5 h-3.5" /></button>
                     </div>
-                    <div className="text-right">
-                      <p className="font-black text-sm">{formatPrice(i.price * i.quantity)}</p>
+                    <div className="text-right ml-auto">
+                      <p className="font-black text-sm whitespace-nowrap">{formatPrice(i.price * i.quantity)}</p>
                       {i.compareAtPrice && i.compareAtPrice > i.price && (
-                        <p className="text-[11px] line-through text-sabren-black/35">{formatPrice(i.compareAtPrice * i.quantity)}</p>
+                        <p className="text-[11px] line-through text-sabren-black/35 whitespace-nowrap">{formatPrice(i.compareAtPrice * i.quantity)}</p>
                       )}
                     </div>
                   </div>
@@ -163,19 +163,19 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
             </div>
 
             <div className="space-y-2.5 text-sm">
-              <div className="flex justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
                 <span className="text-sabren-black/60">Sous-total</span>
-                <span className="font-semibold">{formatPrice(subTotal)}</span>
+                <span className="font-semibold whitespace-nowrap">{formatPrice(subTotal)}</span>
               </div>
               {discount > 0 && (
-                <div className="flex justify-between text-green-600">
+                <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-green-600">
                   <span>Remise ({promo?.code})</span>
-                  <span className="font-semibold">-{formatPrice(discount)}</span>
+                  <span className="font-semibold whitespace-nowrap">-{formatPrice(discount)}</span>
                 </div>
               )}
-              <div className="flex justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
                 <span className="text-sabren-black/60">Frais de livraison</span>
-                <span className={`font-semibold ${freeDelivery ? "text-green-600" : ""}`}>{freeDelivery ? "Offerts" : formatPrice(ship)}</span>
+                <span className={`font-semibold whitespace-nowrap ${freeDelivery ? "text-green-600" : ""}`}>{freeDelivery ? "Offerts" : formatPrice(ship)}</span>
               </div>
               {freeDeliveryThreshold ? (
                 freeDelivery ? (
@@ -183,18 +183,18 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
                     <Truck className="w-3.5 h-3.5 shrink-0" /> Livraison offerte ! Votre commande atteint le seuil minimal.
                   </div>
                 ) : (
-                  <div className="flex items-center justify-between gap-2 text-xs text-sabren-gold-ink bg-sabren-cream rounded-full px-3 py-2">
+                  <div className="flex items-center justify-between gap-x-2 gap-y-1 flex-wrap text-xs text-sabren-gold-ink bg-sabren-cream rounded-full px-3 py-2">
                     <span className="font-semibold">Plus que {formatPrice(freeDeliveryThreshold - subTotal)} pour la livraison offerte</span>
                   </div>
                 )
               ) : null}
-              <div className="flex justify-between text-xs text-sabren-black/60">
+              <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-xs text-sabren-black/60">
                 {isPickup ? (
                   <span className="text-sabren-gold-ink">Retrait boutique — 0 FCFA</span>
                 ) : (
                   <>
-                    <span>Partout au Niger — frais à la charge du client</span>
-                    <span className="text-sabren-gold-ink">Retrait boutique : 0 FCFA</span>
+                    <span className="min-w-0">Partout au Niger — frais à la charge du client</span>
+                    <span className="text-sabren-gold-ink whitespace-nowrap">Retrait boutique : 0 FCFA</span>
                   </>
                 )}
               </div>
@@ -206,9 +206,9 @@ export function PanierClient({ deliveryFee = 100, freeDeliveryThreshold = null }
                     : [customer.quartier, customer.city].filter(Boolean).join(", ") || "Ville/quartier renseignés dans votre profil."}
                 </div>
               )}
-              <div className="flex justify-between items-center border-t border-sabren-gray pt-3">
+              <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 border-t border-sabren-gray pt-3">
                 <span className="font-bold">Total</span>
-                <span className="font-black text-lg text-sabren-black">{formatPrice(grandTotal)}</span>
+                <span className="font-black text-lg text-sabren-black whitespace-nowrap">{formatPrice(grandTotal)}</span>
               </div>
             </div>
 
