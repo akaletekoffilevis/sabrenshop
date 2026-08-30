@@ -6,6 +6,11 @@ export function whatsappLink(message: string, number: string = WHATSAPP_NUMBER) 
   return `https://wa.me/${number}?text=${encoded}`;
 }
 
+export function whatsappShareLink(message: string) {
+  const encoded = encodeURIComponent(message);
+  return `https://api.whatsapp.com/send?text=${encoded}`;
+}
+
 export function productWhatsappMessage(opts: {
   name: string;
   price: number;

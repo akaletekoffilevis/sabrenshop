@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
-import { whatsappLink, productWhatsappMessage } from "@/lib/whatsapp";
+import { whatsappLink, whatsappShareLink, productWhatsappMessage } from "@/lib/whatsapp";
 import { useShopConfig } from "@/lib/useShopConfig";
 import { ShoppingBag, Zap, MessageCircle, Check, Minus, Plus, Share2 } from "lucide-react";
 
@@ -32,10 +32,8 @@ export function ProductActions({ product }: { product: any }) {
   const shareToWhatsapp = () => {
     const url = `${window.location.origin}/produit/${product.slug}`;
     const msg = `Bonjour, je partage avec vous ce produit :\n*${product.name}* — ${product.price.toLocaleString("fr-FR")} FCFA\n${url}\nDisponible chez SABREEN’SHOP !`;
-    window.open(whatsappLink(msg, whatsapp), "_blank");
+    window.open(whatsappShareLink(msg), "_blank");
   };
-
-  const inputCls = "flex items-center justify-center rounded-full border border-sabren-gray bg-white text-sm font-semibold hover:border-sabren-gold transition";
 
   return (
     <div className="mt-5 space-y-4">
