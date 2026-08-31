@@ -41,9 +41,11 @@ export function ProductActions({ product }: { product: any }) {
         const res = await fetch(image);
         clearTimeout(timer);
         if (res.ok) {
+          
           const blob = await res.blob();
           const ext = (image.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
           const file = new File([blob], `sabrenshop-${product.slug}.${ext}`, { type: blob.type || "image/jpeg" });
+
           if (navigator.canShare({ files: [file] })) {
             await navigator.share({ files: [file], text: msg, url });
             return;
