@@ -31,7 +31,7 @@ export function ProductActions({ product }: { product: any }) {
 
   const shareToWhatsapp = async () => {
     const url = `${window.location.origin}/produit/${product.slug}`;
-    const msg = `Bonjour, je partage avec vous ce produit :\n*${product.name}* — ${product.price.toLocaleString("fr-FR")} FCFA\n${url}\nDisponible chez SABREEN’SHOP !`;
+    const msg = `Bonjour, je partage avec vous ce produit :\n*${product.name}* — ${product.price.toLocaleString("fr-FR")} FCFA\n \nDisponible chez SABREEN’SHOP !`;
     const image = (product.images?.[0] as string | undefined) || null;
 
     if (image && /^https?:\/\//i.test(image) && typeof navigator.share === "function" && typeof navigator.canShare === "function") {
@@ -41,7 +41,7 @@ export function ProductActions({ product }: { product: any }) {
         const res = await fetch(image);
         clearTimeout(timer);
         if (res.ok) {
-          
+
           const blob = await res.blob();
           const ext = (image.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
           const file = new File([blob], `sabrenshop-${product.slug}.${ext}`, { type: blob.type || "image/jpeg" });
