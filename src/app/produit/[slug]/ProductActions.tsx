@@ -31,7 +31,7 @@ export function ProductActions({ product }: { product: any }) {
 
   const shareToWhatsapp = async () => {
     const url = `${window.location.origin}/produit/${product.slug}`;
-    const msg = `Bonjour, je partage avec vous ce produit :\n \n ${product.name} — ${product.price.toLocaleString("fr-FR")} FCFA\n \nDisponible chez SABREEN’SHOP !`;
+    const msg = `Bonjour, je partage avec vous ce produit :\n \n ${product.name} — ${product.price.toLocaleString("fr-FR")} FCFA\n \nDisponible chez SABREEN’SHOP ! \n`;
     const image = (product.images?.[0] as string | undefined) || null;
 
     if (image && /^https?:\/\//i.test(image) && typeof navigator.share === "function" && typeof navigator.canShare === "function") {
