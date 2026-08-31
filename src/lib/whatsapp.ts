@@ -89,8 +89,6 @@ export function cartWhatsappMessage(
   
   const parts = [`Bonjour SABREEN’SHOP`, `Je souhaite passer commande :`, ``];
   parts.push(...lines, ``);
-  if (typeof opts.subtotal === "number")
-    parts.push(`Sous-total : ${opts.subtotal.toLocaleString("fr-FR")} FCFA`);
 
   if (opts.discount && opts.discount > 0)
     parts.push(
@@ -107,6 +105,6 @@ export function cartWhatsappMessage(
 
   parts.push(`Total : ${opts.total.toLocaleString("fr-FR")} FCFA`);
   if (opts.customer) parts.push(...customerLines(opts.customer));
-  parts.push(``, `Merci de me confirmer la disponibilité et la livraison.`);
+  parts.push(``, `Merci de me confirmer la disponibilité.`);
   return parts.join("\n");
 }

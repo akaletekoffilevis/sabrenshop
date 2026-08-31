@@ -72,7 +72,6 @@ export function PanierClient({
         size: i.size,
       })),
       {
-        subtotal: subTotal,
         discount,
         deliveryFee: ship,
         total: grandTotal,
@@ -346,9 +345,6 @@ export function PanierClient({
                   <>
                     <span className="min-w-0">
                       Partout au Niger — frais à la charge du client
-                    </span>
-                    <span className="text-sabren-gold-ink whitespace-nowrap">
-                      Retrait boutique : 0 FCFA
                     </span>
                   </>
                 )}
