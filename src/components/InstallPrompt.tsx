@@ -103,7 +103,7 @@ export function InstallPrompt() {
       return;
     }
     try {
-      const next = getCount() + 1;
+      const next = Math.min(MAX_SHOWS, getCount() + 1);
       localStorage.setItem(PROMPT_KEY, String(next));
     } catch {}
   };

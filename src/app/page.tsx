@@ -29,6 +29,35 @@ export default async function HomePage() {
       <Header />
       <main className="flex-1">
         <Hero />
+
+        {/* Comment commander */}
+        <section id="comment-commander" className="max-w-7xl mx-auto container-px lg:px-8 pt-12 scroll-mt-24">
+          <div className="text-center mb-8">
+            <span className="text-xs font-bold uppercase tracking-[0.18em] text-sabren-gold-ink">Simple & rapide</span>
+            <h2 className="font-display font-black text-2xl md:text-3xl mt-1">Comment commander ?</h2>
+            <p className="text-sm text-sabren-black/55 mt-2 max-w-md mx-auto">
+              Trois étapes, zéro complication. Passez commande en quelques minutes.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            {steps.map((s) => (
+              <div key={s.n} className="relative bg-white rounded-2xl border border-sabren-gray shadow-card p-6">
+                <span className="absolute top-5 right-5 w-9 h-9 rounded-full bg-sabren-cream border border-sabren-gold/40 flex items-center justify-center font-display font-black text-sabren-gold-ink">
+                  {s.n}
+                </span>
+                <h3 className="font-bold text-base mt-2 pr-10">{s.title}</h3>
+                <p className="text-sm text-sabren-black/55 mt-2 leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 text-center">
+            <a href={whatsappLink("Bonjour SABREEN’SHOP, je souhaite passer ma commande.", waNumber)} target="_blank" className="inline-flex items-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold rounded-full px-8 py-3.5 text-sm transition shadow-card">
+              <MessageCircle className="w-4 h-4" /> Passer ma commande sur WhatsApp
+            </a>
+            <p className="text-xs text-sabren-black/45 mt-2">Réponse rapide • Lun–Sam 8h–20h</p>
+          </div>
+        </section>
+
         <TrustStrip />
 
         <CategoryGrid />
@@ -106,34 +135,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Comment commander */}
-        <section id="comment-commander" className="max-w-7xl mx-auto container-px lg:px-8 pt-14 scroll-mt-24">
-          <div className="text-center mb-8">
-            <span className="text-xs font-bold uppercase tracking-[0.18em] text-sabren-gold-ink">Simple & rapide</span>
-            <h2 className="font-display font-black text-2xl md:text-3xl mt-1">Comment commander ?</h2>
-            <p className="text-sm text-sabren-black/55 mt-2 max-w-md mx-auto">
-              Trois étapes, zéro complication. Passez commande en quelques minutes.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-4">
-            {steps.map((s) => (
-              <div key={s.n} className="relative bg-white rounded-2xl border border-sabren-gray shadow-card p-6">
-                <span className="absolute top-5 right-5 w-9 h-9 rounded-full bg-sabren-cream border border-sabren-gold/40 flex items-center justify-center font-display font-black text-sabren-gold-ink">
-                  {s.n}
-                </span>
-                <h3 className="font-bold text-base mt-2 pr-10">{s.title}</h3>
-                <p className="text-sm text-sabren-black/55 mt-2 leading-relaxed">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6 text-center">
-            <a href={whatsappLink("Bonjour SABREEN’SHOP, je souhaite passer ma commande.", waNumber)} target="_blank" className="inline-flex items-center gap-2 bg-whatsapp hover:bg-whatsapp-dark text-white font-bold rounded-full px-8 py-3.5 text-sm transition shadow-card">
-              <MessageCircle className="w-4 h-4" /> Passer ma commande sur WhatsApp
-            </a>
-            <p className="text-xs text-sabren-black/45 mt-2">Réponse rapide • Lun–Sam 8h–20h</p>
-          </div>
-        </section>
-      </main>
+        </main>
       <Footer />
       <WhatsappFloat />
     </div>
